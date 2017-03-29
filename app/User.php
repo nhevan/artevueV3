@@ -11,6 +11,16 @@ class User extends Authenticatable
     use HasApiTokens, Notifiable;
 
     /**
+     * allows users to login using username
+     * @param  [type] $username [description]
+     * @return [bool]           [description]
+     */
+    public function findForPassport($username)
+    {
+        return $this->where('username', $username)->first();
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
