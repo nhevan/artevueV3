@@ -15,6 +15,11 @@ class User extends Authenticatable
         return $this->hasOne('App\UserMetadata');
     }
 
+    public function userType()
+    {
+        return $this->belongsTo('App\UserType');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
@@ -31,7 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password',
+        'name', 'username', 'email', 'password', 'user_type_id', 'profile_picture'
     ];
 
     /**
