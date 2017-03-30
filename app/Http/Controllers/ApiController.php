@@ -186,4 +186,11 @@ class ApiController extends Controller
             'pagination' => $model_array
         ]);
     }
+
+    public function respondTransformattedModel($model, Transformer $transformer)
+    {
+        return $this->respond([
+            'data' => $transformer->transform($model)
+        ]);
+    }
 }

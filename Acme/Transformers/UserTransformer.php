@@ -16,9 +16,11 @@ class UserTransformer extends Transformer
                 'name' => $user['name'],
                 'username' => $user['username'],
                 'email' => $user['email'],
-                'meta' => [
-                	'test_gallery_name' => $user['metadata']['is_notification_enabled'],
-                ]
+                'profile_picture' => $user['profile_picture'],
+                'user_type' => $user['user_type_id'],
+            	'is_notification_enabled' => $user['metadata']['is_notification_enabled'],
+            	'is_account_private' => $user['metadata']['is_account_private'],
+            	'is_save_to_phone' => $user['metadata']['is_save_to_phone'],
             ];
     }
 }
