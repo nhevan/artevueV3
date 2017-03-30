@@ -20,4 +20,4 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 Route::get('/manage-tokens', function() {
     return view('tokens');
-});
+})->middleware('auth');
