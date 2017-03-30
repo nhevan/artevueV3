@@ -10,6 +10,11 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    public function metadata()
+    {
+        return $this->hasOne('App\UserMetadata');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]

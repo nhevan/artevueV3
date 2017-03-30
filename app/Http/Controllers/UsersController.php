@@ -30,8 +30,8 @@ class UsersController extends ApiController
     {
         $limit = 5;
         if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
-        $users = $this->user->paginate($limit);
-        
+        $users = $this->user->with('metadata')->paginate($limit);
+
         return $this->respondWithPagination($users, $this->userTransformer);
     }
 }
