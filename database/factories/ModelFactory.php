@@ -3,6 +3,7 @@
 use App\User;
 use App\UserType;
 use App\ArtPreference;
+use App\ArtInteraction;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,22 @@ $factory->define(App\UserArtPreference::class, function (Faker\Generator $faker)
 
     return [
         'art_preference_id' => $faker->randomElement($preferences->toArray()),
+        'user_id' => $faker->randomElement($users->toArray())
+    ];
+});
+
+$factory->define(App\ArtInteraction::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->word
+    ];
+});
+
+$factory->define(App\UserArtInteraction::class, function (Faker\Generator $faker) {
+	$preferences = ArtInteraction::pluck('id');
+	$users = User::pluck('id');
+
+    return [
+        'art_interaction_id' => $faker->randomElement($preferences->toArray()),
         'user_id' => $faker->randomElement($users->toArray())
     ];
 });

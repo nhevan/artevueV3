@@ -15,6 +15,7 @@ class UserTransformer extends Transformer
     	$user['is_blocked'] = 0;
 
     	$artPreferences = $this->transformArtPreferences($user);
+    	$artInteractions = $this->transformArtInteractions($user);
 
         return [
                 'id' => $user['id'],
@@ -54,6 +55,7 @@ class UserTransformer extends Transformer
                 'tagged_count' => $user['metadata']['tagged_count'],
 
                 'art_preferences' => $artPreferences,
+                'art_interactions' => $artInteractions,
 
             	'is_following' => $user['is_following'],
             	'is_blocked' => $user['is_blocked'],
@@ -77,6 +79,25 @@ class UserTransformer extends Transformer
     		array_push($pref_arrays, $tmp);
     	}
     	return $pref_arrays;
+	}
+
+	/**
+     * transforms the Art Interactions associated with the User
+     * @param  [type] $user [description]
+     * @return [type]       [description]
+     */
+    public function transformArtInteractions($user)
+	{
+		$interactions = $user['artInteractions'];
+    	$interactions_array = [];
+    	foreach ($interactions->toArray() as $interaction) {
+    		$tmp = [
+    			'id' => $interaction['id'],
+    			'title' => $interaction['title'],
+    		];
+    		array_push($interactions_array, $tmp);
+    	}
+    	return $interactions_array;
 	}
 	
 }
