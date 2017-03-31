@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/test-user/{user}', function (User $user) {
 });
 
 //User APIs
-Route::middleware('auth:api')->get('/user', 'UsersController@index');
+// Route::middleware('auth:api')->get('/user', 'UsersController@index');
 Route::middleware('auth:api')->get('/user/{user}', 'UsersController@show');
 Route::middleware('auth:api')->post('/user', 'UsersController@store');
 Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser');
