@@ -48,7 +48,7 @@ class UsersController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }
-        
+
         return $this->respondTransformattedModel($user, $this->userTransformer);
     }
 
@@ -199,5 +199,27 @@ class UsersController extends ApiController
             return $this->respond(['message' => 'Username taken.']);
         }
         return $this->respond(['message' => 'Username available.']);
+    }
+
+    /**
+     * search users by name or username
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function searchUser(Request $request)
+    {
+        $rules = [
+            'search_string' => 'required',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $search_string = $request->search_string;
+
+        $limit = 5;
+        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
+        $users = $this->user->where('username', 'like', '%'.$search_string.'%')->orWhere('name', 'like', '%'.$search_string.'%')->orWhere('email', 'like', '%'.$search_string.'%')->with('usertype', 'metadata')->paginate($limit);
+
+        return $this->respondWithPagination($users, $this->userTransformer);
     }
 }

@@ -27,4 +27,5 @@ Route::middleware('auth:api')->get('/facebook-login', 'UsersController@facebookL
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->get('/fetch-user-id', 'UsersController@fetchUserIdByUsername');
 Route::middleware('auth:api')->get('/check-username', 'UsersController@checkUsername');
+Route::middleware('auth:api')->get('/search-user', 'UsersController@searchUser');
 
