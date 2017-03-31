@@ -86,6 +86,9 @@ class UsersController extends ApiController
      */
     public function currentUser(Request $request)
     {
+        // $user = $request->user();
+        // $user->load('artPreferences');
+        // return $user;
         return $this->respondTransformattedModel( $request->user(), $this->userTransformer);
     }
 

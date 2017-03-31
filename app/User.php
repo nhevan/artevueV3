@@ -20,6 +20,11 @@ class User extends Authenticatable
         return $this->belongsTo('App\UserType');
     }
 
+    public function artPreferences()
+    {
+        return $this->belongsToMany('App\ArtPreference');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]

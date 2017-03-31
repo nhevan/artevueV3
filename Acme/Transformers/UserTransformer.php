@@ -14,6 +14,8 @@ class UserTransformer extends Transformer
     	$user['is_following'] = 0;
     	$user['is_blocked'] = 0;
 
+    	$artPreferences = $this->transformArtPreferences($user);
+
         return [
                 'id' => $user['id'],
                 'name' => $user['name'],
@@ -51,8 +53,30 @@ class UserTransformer extends Transformer
                 'following_count' => $user['metadata']['following_count'],
                 'tagged_count' => $user['metadata']['tagged_count'],
 
+                'art_preferences' => $artPreferences,
+
             	'is_following' => $user['is_following'],
             	'is_blocked' => $user['is_blocked'],
             ];
     }
+
+    /**
+     * transforms the Art Preferences associated with the User
+     * @param  [type] $user [description]
+     * @return [type]       [description]
+     */
+    public function transformArtPreferences($user)
+	{
+		$preferences = $user['artPreferences'];
+    	$pref_arrays = [];
+    	foreach ($preferences->toArray() as $pref) {
+    		$tmp = [
+    			'id' => $pref['id'],
+    			'title' => $pref['title'],
+    		];
+    		array_push($pref_arrays, $tmp);
+    	}
+    	return $pref_arrays;
+	}
+	
 }

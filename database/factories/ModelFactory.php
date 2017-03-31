@@ -1,6 +1,8 @@
 <?php
 
+use App\User;
 use App\UserType;
+use App\ArtPreference;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,5 +42,21 @@ $factory->define(App\UserType::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->userName,
         'description' => $faker->paragraph(1)
+    ];
+});
+
+$factory->define(App\ArtPreference::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->word
+    ];
+});
+
+$factory->define(App\UserArtPreference::class, function (Faker\Generator $faker) {
+	$preferences = ArtPreference::pluck('id');
+	$users = User::pluck('id');
+
+    return [
+        'art_preference_id' => $faker->randomElement($preferences->toArray()),
+        'user_id' => $faker->randomElement($users->toArray())
     ];
 });
