@@ -29,3 +29,5 @@ Route::middleware('auth:api')->get('/fetch-user-id', 'UsersController@fetchUserI
 Route::middleware('auth:api')->get('/check-username', 'UsersController@checkUsername');
 Route::middleware('auth:api')->get('/search-user', 'UsersController@searchUser');
 
+Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
+
