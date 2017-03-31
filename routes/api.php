@@ -23,3 +23,4 @@ Route::middleware('auth:api')->get('/user', 'UsersController@index');
 Route::middleware('auth:api')->get('/user/{user}', 'UsersController@show');
 Route::middleware('auth:api')->post('/user', 'UsersController@store');
 Route::middleware('auth:api')->get('/facebook-login', 'UsersController@facebookLogin');
+Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');

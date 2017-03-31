@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\UserTransformer;
 
 class UsersController extends ApiController
@@ -58,7 +60,7 @@ class UsersController extends ApiController
     {
         $rules = [
             'name' => 'required|max:50',
-            'username' => 'required|max:20|unique:users,username',
+            'username' => 'required|min:4|max:20|unique:users,username',
             'password' => 'required|min:6',
             'email' => 'required|email|unique:users,email',
             'user_type_id' => 'required'
@@ -70,6 +72,8 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+        //start following ArteVue
+        $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
     }
 
@@ -99,7 +103,7 @@ class UsersController extends ApiController
     }
 
     /**
-     * [facebookLogin description]
+     * allows a user to login via facebook email address {THIS IS NOT THE RIGHT APPROACH}
      * @param  Request $request [description]
      * @return [type]           [description]
      */
@@ -112,5 +116,47 @@ class UsersController extends ApiController
         }
         return $this->responseNotFound('This email address is not associated with any user. Try signing up first.');
         
+    }
+
+    /**
+     * allows a user to signup via facebook {THIS IS NOT THE RIGHT APPROACH}
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function facebookSignup(Request $request)
+    {
+        $rules = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'username' => 'required|min:4|max:20|unique:users,username',
+            'email' => 'required|email',
+            'user_type_id' => 'required',
+            'social_id' => 'required'
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $user_exists = $this->user->where('email', $request->email)->first();
+        if ($user_exists) {
+            return $this->respondWithAccessToken($user_exists);
+        }
+
+        $request->merge(array( 'name' => $request->first_name.' '.$request->last_name ));
+        $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
+
+        $user = $this->user->create($request->all());
+        //start following ArteVue
+        $this->sendWelcomeEmail($user);
+        return $this->respondWithAccessToken($user);
+    }
+
+    /**
+     * sends welcome email to a user
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function sendWelcomeEmail(User $user)
+    {
+        return Mail::to($user->email)->send(new WelcomeEmail($user));
     }
 }
