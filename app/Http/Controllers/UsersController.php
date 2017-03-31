@@ -48,6 +48,7 @@ class UsersController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }
+        
         return $this->respondTransformattedModel($user, $this->userTransformer);
     }
 
@@ -158,5 +159,45 @@ class UsersController extends ApiController
     public function sendWelcomeEmail(User $user)
     {
         return Mail::to($user->email)->send(new WelcomeEmail($user));
+    }
+
+    /**
+     * returns a user id if a user is found with the provided username
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function fetchUserIdByUsername(Request $request)
+    {
+        $rules = [
+            'username' => 'required|min:4|max:20',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $user = $this->user->where('username', $request->username)->first();
+        if ($user) {
+            return $this->respond(['user_id' => $user->id]);
+        }
+        return $this->responseNotFound('No such user exists.');
+    }
+
+    /**
+     * check whether a username is available
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function checkUsername(Request $request)
+    {
+        $rules = [
+            'username' => 'required|min:4|max:20',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $user = $this->user->where('username', $request->username)->first();
+        if ($user) {
+            return $this->respond(['message' => 'Username taken.']);
+        }
+        return $this->respond(['message' => 'Username available.']);
     }
 }
