@@ -16,6 +16,7 @@ class UserTransformer extends Transformer
 
     	$artPreferences = $this->transformArtPreferences($user);
     	$artInteractions = $this->transformArtInteractions($user);
+        $artTypes = $this->transformArtTypes($user);
 
         return [
                 'id' => $user['id'],
@@ -56,6 +57,7 @@ class UserTransformer extends Transformer
 
                 'art_preferences' => $artPreferences,
                 'art_interactions' => $artInteractions,
+                'art_types' => $artTypes,
 
             	'is_following' => $user['is_following'],
             	'is_blocked' => $user['is_blocked'],
@@ -99,5 +101,24 @@ class UserTransformer extends Transformer
     	}
     	return $interactions_array;
 	}
+
+    /**
+     * transforms the Art Types associated with the User
+     * @param  [type] $user [description]
+     * @return [type]       [description]
+     */
+    public function transformArtTypes($user)
+    {
+        $art_types = $user['artTypes'];
+        $art_type_array = [];
+        foreach ($art_types->toArray() as $art_type) {
+            $tmp = [
+                'id' => $art_type['id'],
+                'title' => $art_type['title'],
+            ];
+            array_push($art_type_array, $tmp);
+        }
+        return $art_type_array;
+    }
 	
 }

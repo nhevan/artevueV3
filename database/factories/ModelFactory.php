@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use App\ArtType;
 use App\UserType;
 use App\ArtPreference;
 use App\ArtInteraction;
@@ -74,6 +75,22 @@ $factory->define(App\UserArtInteraction::class, function (Faker\Generator $faker
 
     return [
         'art_interaction_id' => $faker->randomElement($preferences->toArray()),
+        'user_id' => $faker->randomElement($users->toArray())
+    ];
+});
+
+$factory->define(App\ArtType::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->word
+    ];
+});
+
+$factory->define(App\UserArtType::class, function (Faker\Generator $faker) {
+	$art_types = ArtType::pluck('id');
+	$users = User::pluck('id');
+
+    return [
+        'art_type_id' => $faker->randomElement($art_types->toArray()),
         'user_id' => $faker->randomElement($users->toArray())
     ];
 });
