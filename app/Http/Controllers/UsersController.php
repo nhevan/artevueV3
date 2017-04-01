@@ -356,4 +356,29 @@ class UsersController extends ApiController
         }
         return $this->respond(['message' => 'Email available.']);
     }
+
+    /**
+     * updates a users profile picture
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateProfilePicture(Request $request)
+    {
+        $rules = [
+            'profile_picture' => 'required|file',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        
+        $path = $request->file('profile_picture')->store(
+            'img/profile_pic', 's3'
+        );
+
+        $user = Auth::user();
+        $user->profile_picture = $path;
+        $user->save();
+
+        return $this->respond(['message'=>'Profile picture has been successfully updated.']);
+    }
 }

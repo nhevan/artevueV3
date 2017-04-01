@@ -32,6 +32,7 @@ Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@faceboo
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('auth:api')->get('/check-email', 'UsersController@checkEmail');
+Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
