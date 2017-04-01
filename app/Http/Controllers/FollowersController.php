@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Follower;
 use Illuminate\Http\Request;
+use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\FollowerTransformer;
 
 class FollowersController extends ApiController
 {
+	use CounterSwissKnife;
+
     protected $follower;
     
     /**
@@ -112,6 +115,8 @@ class FollowersController extends ApiController
     	$follower->is_still_following = 0;
     	$follower->save();
 
+    	$this->decrementFollowingCount(Auth::user()->id);
+    	$this->decrementFollowerCount($user_id);
     	return $this->respond(['message' => Auth::user()->name.' stopped following a user.']);
     }
 
@@ -133,6 +138,8 @@ class FollowersController extends ApiController
     		$this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
     	}
 
+    	$this->incrementFollowingCount(Auth::user()->id);
+    	$this->incrementFollowerCount($user_id);
     	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
     }
 }
