@@ -50,6 +50,11 @@ class User extends Authenticatable
         return $this->hasMany('App\BlockedUser');
     }
 
+    public function reportedUsers()
+    {
+        return $this->hasMany('App\ReportedUser');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
