@@ -40,5 +40,7 @@ Route::middleware('auth:api')->post('/follower/{user_id}', 'FollowersController@
 
 Route::middleware('auth:api')->post('/block/{user_id}', 'BlockedUsersController@store');
 
+Route::middleware('auth:api')->post('/report/{user_id}', 'ReportedUsersController@store');
+
 Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
 
