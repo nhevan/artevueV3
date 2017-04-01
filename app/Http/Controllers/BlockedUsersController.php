@@ -35,7 +35,7 @@ class BlockedUsersController extends ApiController
         	return $this->unBlockUser($user_id);
         }
 
-        $this->removeBlockedUserFromFollowerList($user_id); //unimplemented
+        $this->removeBlockedUserFromFollowerList($user_id);
         $this->removeALlPinsOfBlockedUser($user_id); //unimplemented
 
         return $this->blockUser($user_id);
@@ -87,11 +87,10 @@ class BlockedUsersController extends ApiController
 
     /**
      * remove the users from each others followers list
-     * @return [type] [description]
      */
     public function removeBlockedUserFromFollowerList($user_id)
     {
-    	$this->test();
-    	return true;
+    	$this->removeFromFollowerList(Auth::user()->id, $user_id);
+    	$this->removeFromFollowerList($user_id, Auth::user()->id);
     }
 }
