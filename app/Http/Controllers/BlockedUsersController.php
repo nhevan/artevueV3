@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\User;
 use App\BlockedUser;
 use Illuminate\Http\Request;
+use App\Traits\UserSwissKnife;
 use Illuminate\Support\Facades\Auth;
 
 class BlockedUsersController extends ApiController
 {
+	use UserSwissKnife;
+
     protected $blockedUser;
 
     public function __construct(BlockedUser $blockedUser)
@@ -88,6 +91,7 @@ class BlockedUsersController extends ApiController
      */
     public function removeBlockedUserFromFollowerList($user_id)
     {
+    	$this->test();
     	return true;
     }
 }
