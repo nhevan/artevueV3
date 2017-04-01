@@ -3,6 +3,8 @@
 namespace Acme\Transformers;
 
 use App\User;
+use App\Follower;
+use Illuminate\Support\Facades\Auth;
 
 /**
 *
@@ -11,7 +13,7 @@ class UserTransformer extends Transformer
 {
     public function transform($user)
     {
-    	$user['is_following'] = 0;
+    	$user['is_following'] = $this->isFollowing($user['id']);
     	$user['is_blocked'] = 0;
 
     	$artPreferences = $this->transformArtPreferences($user);
@@ -119,6 +121,20 @@ class UserTransformer extends Transformer
             array_push($art_type_array, $tmp);
         }
         return $art_type_array;
+    }
+
+    /**
+     * checks whether the authenticated user is following given user
+     * @param  [type]  $user_id [description]
+     * @return boolean          [description]
+     */
+    public function isFollowing($user_id)
+    {
+        $is_following = Follower::where(['user_id' => $user_id, 'follower_id' => Auth::user()->id, 'is_still_following' => 1])->first();
+        if ($is_following) {
+            return 1;
+        }
+        return 0;
     }
 	
 }

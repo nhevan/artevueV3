@@ -122,6 +122,9 @@ class FollowersController extends ApiController
      */
     public function startFollowing($user_id)
     {
+    	if (Auth::user()->id == $user_id) {
+    		return $this->respondWithError(['message'=>'User can not follow him/herself']);
+    	}
     	$was_once_follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
     	if ($was_once_follower) {
     		$was_once_follower->is_still_following = 1;
