@@ -66,7 +66,7 @@ class FollowersController extends ApiController
     {
         $limit = 10;
         if((int)$request->limit <= 30) $limit = (int)$request->limit ?: $limit;
-        $followers = $this->follower->where('user_id', $user_id)->with('followerDetail')->paginate($limit);
+        $followers = $this->follower->where('user_id', $user_id)->where('is_still_following', 1)->with('followerDetail')->paginate($limit);
 
         return $followers;
     }
@@ -91,20 +91,45 @@ class FollowersController extends ApiController
         return $this->startFollowing($user_id);
     }
 
+    /**
+     * checks if the current user is following the given User
+     * @param  [type]  $user_id [description]
+     * @return boolean          [description]
+     */
     public function isExistingFollower($user_id)
     {
-    	return $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
+    	return $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id, 'is_still_following' => 1])->first();
     }
+
+    /**
+     * remove the given user from current users followers list
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
     public function removeFollower($user_id)
     {
     	$follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
-    	$follower->delete();
+    	$follower->is_still_following = 0;
+    	$follower->save();
 
     	return $this->respond(['message' => Auth::user()->name.' stopped following a user.']);
     }
+
+    /**
+     * add the given user to current user's followers list
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
     public function startFollowing($user_id)
     {
-    	$this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
+    	$was_once_follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
+    	if ($was_once_follower) {
+    		$was_once_follower->is_still_following = 1;
+    		$was_once_follower->save();
+    	}else{
+    		$this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
+    	}
+
     	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
     }
 }
