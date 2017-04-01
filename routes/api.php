@@ -29,6 +29,9 @@ Route::middleware('auth:api')->get('/check-username', 'UsersController@checkUser
 Route::middleware('auth:api')->get('/search-user', 'UsersController@searchUser');
 Route::middleware('auth:api')->get('/facebook-login', 'UsersController@facebookLogin');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
+Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
+Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
+Route::middleware('auth:api')->get('/check-email', 'UsersController@checkEmail');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');

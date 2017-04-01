@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Follower;
+use App\UserMetadata;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -284,5 +285,75 @@ class UsersController extends ApiController
         if ($auth_user == $email_owner->toArray()) {
             return true;
         }
+    }
+
+    /**
+     * updates users gallery name and description
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateGalleryInfo(Request $request)
+    {
+        $rules = [
+            'gallery_name' => 'nullable|max:50',
+            'gallery_description' => 'nullable',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $user_metadata = UserMetadata::where('user_id', Auth::user()->id)->first();
+        $user_metadata->gallery_name = $request->gallery_name;
+        $user_metadata->gallery_description = $request->gallery_description;
+        $user_metadata->save();
+        
+        return $this->respond(['message' => 'Users gallery info successfuly updated.']);
+    }
+
+    /**
+     * updates users is_notification_enabled, is_account_private and is_save_to_phone
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateSettings(Request $request)
+    {
+        $rules = [
+            'is_notification_enabled' => 'required|numeric',
+            'is_account_private' => 'required|numeric',
+            'is_save_to_phone' => 'required|numeric',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $user_metadata = UserMetadata::where('user_id', Auth::user()->id)->first();
+
+        $user_metadata->is_notification_enabled = $request->is_notification_enabled;
+        $user_metadata->is_account_private = $request->is_account_private;
+        $user_metadata->is_save_to_phone = $request->is_save_to_phone;
+
+        $user_metadata->save();
+        
+        return $this->respond(['message' => 'User settings successfuly updated.']);
+    }
+
+    /**
+     * check whether a email is available
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function checkEmail(Request $request)
+    {
+        $rules = [
+            'email' => 'required|email|unique:users,email',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $user = $this->user->where('email', $request->email)->first();
+        if ($user) {
+            return $this->respond(['message' => 'Email taken.']);
+        }
+        return $this->respond(['message' => 'Email available.']);
     }
 }
