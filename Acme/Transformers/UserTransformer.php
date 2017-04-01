@@ -4,6 +4,7 @@ namespace Acme\Transformers;
 
 use App\User;
 use App\Follower;
+use App\BlockedUser;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -14,7 +15,7 @@ class UserTransformer extends Transformer
     public function transform($user)
     {
     	$user['is_following'] = $this->isFollowing($user['id']);
-    	$user['is_blocked'] = 0;
+    	$user['is_blocked'] = $this->isBlocked($user['id']);
 
     	$artPreferences = $this->transformArtPreferences($user);
     	$artInteractions = $this->transformArtInteractions($user);
@@ -132,6 +133,20 @@ class UserTransformer extends Transformer
     {
         $is_following = Follower::where(['user_id' => $user_id, 'follower_id' => Auth::user()->id, 'is_still_following' => 1])->first();
         if ($is_following) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * checks whether the authenticated user has blocked the given user
+     * @param  [type]  $user_id [description]
+     * @return boolean          [description]
+     */
+    public function isBlocked($user_id)
+    {
+        $is_blocked = BlockedUser::where(['user_id' => Auth::user()->id, 'blocked_user_id' => $user_id])->first();
+        if ($is_blocked) {
             return 1;
         }
         return 0;
