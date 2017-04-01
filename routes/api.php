@@ -30,6 +30,8 @@ Route::middleware('auth:api')->get('/search-user', 'UsersController@searchUser')
 Route::middleware('auth:api')->get('/facebook-login', 'UsersController@facebookLogin');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 
+Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
+Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
 
 Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
 

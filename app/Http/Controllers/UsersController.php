@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Follower;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\UserTransformer;
+use Acme\Transformers\FollowerTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
