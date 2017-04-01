@@ -94,3 +94,12 @@ $factory->define(App\UserArtType::class, function (Faker\Generator $faker) {
         'user_id' => $faker->randomElement($users->toArray())
     ];
 });
+
+$factory->define(App\Follower::class, function (Faker\Generator $faker) {
+    $users = User::pluck('id');
+
+    return [
+        'user_id' => $faker->randomElement($users->toArray()),
+        'follower_id' => $faker->randomElement($users->toArray())
+    ];
+});

@@ -35,6 +35,16 @@ class User extends Authenticatable
         return $this->belongsToMany('App\ArtType');
     }
 
+    public function followers()
+    {
+        return $this->hasMany('App\Follower');
+    }
+
+    public function following()
+    {
+        return $this->hasMany('App\Follower', 'follower_id');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
