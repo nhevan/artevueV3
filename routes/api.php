@@ -34,5 +34,7 @@ Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollo
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
 Route::middleware('auth:api')->post('/follower/{user_id}', 'FollowersController@store');
 
+Route::middleware('auth:api')->post('/block/{user_id}', 'BlockedUsersController@store');
+
 Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
 
