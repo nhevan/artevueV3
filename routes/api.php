@@ -32,6 +32,7 @@ Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@faceboo
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
+Route::middleware('auth:api')->post('/follower/{user_id}', 'FollowersController@store');
 
 Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
 

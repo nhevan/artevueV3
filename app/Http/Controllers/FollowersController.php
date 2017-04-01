@@ -70,4 +70,41 @@ class FollowersController extends ApiController
 
         return $followers;
     }
+
+
+	/**
+     * swaps a follower status
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function store($user_id, Request $request)
+    {
+        $user = User::find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        if ($this->isExistingFollower($user_id)) {
+        	return $this->removeFollower($user_id);
+        }
+        
+        return $this->startFollowing($user_id);
+    }
+
+    public function isExistingFollower($user_id)
+    {
+    	return $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
+    }
+    public function removeFollower($user_id)
+    {
+    	$follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
+    	$follower->delete();
+
+    	return $this->respond(['message' => Auth::user()->name.' stopped following a user.']);
+    }
+    public function startFollowing($user_id)
+    {
+    	$this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
+    	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
+    }
 }
