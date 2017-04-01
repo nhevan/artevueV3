@@ -103,3 +103,11 @@ $factory->define(App\Follower::class, function (Faker\Generator $faker) {
         'follower_id' => $faker->randomElement($users->toArray())
     ];
 });
+$factory->define(App\BlockedUser::class, function (Faker\Generator $faker) {
+    $users = User::pluck('id');
+
+    return [
+        'user_id' => $faker->randomElement($users->toArray()),
+        'blocked_user_id' => $faker->randomElement($users->toArray())
+    ];
+});

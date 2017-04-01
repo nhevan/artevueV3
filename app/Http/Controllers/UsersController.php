@@ -89,9 +89,9 @@ class UsersController extends ApiController
      */
     public function currentUser(Request $request)
     {
-        // $user = $request->user();
-        // $user->load('following');
-        // return $user;
+        $user = $request->user();
+        $user->load('blockedUsers');
+        return $user;
         return $this->respondTransformattedModel( $request->user(), $this->userTransformer);
     }
 

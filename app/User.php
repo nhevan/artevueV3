@@ -45,6 +45,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Follower', 'follower_id');
     }
 
+    public function blockedUsers()
+    {
+        return $this->hasMany('App\BlockedUser');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
