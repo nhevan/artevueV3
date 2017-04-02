@@ -15,6 +15,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\MessageSent' => [
             'App\Listeners\SendPusherNotification',
+            'App\Listeners\SendFcmNotification',
         ],
     ];
 

@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+    'fcm_server_key' => env('FCM_SERVER_KEY'),
     /*
     |--------------------------------------------------------------------------
     | Application Name
