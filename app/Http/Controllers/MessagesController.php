@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Message;
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Response as IlluminateResponse;
@@ -28,11 +29,13 @@ class MessagesController extends ApiController
     	}
     	
     	try {
-    		$this->createMessage($request);
+    		$message = $this->createMessage($request);
     	} catch (QueryException $e) {
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('Something went wrong, probably the receiver does not exist.');
     	}
     	
+    	event(new MessageSent($message));
+
         return $this->respond(['message'=>'Message successfully sent.']);
     }
 
@@ -59,6 +62,7 @@ class MessagesController extends ApiController
     		$message->url = $request->url;
     	}
 
-		$message->save();    	
+		$message->save();
+		return $message;
     }
 }
