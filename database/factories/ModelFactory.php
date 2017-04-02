@@ -120,3 +120,13 @@ $factory->define(App\ReportedUser::class, function (Faker\Generator $faker) {
         'suspect_id' => $faker->randomElement($users->toArray())
     ];
 });
+
+$factory->define(App\Message::class, function (Faker\Generator $faker) {
+    $users = User::pluck('id');
+
+    return [
+        'sender_id' => $faker->randomElement($users->toArray()),
+        'receiver_id' => $faker->randomElement($users->toArray()),
+        'message' => $faker->sentence(10)
+    ];
+});

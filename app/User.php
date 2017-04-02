@@ -55,6 +55,16 @@ class User extends Authenticatable
         return $this->hasMany('App\ReportedUser');
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany('App\Message', 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany('App\Message', 'receiver_id');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
