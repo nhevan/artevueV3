@@ -45,3 +45,4 @@ Route::middleware('auth:api')->post('/report/{user_id}', 'ReportedUsersControlle
 Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
 
 Route::middleware('auth:api')->post('/message', 'MessagesController@store');
+Route::middleware('auth:api')->get('/message/{friend_id}', 'MessagesController@index');

@@ -23,7 +23,9 @@ trait NotificationSwissKnife{
 
         $pusher = new \Pusher( $app_key, $app_secret, $app_id, $options );
 
-        $data = $data->toArray();
+        if (!is_array($data)) {
+            $data = $data->toArray();
+        }
         $data = array_merge($data, $additional_data);
 
         $pusher->trigger($channel, $event, $data);
