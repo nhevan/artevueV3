@@ -80,7 +80,8 @@ class UsersController extends ApiController
         $user = $this->user->create($request->all());
         //start following ArteVue
         $this->sendWelcomeEmail($user);
-        return $this->respondWithAccessToken($user);
+
+        return $this->respond(['message' => 'User successfully signed up.']);
     }
 
     /**
