@@ -136,10 +136,10 @@ class MessagesController extends ApiController
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
         }
-        if ($request->is_file == 1 && $request->is_post == 1) {
+        if ($this->isBothFileAndPost()) {
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'A message can not be of both file and post type at the same time, Check your is_file and is_post key.']);
     	}
-    	if ($request->receiver_id == $request->user()->id) {
+    	if ($this->isReceiverSameAsSender()) {
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'One can not send a message to himself/herself']);
     	}
     	
@@ -151,9 +151,32 @@ class MessagesController extends ApiController
     	
     	event(new MessageSent($message));
     	$this->incrementMessageCount($request->user()->id);
-    	$this->updateParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
+    	$this->updateTotalMessageCountInParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
+    	$this->updateMessageCountInFollowersTable($request->receiver_id);
 
         return $this->respond(['message'=>'Message successfully sent.']);
+    }
+
+    /**
+     * checks if sending message has both is_file and is_post key set to value 1
+     * @return boolean [description]
+     */
+    public function isBothFileAndPost()
+    {
+    	if ($this->request->is_file == 1 && $this->request->is_post == 1) {
+    		return true;
+    	}
+    }
+
+    /**
+     * checks if the sender is trying send message to himself/herself
+     * @return boolean [description]
+     */
+    public function isReceiverSameAsSender()
+    {
+    	if ($this->request->receiver_id == $this->request->user()->id) {
+    		return true;
+    	}
     }
 
     /**
@@ -193,7 +216,7 @@ class MessagesController extends ApiController
     	$participant_ids = [ $request->user()->id, $request->friend_id ];
 
     	$this->deleteEntryInMessageParticipantTable($participant_ids);
-    	$this->deleteAllMessages($participant_ids);
+    	$this->deleteAllMessages($request->user()->id, $request->friend_id);
 
     	return $this->respond([ 'message' => 'All messages has been deleted.' ]);
     }
@@ -208,8 +231,12 @@ class MessagesController extends ApiController
     	return MessageParticipant::whereIN('participant_one', $participant_ids)->whereIN('participant_two', $participant_ids)->delete();
     }
 
-    public function deleteAllMessages($participant_ids)
+    public function deleteAllMessages($sender_id, $receiver_id)
     {
-    	return $this->message->whereIn('sender_id', $participant_ids)->whereIn('receiver_id', $participant_ids)->delete();
+    	$owner_message_count = $this->message->where('sender_id', $sender_id)->where('receiver_id', $receiver_id)->delete();
+    	$receiver_message_count = $this->message->where('sender_id', $receiver_id)->where('receiver_id', $sender_id)->delete();
+
+    	$this->decrementMessageCount($sender_id, $owner_message_count);
+    	$this->decrementMessageCount($receiver_id, $receiver_message_count);
     }
 }

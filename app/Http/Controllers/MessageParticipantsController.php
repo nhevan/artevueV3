@@ -22,11 +22,15 @@ class MessageParticipantsController extends ApiController
         $this->messageParticipantTransformer = $messageParticipantTransformer;
     }
 
+    /**
+     * returns the friends list and their last message
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
 	public function index(Request $request)
 	{
 		$message_history = $this->messageParticipant->where('participant_one', $request->user()->id)->orWhere('participant_two', $request->user()->id)->with('lastMessage', 'participantOneData', 'participantTwoData')->paginate(10);
 
-		// return $this->respond($message_history);
 		return $this->respondWithPagination($message_history, $this->messageParticipantTransformer);
 	}
 }

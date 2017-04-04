@@ -2,8 +2,10 @@
 
 namespace App\Traits;
 
+use App\Follower;
 use App\UserMetadata;
 use App\MessageParticipant;
+use Illuminate\Support\Facades\Auth;
 
 trait CounterSwissKnife{
 
@@ -62,14 +64,37 @@ trait CounterSwissKnife{
      * @param  [type]  $user_id [description]
      * @return [type]          [description]
      */
-    public function incrementMessageCount($user_id)
+    public function incrementMessageCount($user_id, $count = 1)
     {
         $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
-        $metadata->message_count = $metadata->message_count + 1;
+        
+        $metadata->message_count = $metadata->message_count + $count;
+        
         return $metadata->save();
     }
 
-    public function updateParticipantsTable($sender_id, $receiver_id, $last_message_id)
+    /**
+     * decrement a users message_count metadata value
+     * @param  [type]  $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementMessageCount($user_id, $count = 1)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        
+        $metadata->message_count = $metadata->message_count - $count;
+        
+        return $metadata->save();
+    }
+
+    /**
+     * updates total message_count in Message Participants table
+     * @param  [type] $sender_id       [description]
+     * @param  [type] $receiver_id     [description]
+     * @param  [type] $last_message_id [description]
+     * @return [type]                  [description]
+     */
+    public function updateTotalMessageCountInParticipantsTable($sender_id, $receiver_id, $last_message_id)
     {
         $participant_ids = [$sender_id, $receiver_id];
         $is_existing = MessageParticipant::whereIN('participant_one',$participant_ids)->whereIN('participant_two',$participant_ids)->first();
@@ -82,5 +107,18 @@ trait CounterSwissKnife{
         $is_existing->total_messages = $is_existing->total_messages + 1;
 
         $is_existing->save();
+    }
+
+    /**
+     * updates message_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function updateMessageCountInFollowersTable($follower_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $follower_id)->first();
+        if ($is_existing) {
+            $is_existing->message_count = $is_existing->message_count + 1;
+            return $is_existing->save();
+        }
     }
 }
