@@ -1,6 +1,7 @@
 <?php
 
 use App\User;
+use App\Artist;
 use App\ArtType;
 use App\UserType;
 use App\ArtPreference;
@@ -134,5 +135,22 @@ $factory->define(App\Message::class, function (Faker\Generator $faker) {
 $factory->define(App\Artist::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->name
+    ];
+});
+
+$factory->define(App\Post::class, function (Faker\Generator $faker) {
+    $users = User::pluck('id');
+    $artists = Artist::pluck('id');
+    return [
+        'image' => $faker->sentence(1),
+        'description' => $faker->sentence(1),
+        'owner_id' => $faker->randomElement($users->toArray()),
+        'artist_id' => $faker->randomElement($artists->toArray()),
+    ];
+});
+
+$factory->state(App\Post::class, 'noArtist', function ($faker) {
+    return [
+        'artist_id' => null,
     ];
 });

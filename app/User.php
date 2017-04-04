@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Message', 'receiver_id');
     }
 
+    public function posts()
+    {
+        return $this->hasMany('App\Post', 'owner_id');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
