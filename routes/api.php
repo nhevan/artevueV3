@@ -49,4 +49,5 @@ Route::middleware('auth:api')->get('/message-participants', 'MessageParticipants
 Route::middleware('auth:api')->get('/message/{friend_id}', 'MessagesController@index');
 Route::middleware('auth:api')->delete('/conversation/{friend_id}', 'MessagesController@delete');
 
-Route::middleware('auth:api')->get('/post', 'PostsController@tmp');
+Route::middleware('auth:api')->get('/post', 'PostsController@index');
+Route::middleware('auth:api')->get('/post/{owner_id}', 'PostsController@index');
