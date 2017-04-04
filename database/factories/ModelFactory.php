@@ -130,3 +130,9 @@ $factory->define(App\Message::class, function (Faker\Generator $faker) {
         'message' => $faker->sentence(10)
     ];
 });
+
+$factory->define(App\Artist::class, function (Faker\Generator $faker) {
+    return [
+        'title' => $faker->name
+    ];
+});
