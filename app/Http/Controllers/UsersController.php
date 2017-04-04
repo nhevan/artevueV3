@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\UserTransformer;
 use Acme\Transformers\FollowerTransformer;
+use Acme\Transformers\UserSearchTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
@@ -78,6 +79,9 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+        $metadata = New UserMetadata;
+        $user->metadata()->save($metadata);
+
         //start following ArteVue
         $this->sendWelcomeEmail($user);
 
@@ -155,6 +159,9 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+        $metadata = New UserMetadata;
+        $user->metadata()->save($metadata);
+
         //start following ArteVue
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
@@ -227,9 +234,10 @@ class UsersController extends ApiController
 
         $limit = 5;
         if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
-        $users = $this->user->where('username', 'like', '%'.$search_string.'%')->orWhere('name', 'like', '%'.$search_string.'%')->orWhere('email', 'like', '%'.$search_string.'%')->with('usertype', 'metadata')->paginate($limit);
+        $users = $this->user->where('username', 'like', '%'.$search_string.'%')->orWhere('name', 'like', '%'.$search_string.'%')->orWhere('email', 'like', '%'.$search_string.'%')->with('usertype', 'metadata', 'artPreferences', 'arttypes')->paginate($limit);
 
-        return $this->respondWithPagination($users, $this->userTransformer);
+        $userSearchTransformer = new UserSearchTransformer;
+        return $this->respondWithPagination($users, $userSearchTransformer );
     }
 
     /**

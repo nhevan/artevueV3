@@ -17,9 +17,11 @@ class UserTransformer extends Transformer
     	$user['is_following'] = $this->isFollowing($user['id']);
     	$user['is_blocked'] = $this->isBlocked($user['id']);
 
-    	$artPreferences = $this->transformArtPreferences($user);
-    	$artInteractions = $this->transformArtInteractions($user);
-        $artTypes = $this->transformArtTypes($user);
+        $artPreferences = [];
+        $artTypes = [];
+        if(isset($user['artPreferences'])) $artPreferences = $this->transformArtPreferences($user);
+    	// $artInteractions = $this->transformArtInteractions($user);
+        if(isset($user['artTypes'])) $artTypes = $this->transformArtTypes($user);
 
         return [
                 'id' => $user['id'],
@@ -59,7 +61,7 @@ class UserTransformer extends Transformer
                 'tagged_count' => $user['metadata']['tagged_count'],
 
                 'art_preferences' => $artPreferences,
-                'art_interactions' => $artInteractions,
+                // 'art_interactions' => $artInteractions,
                 'art_types' => $artTypes,
 
             	'is_following' => $user['is_following'],
@@ -74,6 +76,8 @@ class UserTransformer extends Transformer
      */
     public function transformArtPreferences($user)
 	{
+        // var_dump($user->toArray());
+        // exit();
 		$preferences = $user['artPreferences'];
     	$pref_arrays = [];
     	foreach ($preferences->toArray() as $pref) {
