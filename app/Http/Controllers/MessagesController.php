@@ -6,13 +6,14 @@ use App\User;
 use App\Message;
 use App\Events\MessageSent;
 use Illuminate\Http\Request;
+use App\Traits\CounterSwissKnife;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class MessagesController extends ApiController
 {
-	use NotificationSwissKnife;
+	use NotificationSwissKnife, CounterSwissKnife;
 
 	protected $message;
 	protected $request;
@@ -145,6 +146,8 @@ class MessagesController extends ApiController
     	}
     	
     	event(new MessageSent($message));
+    	$this->incrementMessageCount($request->user()->id);
+    	$this->updateParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
 
         return $this->respond(['message'=>'Message successfully sent.']);
     }

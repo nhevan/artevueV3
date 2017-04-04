@@ -28,6 +28,6 @@ class SendFcmNotification
      */
     public function handle(MessageSent $event)
     {
-        $this->sendFcmMessage($event->message->receiver, 'New Message', $event->message->receiver->username.':'.$event->message->message);
+        $this->sendFcmMessage($event->message->receiver, 'New Message', $event->message->receiver->username.' : '.$event->message->message);
     }
 }
