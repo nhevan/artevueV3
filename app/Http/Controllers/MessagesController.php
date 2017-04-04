@@ -213,6 +213,9 @@ class MessagesController extends ApiController
      */
     public function delete(Request $request)
     {
+    	$friend = User::find($request->friend_id);
+    	if(!$friend)
+    		return $this->responseNotFound('The User does not exist.');
     	$participant_ids = [ $request->user()->id, $request->friend_id ];
 
     	$this->deleteEntryInMessageParticipantTable($participant_ids);
