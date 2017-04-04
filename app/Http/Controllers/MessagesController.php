@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Message;
 use App\Events\MessageSent;
+use App\MessageParticipant;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use App\Traits\NotificationSwissKnife;
@@ -136,7 +137,10 @@ class MessagesController extends ApiController
             return $this->responseValidationError();
         }
         if ($request->is_file == 1 && $request->is_post == 1) {
-    		return $this->respondWithError(['message'=>'A message can not be of both file and post type at the same time, Check your is_file and is_post key.']);
+    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'A message can not be of both file and post type at the same time, Check your is_file and is_post key.']);
+    	}
+    	if ($request->receiver_id == $request->user()->id) {
+    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'One can not send a message to himself/herself']);
     	}
     	
     	try {
@@ -177,5 +181,35 @@ class MessagesController extends ApiController
 
 		$message->save();
 		return $message;
+    }
+
+    /**
+     * delete all messages sent/received between a friend
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function delete(Request $request)
+    {
+    	$participant_ids = [ $request->user()->id, $request->friend_id ];
+
+    	$this->deleteEntryInMessageParticipantTable($participant_ids);
+    	$this->deleteAllMessages($participant_ids);
+
+    	return $this->respond([ 'message' => 'All messages has been deleted.' ]);
+    }
+
+    /**
+     * deletes the row from message_participants
+     * @param  [type] $participant_ids [description]
+     * @return [type]                  [description]
+     */
+    public function deleteEntryInMessageParticipantTable($participant_ids)
+    {
+    	return MessageParticipant::whereIN('participant_one', $participant_ids)->whereIN('participant_two', $participant_ids)->delete();
+    }
+
+    public function deleteAllMessages($participant_ids)
+    {
+    	return $this->message->whereIn('sender_id', $participant_ids)->whereIn('receiver_id', $participant_ids)->delete();
     }
 }
