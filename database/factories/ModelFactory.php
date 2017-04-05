@@ -3,6 +3,7 @@
 use App\User;
 use App\Artist;
 use App\ArtType;
+use App\Hashtag;
 use App\UserType;
 use App\ArtPreference;
 use App\ArtInteraction;
@@ -152,5 +153,11 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
 $factory->state(App\Post::class, 'noArtist', function ($faker) {
     return [
         'artist_id' => null,
+    ];
+});
+
+$factory->define(App\Hashtag::class, function ($faker) {
+    return [
+        'hashtag' => '#'.$faker->word,
     ];
 });

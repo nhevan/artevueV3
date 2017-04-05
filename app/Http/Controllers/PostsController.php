@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\User;
 use App\Artist;
+use App\Hashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
@@ -204,8 +205,13 @@ class PostsController extends ApiController
 
     public function saveHashtags()
     {
+    	preg_match_all('/(?<!\w)#\w+/',$this->request->hashtags, $hashtags);
+    	$hashtags = $hashtags[0];
 
-    	preg_match_all('/(?<!\w)#\w+/',$hashtag_value, $hash_array);
-		$hash_array = $hash_array[0];
+    	foreach ($hashtags as $hashtag) {
+    		$hashtag = Hashtag::firstOrCreate(['hashtag' => $hashtag]);
+    		$hashtag->use_count = $hashtag->use_count + 1;
+    		$hashtag->save();
+    	}
     }
 }

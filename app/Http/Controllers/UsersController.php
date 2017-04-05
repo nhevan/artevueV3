@@ -212,9 +212,9 @@ class UsersController extends ApiController
         }
         $user = $this->user->where('username', $request->username)->first();
         if ($user) {
-            return $this->respond(['message' => 'Username taken.']);
+            return $this->respond(['message' => 'Username taken.', 'is_taken' => 1]);
         }
-        return $this->respond(['message' => 'Username available.']);
+        return $this->respond(['message' => 'Username available.', 'is_taken' => 0]);
     }
 
     /**
