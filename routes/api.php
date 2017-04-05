@@ -53,3 +53,6 @@ Route::middleware('auth:api')->get('/post', 'PostsController@index');
 Route::middleware('auth:api')->get('/post/{owner_id}', 'PostsController@index');
 Route::middleware('auth:api')->post('/post', 'PostsController@store');
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
+
+Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
+Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');
