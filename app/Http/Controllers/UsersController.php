@@ -361,9 +361,9 @@ class UsersController extends ApiController
         }
         $user = $this->user->where('email', $request->email)->first();
         if ($user) {
-            return $this->respond(['message' => 'Email taken.']);
+            return $this->respond(['message' => 'Email taken.', 'is_taken' => 1]);
         }
-        return $this->respond(['message' => 'Email available.']);
+        return $this->respond(['message' => 'Email available.', 'is_taken' => 0]);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Post;
 use App\User;
 use App\Artist;
 use App\Hashtag;
+use App\PostHashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
@@ -59,12 +60,13 @@ class PostsController extends ApiController
 
     	$this->setArtist();
     	$this->checkIfGalleryItem(); //need to implement
-        $new_post = $this->savePost();
+        $new_post = $this->request->user()->posts()->save($this->savePost());
+        $this->post = $new_post;
         $this->updateCounters(); //need to implement
-        $this->saveHashtags(); //need to implement
+        $this->saveHashtags();
         $this->sendNewPostEvent(); //need to implement
         
-        return $this->request->user()->posts()->save($new_post);
+        return $this->respond(['message'=>'New Post created.']);
     }
 
     /**
@@ -87,7 +89,7 @@ class PostsController extends ApiController
     	}else{
     		$this->setArtist();
     	}
-    	
+    	$this->updateHashtags();
     	$this->post->fill($this->request->all());
     	$this->post->save();
 
@@ -203,15 +205,50 @@ class PostsController extends ApiController
     	# code...
     }
 
+    /**
+     * saves all the hashtags entered in a post
+     * @return [type] [description]
+     */
     public function saveHashtags()
     {
     	preg_match_all('/(?<!\w)#\w+/',$this->request->hashtags, $hashtags);
     	$hashtags = $hashtags[0];
+    	$hashtags = array_unique($hashtags);
 
     	foreach ($hashtags as $hashtag) {
     		$hashtag = Hashtag::firstOrCreate(['hashtag' => $hashtag]);
     		$hashtag->use_count = $hashtag->use_count + 1;
     		$hashtag->save();
+    		$this->savePostHashtag($hashtag->id);
     	}
+    }
+
+    /**
+     * saves a post hashtag
+     * @param  [type] $hashtag_id [description]
+     * @return [type]             [description]
+     */
+    public function savePostHashtag($hashtag_id)
+    {
+    	return PostHashtag::create([ 'post_id' => $this->post->id, 'hashtag_id' => $hashtag_id]);
+    }
+
+    /**
+     * updates the hashtags of a post
+     * @return [type] [description]
+     */
+    public function updateHashtags()
+    {
+    	$this->deleteOldHashtags();
+    	$this->saveHashtags();
+    }
+
+    /**
+     * deletes all hashtags of a post
+     * @return [type] [description]
+     */
+    public function deleteOldHashtags()
+    {
+    	PostHashtag::where(['post_id' => $this->post->id])->delete();
     }
 }
