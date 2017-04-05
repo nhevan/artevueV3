@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Artist;
 use App\Follower;
 use App\UserMetadata;
 use App\MessageParticipant;
@@ -119,6 +120,20 @@ trait CounterSwissKnife{
         if ($is_existing) {
             $is_existing->message_count = $is_existing->message_count + 1;
             return $is_existing->save();
+        }
+    }
+
+    /**
+     * decreases the post_count of an artist
+     * @param  [type] $artist_id [description]
+     * @return [type]            [description]
+     */
+    public function decreaseArtistPostCount($artist_id)
+    {
+        $artist = Artist::find($artist_id);
+        if ($artist) {
+            $artist->post_count = $artist->post_count - 1;
+            return $artist->save();
         }
     }
 }
