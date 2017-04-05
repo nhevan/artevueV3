@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Pin;
 use App\Post;
 use App\User;
+use Exception;
 use App\Artist;
 use App\Hashtag;
 use App\PostHashtag;
@@ -12,6 +13,8 @@ use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
+use Illuminate\Http\Response as IlluminateResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PostsController extends ApiController
 {
@@ -79,7 +82,7 @@ class PostsController extends ApiController
     {
     	$this->post = $post;
     	if (!$this->isPostOwner()) {
-    		return $this->respond(['message' => 'Only a post owner can update his/her post.']);
+    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respond(['message' => 'Only a post owner can update his/her post.']);
     	}
     	if($this->hadArtist()){
     		$old_artist_id  = $this->post->artist->id;
@@ -214,7 +217,12 @@ class PostsController extends ApiController
 
     public function updateCounters()
     {
-    	# code...
+    	$this->incrementUserPostCount($this->request->user()->id);
+    	if ($this->request->is_gallery_item) {
+    		$this->incrementUserPinCount($this->request->user()->id);
+    		$this->incrementPostPinCount($this->post->id);
+    	}
+    	//tagged user count
     }
 
     /**

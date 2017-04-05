@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Post;
 use App\Artist;
 use App\Follower;
 use App\UserMetadata;
@@ -9,6 +10,56 @@ use App\MessageParticipant;
 use Illuminate\Support\Facades\Auth;
 
 trait CounterSwissKnife{
+
+    /**
+     * increments a users post_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementUserPostCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        $metadata->post_count = $metadata->post_count + 1;
+        return $metadata->save();
+    }
+
+    /**
+     * decrement a users post_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserPostCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        if($metadata->post_count)
+            $metadata->post_count = $metadata->post_count - 1;
+        return $metadata->save();
+    }
+
+    /**
+     * increment a users pin_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementUserPinCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        $metadata->pin_count = $metadata->pin_count + 1;
+        return $metadata->save();
+    }
+
+    /**
+     * decrement a users pin_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserPinCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        if($metadata->pin_count)
+            $metadata->pin_count = $metadata->pin_count - 1;
+        return $metadata->save();
+    }
 
     /**
      * increments a users following_count metadata value
@@ -135,5 +186,30 @@ trait CounterSwissKnife{
             $artist->post_count = $artist->post_count - 1;
             return $artist->save();
         }
+    }
+
+    /**
+     * increments posts pin count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementPostPinCount($post_id)
+    {
+        $post = Post::find($post_id);
+        $post->pin_count = $post->pin_count + 1;
+        return $post->save();
+    }
+
+    /**
+     * decrement posts pin count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementPostPinCount($post_id)
+    {
+        $post = Post::find($post_id);
+        if($post->pin_count)
+            $post->pin_count = $post->pin_count - 1;
+        return $post->save();
     }
 }
