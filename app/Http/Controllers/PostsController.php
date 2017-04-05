@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Pin;
 use App\Post;
 use App\User;
 use App\Artist;
@@ -59,9 +60,9 @@ class PostsController extends ApiController
     	}
 
     	$this->setArtist();
-    	$this->checkIfGalleryItem(); //need to implement
         $new_post = $this->request->user()->posts()->save($this->savePost());
         $this->post = $new_post;
+        $this->pinIfGalleryItem();
         $this->updateCounters(); //need to implement
         $this->saveHashtags();
         $this->sendNewPostEvent(); //need to implement
@@ -129,9 +130,20 @@ class PostsController extends ApiController
      * check if the post is marked as gallery item, if yes then pin it
      * @return [type] [description]
      */
-    public function checkIfGalleryItem()
+    public function pinIfGalleryItem()
     {
-    	# code...
+    	if ($this->request->is_gallery_item) {
+    		$this->pinPost();
+    	}
+    }
+
+    /**
+     * pins a post
+     * @return [type] [description]
+     */
+    public function pinPost()
+    {
+    	return Pin::create([ 'post_id' => $this->post->id, 'user_id' => $this->request->user()->id]);
     }
 
     /**
