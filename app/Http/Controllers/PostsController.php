@@ -101,6 +101,18 @@ class PostsController extends ApiController
     }
 
     /**
+     * deletes a post object
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function delete($post_id)
+    {
+        //delete post
+        //decrease user post count
+        //decrease pin count for all users
+    }
+
+    /**
      * swaps the gallery and lock status of a post
      * @param  [type] $post_id [description]
      * @return [type]          [description]

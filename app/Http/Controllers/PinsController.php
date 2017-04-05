@@ -38,6 +38,7 @@ class PinsController extends ApiController
 
     		$this->incrementPostPinCount($post_id);
 	    	$this->incrementUserPinCount($this->request->user()->id);
+            $this->updatePinCountInFollowersTable($post->owner_id);
 
     		return $this->respond([ 'message' => 'Post successfully pinned.' ]);
     	}

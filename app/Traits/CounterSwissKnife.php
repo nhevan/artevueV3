@@ -175,6 +175,19 @@ trait CounterSwissKnife{
     }
 
     /**
+     * updates pin_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function updatePinCountInFollowersTable($post_owner_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
+        if ($is_existing) {
+            $is_existing->pin_count = $is_existing->pin_count + 1;
+            return $is_existing->save();
+        }
+    }
+
+    /**
      * decreases the post_count of an artist
      * @param  [type] $artist_id [description]
      * @return [type]            [description]
