@@ -193,4 +193,10 @@ class ApiController extends Controller
             'data' => $transformer->transform($model)
         ]);
     }
+
+    public function responseUnauthorized($message = 'Unauthorized action.')
+    {
+        return $this->setStatusCode(IlluminateResponse::HTTP_UNAUTHORIZED)->respond(['message' => $message]);
+    }
+    
 }

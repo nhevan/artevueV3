@@ -179,7 +179,7 @@ trait CounterSwissKnife{
      * @param  [type] $artist_id [description]
      * @return [type]            [description]
      */
-    public function decreaseArtistPostCount($artist_id)
+    public function decreasePreviousArtistPostCount($artist_id)
     {
         $artist = Artist::find($artist_id);
         if ($artist) {

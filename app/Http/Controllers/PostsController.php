@@ -82,13 +82,13 @@ class PostsController extends ApiController
     {
     	$this->post = $post;
     	if (!$this->isPostOwner()) {
-    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respond(['message' => 'Only a post owner can update his/her post.']);
+    		return $this->responseUnauthorized('Only a post owner can update his/her post.');
     	}
     	if($this->hadArtist()){
     		$old_artist_id  = $this->post->artist->id;
     		if(!$this->sameArtist()){
     			$this->setArtist();
-    			$this->decreaseArtistPostCount($old_artist_id);
+    			$this->decreasePreviousArtistPostCount($old_artist_id);
     		}
     	}else{
     		$this->setArtist();
@@ -98,6 +98,37 @@ class PostsController extends ApiController
     	$this->post->save();
 
     	return $this->respond(['message' => 'Post Successfully Updated.']);
+    }
+
+    /**
+     * swaps the gallery and lock status of a post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function swapGalleryAndLockStatus($post_id)
+    {
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->responseNotFound('Post does not exist.');
+        }
+
+        $this->post = $post;
+        if (!$this->isPostOwner()) {
+            return $this->responseUnauthorized('Only a post owner can swap its gallery presence status.');
+        }
+
+        if ($this->request->is_gallery_item != null) {
+            $post->is_gallery_item = $this->request->is_gallery_item;
+            $post->save();
+            return $this->respond(['message' => 'Gallery status successfully swapped.']);
+        }
+        if ($this->request->is_locked != null) {
+            $post->is_locked = $this->request->is_locked;
+            $post->save();
+            return $this->respond(['message' => 'Lock status successfully swapped.']);
+        }
+
+        return $this->respond(['message' => 'Nothing to update.']);
     }
 
     /**
