@@ -65,4 +65,5 @@ Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsC
 Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
 
 Route::middleware('auth:api')->get('/artist', 'ArtistsController@index');
+Route::middleware('auth:api')->get('/search-artist', 'ArtistsController@searchArtist');
 Route::middleware('auth:api')->get('/artist/posts/{artist_id}', 'ArtistsController@posts');

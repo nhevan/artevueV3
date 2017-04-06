@@ -47,4 +47,23 @@ class ArtistsController extends ApiController
         return $this->respondWithPagination($posts, new PostTransformer);
 	}
     
+    /**
+     * searches users with a possible given search string
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function searchArtist(Request $request)
+    {
+    	$rules = [
+            'search_string' => 'required',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $this->request = $request;
+        $search_string = $this->request->search_string;
+
+        $matching_artists = $this->artist->where('title', 'like', '%'.$search_string.'%')->get()->toArray();
+        return $this->respondAsTransformattedArray($matching_artists, new ArtistTransformer);
+    }
 }
