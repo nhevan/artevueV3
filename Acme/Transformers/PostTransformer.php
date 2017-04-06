@@ -2,6 +2,7 @@
 
 namespace Acme\Transformers;
 
+use App\Pin;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -65,7 +66,11 @@ class PostTransformer extends Transformer
      */
     public function isPostPinned($post_id)
     {
-    	return 0;
+        $is_pinned = Pin::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        if ($is_pinned) {
+            return 1;
+        }
+        return 0;
     }
 	
 }

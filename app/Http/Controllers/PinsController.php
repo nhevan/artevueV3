@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Pin;
 use App\Post;
+use App\User;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use Acme\Transformers\PostTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class PinsController extends ApiController
@@ -67,5 +69,24 @@ class PinsController extends ApiController
     	$this->decrementUserPinCount($this->request->user()->id);
 
 		return $this->respond([ 'message' => 'Post successfully unpinned.' ]);
+    }
+
+    /**
+     * fetch all pinned posts of a user
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function pinnedPosts($user_id)
+    {
+        $user = User::find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        $post_ids = $user->pins->pluck('post_id');
+
+        $posts = Post::whereIn('id', $post_ids)->with('artist', 'owner')->latest()->paginate(20);
+
+        return $this->respondWithPagination($posts, New PostTransformer);
     }
 }

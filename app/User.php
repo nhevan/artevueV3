@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Post', 'owner_id');
     }
 
+    public function pins()
+    {
+        return $this->hasMany('App\Pin');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]
