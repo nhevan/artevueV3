@@ -67,7 +67,7 @@ class PostsController extends ApiController
         $new_post = $this->request->user()->posts()->save($this->savePost());
         $this->post = $new_post;
         $this->pinIfGalleryItem();
-        $this->updateCounters(); //need to implement
+        $this->updateCounters();
         $this->saveTaggedUsers();
         $this->saveHashtags();
         $this->sendNewPostEvent(); //need to implement
@@ -360,8 +360,9 @@ class PostsController extends ApiController
      */
     public function uploadPostImageTos3()
     {
+        $storage = config('app.storage');
     	$path = $this->request->file('post_image')->store(
-            'img/posts', 'local'
+            'img/posts', $storage
         );
 
         return $path;
@@ -379,7 +380,6 @@ class PostsController extends ApiController
     		$this->incrementUserPinCount($this->request->user()->id);
     		$this->incrementPostPinCount($this->post->id);
     	}
-    	//tagged user count
     }
 
     /**

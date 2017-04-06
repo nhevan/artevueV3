@@ -2,6 +2,7 @@
 
 return [
     'fcm_server_key' => env('FCM_SERVER_KEY'),
+    'storage' => env('STORAGE', 'local'),
     /*
     |--------------------------------------------------------------------------
     | Application Name
