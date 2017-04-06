@@ -49,4 +49,26 @@ class HashtagsController extends ApiController
 
     	return $this->respondWithPagination($posts, New PostTransformer);
     }
+
+    /**
+     * searches for a hashtag using a given search string
+     * @param  Request $request [description]
+     * @return [type]                [description]
+     */
+    public function searchHashtag(Request $request)
+    {
+    	$rules = [
+            'search_string' => 'required',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $search_string = $request->search_string;
+
+        $limit = 5;
+        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
+        $hashtags = Hashtag::where('hashtag', 'like', '%'.$search_string.'%')->orderBy('use_count', 'DESC')->get();
+
+        return $this->respond(['data' => $hashtags]);
+    }
 }

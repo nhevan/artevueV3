@@ -61,3 +61,4 @@ Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete')
 
 Route::middleware('auth:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
 Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');
+Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
