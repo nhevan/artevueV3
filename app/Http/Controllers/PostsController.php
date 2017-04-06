@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Pin;
+use App\Tag;
 use App\Post;
 use App\User;
 use Exception;
@@ -67,10 +68,56 @@ class PostsController extends ApiController
         $this->post = $new_post;
         $this->pinIfGalleryItem();
         $this->updateCounters(); //need to implement
+        $this->saveTaggedUsers();
         $this->saveHashtags();
         $this->sendNewPostEvent(); //need to implement
         
         return $this->respond(['message'=>'New Post created.']);
+    }
+
+    /**
+     * stores the tagged users of a given post
+     * @return [type] [description]
+     */
+    public function saveTaggedUsers()
+    {
+        if(!$this->request->tagged_users){
+            return;
+        }
+
+        $tags = $this->parseTaggedUsersInput();
+
+        foreach($tags as $tag) {
+            $tag['post_id'] = $this->post->id;
+            $this->tagUser($tag);
+        }
+    }
+
+    /**
+     * tag a single user to a post
+     * @param  array  $tag [description]
+     * @return [type]      [description]
+     */
+    public function tagUser(array $tag)
+    {
+        $user = User::find($tag['user_id']);
+        if($user){
+            $tag['username'] = $user->username;
+            $new_tag = Tag::create($tag);
+            if($new_tag) $this->incrementUserTaggedCount($tag['user_id']);
+        }
+    }
+
+    /**
+     * parses the tagged_users string to array
+     * @return array [description]
+     */
+    public function parseTaggedUsersInput()
+    {
+        $raw_tags = stripcslashes($this->request->tagged_users);
+        $tags = json_decode($raw_tags, JSON_UNESCAPED_UNICODE);
+
+        return $tags;
     }
 
     /**
@@ -105,10 +152,33 @@ class PostsController extends ApiController
     		$this->setArtist();
     	}
     	$this->updateHashtags();
+        $this->updateTaggedUsers();
     	$this->post->fill($this->request->all());
     	$this->post->save();
 
     	return $this->respond(['message' => 'Post Successfully Updated.']);
+    }
+
+    /**
+     * while editing a post it deletes all the previous tags and enters the new tags
+     * @return [type] [description]
+     */
+    public function updateTaggedUsers()
+    {
+        $this->removePreviousTaggedUsers();
+        $this->saveTaggedUsers();
+    }
+
+    /**
+     * deletes all the current tagged users in a post
+     * @return [type] [description]
+     */
+    public function removePreviousTaggedUsers()
+    {
+        foreach($this->post->tags as $tag){
+            $this->decrementUserTaggedCount($tag->user_id);
+            $tag->delete();
+        }
     }
 
     /**

@@ -13,6 +13,31 @@ use Illuminate\Support\Facades\Auth;
 trait CounterSwissKnife{
 
     /**
+     * increments a users tagged_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementUserTaggedCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        $metadata->tagged_count = $metadata->tagged_count + 1;
+        return $metadata->save();
+    }
+
+    /**
+     * decrement a users tagged_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserTaggedCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        if($metadata->tagged_count)
+            $metadata->tagged_count = $metadata->tagged_count - 1;
+        return $metadata->save();
+    }
+
+    /**
      * increments a users post_count metadata value
      * @param  [type] $user_id [description]
      * @return [type]          [description]
