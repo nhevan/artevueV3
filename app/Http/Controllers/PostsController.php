@@ -307,7 +307,7 @@ class PostsController extends ApiController
      */
     public function saveHashtags()
     {
-    	preg_match_all('/(?<!\w)#\w+/',$this->request->hashtags, $hashtags);
+    	preg_match_all('/(?<!\w)#\w+/',$this->request->description, $hashtags);
     	$hashtags = $hashtags[0];
     	$hashtags = array_unique($hashtags);
 
