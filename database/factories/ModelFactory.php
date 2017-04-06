@@ -1,5 +1,6 @@
 <?php
 
+use App\Post;
 use App\User;
 use App\Artist;
 use App\ArtType;
@@ -159,5 +160,14 @@ $factory->state(App\Post::class, 'noArtist', function ($faker) {
 $factory->define(App\Hashtag::class, function ($faker) {
     return [
         'hashtag' => '#'.$faker->word,
+    ];
+});
+
+$factory->define(App\PostHashtag::class, function ($faker) {
+    $posts = Post::pluck('id');
+    $hashtags = Hashtag::pluck('id');
+    return [
+        'post_id' => $faker->randomElement($posts->toArray()),
+        'hashtag_id' => $faker->randomElement($hashtags->toArray()),
     ];
 });

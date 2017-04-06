@@ -187,6 +187,13 @@ class ApiController extends Controller
         ]);
     }
 
+    public function respondAsTransformattedArray(array $model, Transformer $transformer)
+    {
+        return $this->respond([
+            'data'=>$transformer->transformCollection($model)
+        ]);
+    }
+
     public function respondTransformattedModel($model, Transformer $transformer)
     {
         return $this->respond([
