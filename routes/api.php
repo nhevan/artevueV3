@@ -56,6 +56,7 @@ Route::middleware('auth:api')->post('/post', 'PostsController@store');
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
 Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGalleryAndLockStatus');
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
+Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');

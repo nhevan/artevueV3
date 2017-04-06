@@ -428,4 +428,23 @@ class PostsController extends ApiController
     {
     	PostHashtag::where(['post_id' => $this->post->id])->delete();
     }
+
+    /**
+     * fetches all the posts where the given user was tagged
+     * @param  integer $user_id [description]
+     * @return [type]          [description]
+     */
+    public function taggedPosts($user_id)
+    {
+        $user = User::find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        $post_ids = $user->tags->pluck('post_id')->toArray();
+
+        $posts = $this->post->whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->paginate(20);
+
+        return $this->respondWithPagination($posts, $this->postTransformer);
+    }
 }
