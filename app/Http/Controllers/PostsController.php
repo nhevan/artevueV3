@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response as IlluminateResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -361,11 +362,16 @@ class PostsController extends ApiController
     public function uploadPostImageTos3()
     {
         $storage = config('app.storage');
-    	$path = $this->request->file('post_image')->store(
-            'img/posts', $storage
-        );
+    	// $path = $this->request->file('post_image')->store(
+     //        'img/posts', $storage
+     //    );
+        
+        $image = $this->request->file('post_image');
+        $imageFileName = time() . '.' . $image->getClientOriginalExtension();
+        $filePath = '/img/posts/' . $imageFileName;
+        $path = Storage::disk($storage)->put($filePath, file_get_contents($image), 'public');
 
-        return $path;
+        return $filePath;
     }
 
     public function sendNewPostEvent()
