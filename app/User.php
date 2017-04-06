@@ -75,6 +75,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Pin');
     }
 
+    public function tags()
+    {
+        return $this->hasMany('App\Tag');
+    }
+
     /**
      * allows users to login using username
      * @param  [type] $username [description]

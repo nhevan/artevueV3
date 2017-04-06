@@ -20,4 +20,8 @@ class Post extends Model
     {
         return $this->belongsTo('App\Artist');
     }
+    public function tags()
+    {
+        return $this->hasMany('App\Tag');
+    }
 }

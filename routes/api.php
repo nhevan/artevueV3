@@ -51,6 +51,7 @@ Route::middleware('auth:api')->delete('/conversation/{friend_id}', 'MessagesCont
 
 Route::middleware('auth:api')->get('/post', 'PostsController@index');
 Route::middleware('auth:api')->get('/post/{owner_id}', 'PostsController@index');
+Route::middleware('auth:api')->get('/post/detail/{post}', 'PostsController@show');
 Route::middleware('auth:api')->post('/post', 'PostsController@store');
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
 Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGalleryAndLockStatus');

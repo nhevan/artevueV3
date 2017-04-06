@@ -74,6 +74,17 @@ class PostsController extends ApiController
     }
 
     /**
+     * returns the details of a specific post
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function show(Post $post)
+    {
+        $post->load('owner','artist', 'tags');
+        return $this->respond(['data' => $post]);
+    }
+
+    /**
      * edits a post model
      * @param  Post   $post [description]
      * @return [type]       [description]

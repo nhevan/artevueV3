@@ -171,3 +171,13 @@ $factory->define(App\PostHashtag::class, function ($faker) {
         'hashtag_id' => $faker->randomElement($hashtags->toArray()),
     ];
 });
+
+$factory->define(App\Tag::class, function ($faker) {
+    $posts = Post::pluck('id');
+    $users = User::pluck('id');
+    return [
+        'post_id' => $faker->randomElement($posts->toArray()),
+        'user_id' => $faker->randomElement($users->toArray()),
+        'username' => $faker->name,
+    ];
+});
