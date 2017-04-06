@@ -48,7 +48,7 @@ class PostsController extends ApiController
             return $this->responseNotFound('User does not exist.');
         }
 
-    	$posts = $owner->posts()->with('artist', 'owner')->orderBy('id','DESC')->paginate(20);
+    	$posts = $owner->posts()->with('artist', 'owner', 'tags')->orderBy('id','DESC')->paginate(20);
     	return $this->respondWithPagination($posts, $this->postTransformer );
     }
 

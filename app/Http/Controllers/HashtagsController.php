@@ -25,7 +25,7 @@ class HashtagsController extends ApiController
     		return $this->responseNotFound('Hashtag does not exist.');
     	}
 
-    	$posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->with('artist', 'owner')->limit(9)->get()->toArray();
+    	$posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->with('artist', 'owner', 'tags')->limit(9)->get()->toArray();
 
     	return $this->respondAsTransformattedArray($posts, New PostTransformer);
     }
@@ -45,7 +45,7 @@ class HashtagsController extends ApiController
     	}
     	$top_posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->limit(9)->get()->pluck('post_id')->toArray();
 
-    	$posts = $hashtag->posts()->whereNotIn('post_id', $top_posts)->with('artist', 'owner')->latest()->paginate(5);
+    	$posts = $hashtag->posts()->whereNotIn('post_id', $top_posts)->with('artist', 'owner', 'tags')->latest()->paginate(5);
 
     	return $this->respondWithPagination($posts, New PostTransformer);
     }

@@ -85,7 +85,7 @@ class PinsController extends ApiController
 
         $post_ids = $user->pins->pluck('post_id');
 
-        $posts = Post::whereIn('id', $post_ids)->with('artist', 'owner')->latest()->paginate(20);
+        $posts = Post::whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->latest()->paginate(20);
 
         return $this->respondWithPagination($posts, New PostTransformer);
     }

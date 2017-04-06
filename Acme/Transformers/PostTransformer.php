@@ -15,6 +15,17 @@ class PostTransformer extends Transformer
     	$is_liked = $this->isPostLiked($post['id']);
     	$is_pinned = $this->isPostPinned($post['id']);
 
+        $tags = [];
+        if($post['tags'] != null){
+            foreach ($post['tags'] as $tag) {
+                $tmp = [
+                    'user_id' => $tag['user_id'],
+                    'username' => $tag['username']
+                ];
+                array_push($tags, $tmp);
+            }
+        }
+
     	$post = [
                 'id' => $post['id'],
                 'image' => $post['image'],
@@ -46,6 +57,7 @@ class PostTransformer extends Transformer
                 ],
                 'is_liked' => $is_liked,
                 'is_pinned' => $is_pinned,
+                'tagged_users' => $tags
             ];
         return $post;
     }

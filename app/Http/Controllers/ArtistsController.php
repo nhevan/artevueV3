@@ -42,7 +42,7 @@ class ArtistsController extends ApiController
         }
         $this->artist = $artist;
 
-        $posts = $this->artist->posts()->with('artist', 'owner')->latest()->paginate(20);
+        $posts = $this->artist->posts()->with('artist', 'owner', 'tags')->latest()->paginate(20);
 
         return $this->respondWithPagination($posts, new PostTransformer);
 	}
