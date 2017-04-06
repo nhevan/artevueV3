@@ -31,7 +31,7 @@ class UserTypesController extends ApiController
         $user_types = $this->userType->where('title', '<>', 'Super Admin')->where('title', '<>', 'Admin')->get()->toArray();
 
         return $this->respond([
-            $this->userTypeTransformer->transformCollection($user_types)
+            'data' => $this->userTypeTransformer->transformCollection($user_types)
         ]);
     }
 }
