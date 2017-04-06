@@ -63,3 +63,6 @@ Route::middleware('auth:api')->get('/pin/posts/{user_id}', 'PinsController@pinne
 Route::middleware('auth:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
 Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');
 Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
+
+Route::middleware('auth:api')->get('/artist', 'ArtistsController@index');
+Route::middleware('auth:api')->get('/artist/posts/{artist_id}', 'ArtistsController@posts');

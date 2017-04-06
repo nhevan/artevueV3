@@ -22,6 +22,7 @@ class PostTransformer extends Transformer
                 'hashtags' => $post['hashtags'],
                 'aspect_ratio' => $post['aspect_ratio'],
                 'price' => $post['price'],
+                'artist_id' => $post['artist']['id'],
                 'artist' => $post['artist']['title'],
 
                 'has_buy_btn' => $post['has_buy_btn'],
