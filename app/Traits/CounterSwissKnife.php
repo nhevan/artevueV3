@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Pin;
 use App\Post;
 use App\Artist;
 use App\Follower;
@@ -59,6 +60,19 @@ trait CounterSwissKnife{
         if($metadata->pin_count)
             $metadata->pin_count = $metadata->pin_count - 1;
         return $metadata->save();
+    }
+
+    /**
+     * decreases pin count of all users who pinned the given post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserPinCountWhoPinnedThisPost($post_id)
+    {
+        $pins = Pin::where(['post_id'=>$post_id])->get();
+        foreach ($pins as $pin) {
+            $this->decrementUserPinCount($pin->user_id);
+        }
     }
 
     /**

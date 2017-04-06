@@ -107,9 +107,42 @@ class PostsController extends ApiController
      */
     public function delete($post_id)
     {
-        //delete post
-        //decrease user post count
-        //decrease pin count for all users
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->responseNotFound('Post does not exist.');
+        }
+
+        $this->post = $post;
+        if (!$this->isPostOwner()) {
+            return $this->responseUnauthorized('Only the owner of the post can delete it.');
+        }
+
+        $this->decrementUserPostCount($this->post->owner_id);
+        
+        //decrease user like count 
+        //decrease user tag count 
+        //decrease pin count for all users who pinned this post
+        $this->decrementUserPinCountWhoPinnedThisPost($this->post->id);
+        //decrease like count for all users who liked this post
+        //decrease comment count for all users who commented on this post
+        //decrease tag count for all users who were tagged in this post
+        
+        if ($this->post->artist_id) {
+            $this->decreasePreviousArtistPostCount($this->post->artist_id);
+        }
+
+        $this->post->delete();
+
+        return $this->respond(['message' => 'Post successfully deleted']);
+    }
+
+    /**
+     * check if the post is pinned by the current user
+     * @return boolean [description]
+     */
+    public function isPinned()
+    {
+        return Pin::where('user_id', $this->request->user()->id)->where('post_id',$this->post->id)->first();
     }
 
     /**
