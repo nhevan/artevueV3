@@ -57,10 +57,14 @@ Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
 Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGalleryAndLockStatus');
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
+Route::middleware('auth:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');
 Route::middleware('auth:api')->get('/pin/posts/{user_id}', 'PinsController@pinnedPosts');
+
+Route::middleware('auth:api')->post('/like/{post_id}', 'LikesController@store');
+Route::middleware('auth:api')->delete('/like/{post_id}', 'LikesController@delete');
 
 Route::middleware('auth:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
 Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');

@@ -24,4 +24,8 @@ class Post extends Model
     {
         return $this->hasMany('App\Tag');
     }
+    public function likes()
+    {
+        return $this->hasMany('App\Like');
+    }
 }

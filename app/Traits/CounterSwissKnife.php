@@ -86,6 +86,30 @@ trait CounterSwissKnife{
             $metadata->pin_count = $metadata->pin_count - 1;
         return $metadata->save();
     }
+    /**
+     * increment a users like_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementUserLikeCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        $metadata->like_count = $metadata->like_count + 1;
+        return $metadata->save();
+    }
+
+    /**
+     * decrement a users like_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserLikeCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        if($metadata->like_count)
+            $metadata->like_count = $metadata->like_count - 1;
+        return $metadata->save();
+    }
 
     /**
      * decreases pin count of all users who pinned the given post
@@ -225,6 +249,31 @@ trait CounterSwissKnife{
             return $is_existing->save();
         }
     }
+    /**
+     * updates like_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function updateLikeCountInFollowersTable($post_owner_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
+        if ($is_existing) {
+            $is_existing->like_count = $is_existing->like_count + 1;
+            return $is_existing->save();
+        }
+    }
+
+    /**
+     * decrement like_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function decrementLikeCountInFollowersTable($post_owner_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
+        if ($is_existing) {
+            $is_existing->like_count = $is_existing->like_count - 1;
+            return $is_existing->save();
+        }
+    }
 
     /**
      * decreases the post_count of an artist
@@ -262,6 +311,30 @@ trait CounterSwissKnife{
         $post = Post::find($post_id);
         if($post->pin_count)
             $post->pin_count = $post->pin_count - 1;
+        return $post->save();
+    }
+    /**
+     * increments posts like count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementPostLikeCount($post_id)
+    {
+        $post = Post::find($post_id);
+        $post->like_count = $post->like_count + 1;
+        return $post->save();
+    }
+
+    /**
+     * decrement posts like count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementPostLikeCount($post_id)
+    {
+        $post = Post::find($post_id);
+        if($post->like_count)
+            $post->like_count = $post->like_count - 1;
         return $post->save();
     }
 }

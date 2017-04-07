@@ -13,6 +13,7 @@ use App\PostHashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
+use Acme\Transformers\LikeTransformer;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response as IlluminateResponse;
@@ -447,5 +448,23 @@ class PostsController extends ApiController
         $posts = $this->post->whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->paginate(20);
 
         return $this->respondWithPagination($posts, $this->postTransformer);
+    }
+
+    /**
+     * fetches all the likes of a given post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function postLikes($post_id)
+    {
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->responseNotFound('Post does not exist.');
+        }
+
+        $this->post = $post;
+        $likes = $this->post->likes()->with('user')->paginate(20);
+
+        return $this->respondWithPagination($likes, new LikeTransformer);
     }
 }
