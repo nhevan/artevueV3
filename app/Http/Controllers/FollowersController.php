@@ -10,6 +10,7 @@ use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
 use Acme\Transformers\FollowerTransformer;
+use Acme\Transformers\FollowingTransformer;
 
 class FollowersController extends ApiController
 {
@@ -145,5 +146,15 @@ class FollowersController extends ApiController
 
         event(new NewFollower($user_id));
     	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
+    }
+
+    /**
+     * fetches all the following users. these users can be used as taggable users
+     * @return [type] [description]
+     */
+    public function getFollowingUsers(Request $request)
+    {
+        $followings = $request->user()->following->load('user')->toArray();
+        return $this->respondAsTransformattedArray($followings, new FollowingTransformer);
     }
 }

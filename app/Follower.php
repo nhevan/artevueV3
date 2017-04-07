@@ -13,6 +13,11 @@ class Follower extends Model
         return $this->belongsTo('App\User', 'follower_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

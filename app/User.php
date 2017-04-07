@@ -42,7 +42,7 @@ class User extends Authenticatable
 
     public function following()
     {
-        return $this->hasMany('App\Follower', 'follower_id');
+        return $this->hasMany('App\Follower', 'follower_id')->where('is_still_following', 1);
     }
 
     public function blockedUsers()
