@@ -112,6 +112,31 @@ trait CounterSwissKnife{
     }
 
     /**
+     * increment a users comment_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementUserCommentCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        $metadata->comment_count = $metadata->comment_count + 1;
+        return $metadata->save();
+    }
+
+    /**
+     * decrement a users comment_count metadata value
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserCommentCount($user_id)
+    {
+        $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
+        if($metadata->comment_count)
+            $metadata->comment_count = $metadata->comment_count - 1;
+        return $metadata->save();
+    }
+
+    /**
      * decreases pin count of all users who pinned the given post
      * @param  [type] $post_id [description]
      * @return [type]          [description]
@@ -290,6 +315,32 @@ trait CounterSwissKnife{
     }
 
     /**
+     * increment comment_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function incrementCommentCountInFollowersTable($post_owner_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
+        if ($is_existing) {
+            $is_existing->comment_count = $is_existing->comment_count + 1;
+            return $is_existing->save();
+        }
+    }
+
+    /**
+     * decrement comment_count in followers table IF follower exist else do nothing
+     * @return [type] [description]
+     */
+    public function deccrementCommentCountInFollowersTable($post_owner_id)
+    {
+        $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
+        if ($is_existing) {
+            $is_existing->comment_count = $is_existing->comment_count - 1;
+            return $is_existing->save();
+        }
+    }
+
+    /**
      * increments posts pin count
      * @param  [type] $post_id [description]
      * @return [type]          [description]
@@ -335,6 +386,31 @@ trait CounterSwissKnife{
         $post = Post::find($post_id);
         if($post->like_count)
             $post->like_count = $post->like_count - 1;
+        return $post->save();
+    }
+
+    /**
+     * increments posts comment count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function incrementPostCommentCount($post_id)
+    {
+        $post = Post::find($post_id);
+        $post->comment_count = $post->comment_count + 1;
+        return $post->save();
+    }
+
+    /**
+     * decrement posts comment count
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementPostCommentCount($post_id)
+    {
+        $post = Post::find($post_id);
+        if($post->comment_count)
+            $post->comment_count = $post->comment_count - 1;
         return $post->save();
     }
 }

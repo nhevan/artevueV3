@@ -60,7 +60,9 @@ class CommentsController extends ApiController
         $this->comment = $new_comment;
         $this->manageHashtags();
         if($new_comment){
-        	//update counters
+        	$this->incrementPostCommentCount($post_id);
+	    	$this->incrementUserCommentCount($this->request->user()->id);
+            $this->incrementCommentCountInFollowersTable($post->owner_id);
         	//send FCM + pusher
         	return $this->respond(['message' => 'comment successfully posted.']);
         }
@@ -78,14 +80,16 @@ class CommentsController extends ApiController
             return $this->responseNotFound('Comment does not exist.');
         }
         $this->comment = $comment;
-        
+        $post_id = $comment->post_id;
         if (!$this->isCommentOwner()) {
     		return $this->responseUnauthorized('Only the comment owner can delete the comment.');
     	}
 
     	$is_deleted = $this->comment->delete();
     	if ($is_deleted) {
-    		//update counters
+    		$this->decrementPostCommentCount($post_id);
+	    	$this->decrementUserCommentCount($this->request->user()->id);
+            // $this->incrementCommentCountInFollowersTable($post->owner_id);
     		return $this->respond(['message' => 'The comment has been successfully deleted.']);
     	}
     }
