@@ -74,3 +74,7 @@ Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@search
 Route::middleware('auth:api')->get('/artist', 'ArtistsController@index');
 Route::middleware('auth:api')->get('/search-artist', 'ArtistsController@searchArtist');
 Route::middleware('auth:api')->get('/artist/posts/{artist_id}', 'ArtistsController@posts');
+
+Route::middleware('auth:api')->post('/comment/{post_id}', 'CommentsController@store');
+Route::middleware('auth:api')->get('/comment/{post_id}', 'CommentsController@index');
+Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsController@delete');

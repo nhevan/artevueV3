@@ -28,4 +28,8 @@ class Post extends Model
     {
         return $this->hasMany('App\Like');
     }
+    public function comments()
+    {
+        return $this->hasMany('app\Comment');
+    }
 }
