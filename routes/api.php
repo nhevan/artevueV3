@@ -59,6 +59,7 @@ Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGal
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
+Route::middleware('auth:api')->get('/feed', 'PostsController@feed');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');

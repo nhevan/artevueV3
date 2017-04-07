@@ -9,6 +9,7 @@ use App\User;
 use Exception;
 use App\Artist;
 use App\Hashtag;
+use App\Follower;
 use App\PostHashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
@@ -466,5 +467,20 @@ class PostsController extends ApiController
         $likes = $this->post->likes()->with('user')->paginate(20);
 
         return $this->respondWithPagination($likes, new LikeTransformer);
+    }
+
+    /**
+     * returns the feed post list of the current user
+     * @return [type] [description]
+     */
+    public function feed()
+    {
+        $following_user_ids = Follower::where('follower_id', $this->request->user()->id)->pluck('user_id')->toArray();
+        array_push($following_user_ids, $this->request->user()->id);
+
+        $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->paginate(20);
+
+        return $this->respondWithPagination($feed_posts, $this->postTransformer);
+        var_dump($feed_posts);
     }
 }
