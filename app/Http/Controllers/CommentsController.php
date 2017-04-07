@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use App\Comment;
+use App\Hashtag;
+use App\CommentHashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Acme\Transformers\CommentTransformer;
@@ -55,7 +57,8 @@ class CommentsController extends ApiController
         }
 
         $new_comment = $this->comment->create(['user_id'=>$this->request->user()->id, 'post_id'=>$post->id, 'comment'=>$this->request->comment]);
-
+        $this->comment = $new_comment;
+        $this->manageHashtags();
         if($new_comment){
         	//update counters
         	//send FCM + pusher
@@ -94,5 +97,33 @@ class CommentsController extends ApiController
     public function isCommentOwner()
     {
     	return $this->comment->user_id == $this->request->user()->id;
+    }
+
+    /**
+     * manages the hashtags given within a comment
+     * @return [type] [description]
+     */
+    public function manageHashtags()
+    {
+    	preg_match_all('/(?<!\w)#\w+/',$this->request->comment, $hashtags);
+    	$hashtags = $hashtags[0];
+    	$hashtags = array_unique($hashtags);
+
+    	foreach ($hashtags as $hashtag) {
+    		$hashtag = Hashtag::firstOrCreate(['hashtag' => $hashtag]);
+    		$hashtag->use_count = $hashtag->use_count + 1;
+    		$hashtag->save();
+    		$this->saveCommentHashtag($hashtag->id);
+    	}
+    }
+
+    /**
+     * saves a hashtag against a comment
+     * @param  [type] $hashtag_id [description]
+     * @return [type]             [description]
+     */
+    public function saveCommentHashtag($hashtag_id)
+    {
+    	return CommentHashtag::create([ 'comment_id' => $this->comment->id, 'hashtag_id' => $hashtag_id]);
     }
 }
