@@ -1,5 +1,6 @@
 <?php
 
+use App\News;
 use App\Post;
 use App\User;
 use App\Artist;
@@ -179,5 +180,15 @@ $factory->define(App\Tag::class, function ($faker) {
         'post_id' => $faker->randomElement($posts->toArray()),
         'user_id' => $faker->randomElement($users->toArray()),
         'username' => $faker->name,
+    ];
+});
+
+$factory->define(App\News::class, function ($faker) {
+    return [
+        'headline' => $faker->sentence,
+        'description' => $faker->sentence(1),
+        'image' => $faker->sentence,
+        'url' => $faker->sentence,
+        'publish_date' => $faker->date
     ];
 });

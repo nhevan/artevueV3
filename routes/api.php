@@ -81,3 +81,5 @@ Route::middleware('auth:api')->get('/artist/posts/{artist_id}', 'ArtistsControll
 Route::middleware('auth:api')->post('/comment/{post_id}', 'CommentsController@store');
 Route::middleware('auth:api')->get('/comment/{post_id}', 'CommentsController@index');
 Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsController@delete');
+
+Route::middleware('auth:api')->get('/news', 'NewsController@index');
