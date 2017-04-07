@@ -12,4 +12,9 @@ class UserMetadata extends Model
     {
     	return $this->belongsTo('App\User');
     }
+
+    public function latest3Posts()
+    {
+    	return $this->hasMany('App\Post', 'owner_id', 'user_id')->latest()->take(3);
+    }
 }

@@ -33,6 +33,7 @@ Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@up
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('auth:api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
+Route::middleware('auth:api')->get('/discover-user', 'DiscoverController@discoverUser');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
