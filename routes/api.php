@@ -33,7 +33,7 @@ Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@up
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('auth:api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
-Route::middleware('auth:api')->get('/discover-user', 'DiscoverController@discoverUser');
+Route::middleware('auth:api')->get('/discover-users', 'DiscoverController@discoverUsers');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
@@ -61,6 +61,7 @@ Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth:api')->get('/feed', 'PostsController@feed');
+Route::middleware('auth:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');
