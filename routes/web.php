@@ -1,5 +1,6 @@
 <?php
 
+use App\Post;
 use Illuminate\Support\Facades\App;
 
 /*
@@ -25,7 +26,15 @@ Route::get('/manage-tokens', function() {
 })->middleware('auth');
 
 Route::get('/test-pdf', function () {
-	$data['gate'] = 420;
+	$posts = Post::whereIn('id', [1,2,3])->get()->toArray();
+	$data['gallery_name'] = 'ArteVue';
+	$data['gallery_description'] = 'ArteVue is the first art ecosystem for artists, art lovers, collectors, art professionals and art institutions to discover, buy, collect, curate, and catalogue art. 
+www.artevue.co.uk
+Info@artevue.co.uk';
+	$data['gallery_images'] = $posts;
+
+	// var_dump($data);
+	// exit();
 
 	$pdf = App::make('snappy.pdf.wrapper');
 	$pdf->loadView('pdf.gallery', compact('data'));
