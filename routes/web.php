@@ -33,6 +33,8 @@ www.artevue.co.uk
 Info@artevue.co.uk';
 	$data['gallery_images'] = $posts;
 
+	// return view('pdf.gallery', compact('data'));
+
 	// var_dump($data);
 	// exit();
 
