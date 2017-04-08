@@ -366,7 +366,7 @@ class PostsController extends ApiController
     {
         $storage = config('app.storage');
     	$path = $this->request->file('post_image')->store(
-            'img/posts', $storage
+            'img/posts', 's3'
         );
         
         return $path;
