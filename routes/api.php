@@ -83,3 +83,4 @@ Route::middleware('auth:api')->get('/comment/{post_id}', 'CommentsController@ind
 Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsController@delete');
 
 Route::middleware('auth:api')->get('/news', 'NewsController@index');
+Route::middleware('auth:api')->get('/events', 'EventsController@index');

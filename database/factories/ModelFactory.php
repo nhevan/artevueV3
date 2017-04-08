@@ -192,3 +192,16 @@ $factory->define(App\News::class, function ($faker) {
         'publish_date' => $faker->date
     ];
 });
+
+$factory->define(App\Event::class, function ($faker) {
+    return [
+        'headline' => $faker->sentence,
+        'description' => $faker->sentence(1),
+        'image' => $faker->sentence,
+        'url' => $faker->sentence,
+        'location' => $faker->sentence,
+        'start_date' => $faker->datetime,
+        'end_date' => $faker->datetime,
+        'publish_date' => $faker->date
+    ];
+});
