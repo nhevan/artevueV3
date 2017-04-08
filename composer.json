@@ -9,6 +9,8 @@
         "barryvdh/laravel-snappy": "^0.3.3",
         "doctrine/dbal": "^2.5",
         "guzzlehttp/guzzle": "^6.2",
+        "h4cc/wkhtmltoimage-amd64": "0.12.x",
+        "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "laravel/framework": "5.4.*",
         "laravel/passport": "^2.0",
         "laravel/tinker": "~1.0",
