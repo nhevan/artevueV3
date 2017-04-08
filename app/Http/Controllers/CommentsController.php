@@ -63,7 +63,9 @@ class CommentsController extends ApiController
         	$this->incrementPostCommentCount($post_id);
 	    	$this->incrementUserCommentCount($this->request->user()->id);
             $this->incrementCommentCountInFollowersTable($post->owner_id);
-        	//send FCM + pusher
+            
+            dispatch(new SendNewCommentNotification($new_comment));
+
         	return $this->respond(['message' => 'comment successfully posted.']);
         }
     }
