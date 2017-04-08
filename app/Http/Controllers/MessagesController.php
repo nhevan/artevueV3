@@ -75,7 +75,8 @@ class MessagesController extends ApiController
 	public function notifyFriend($friend_id)
 	{
 		$data = [ 'message' => 'All your messages has been read by your friend '.$this->request->user()->name, 'reader_id' => $this->request->user()->id ];
-		$this->sendPusherNotification($friend_id.'-message-read-channel','message-read', $data);
+
+		dispatch(new SendMessagesReadNotification($data, $friend_id));
 	}
 
 	/**
