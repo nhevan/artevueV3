@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\User;
+use App\Follower;
 
 trait NotificationSwissKnife{
 
@@ -69,5 +70,23 @@ trait NotificationSwissKnife{
             ]
         );
         return $response;
+    }
+
+    /**
+     * sends activity push notification to all followers of a given user
+     * @param  [type] $user_id [description]
+     * @param  array  $data    [description]
+     * @return [type]          [description]
+     */
+    public function sendPusherNotificationToAllFollowersOfAUser($user_id, $data = [])
+    {
+        $event = 'all-activities';
+
+        $follower_ids = Follower::where('user_id', $user_id)->pluck('follower_id')->toArray();
+
+        foreach ($follower_ids as $follower_id) {
+            $channel = $follower_id.'-activity-channel';
+            $this->sendPusherNotification($channel, $event, $data);
+        }
     }
 }

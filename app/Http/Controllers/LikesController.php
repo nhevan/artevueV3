@@ -6,11 +6,13 @@ use App\Like;
 use App\Post;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use App\Jobs\SendNewLikeNotification;
+use App\Traits\NotificationSwissKnife;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class LikesController extends ApiController
 {
-    use CounterSwissKnife;
+    use CounterSwissKnife, NotificationSwissKnife;
 
 	protected $request;
 	protected $like;
@@ -34,7 +36,9 @@ class LikesController extends ApiController
         }
     	$is_existing = $this->like->where([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ])->first();
     	if (!$is_existing) {
-    		$this->like->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
+    		$new_like = $this->like->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
+
+            dispatch(new SendNewLikeNotification($new_like));
 
     		$this->incrementPostLikeCount($post_id);
 	    	$this->incrementUserLikeCount($this->request->user()->id);
