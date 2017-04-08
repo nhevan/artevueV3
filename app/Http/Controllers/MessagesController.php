@@ -150,7 +150,6 @@ class MessagesController extends ApiController
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('Something went wrong, probably the receiver does not exist.');
     	}
     	
-    	// event(new MessageSent($message));
     	dispatch(new SendNewMessageNotification($message));
     	$this->incrementMessageCount($request->user()->id);
     	$this->updateTotalMessageCountInParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
