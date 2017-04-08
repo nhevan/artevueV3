@@ -174,7 +174,7 @@ class UsersController extends ApiController
      */
     public function sendWelcomeEmail(User $user)
     {
-        return Mail::to($user->email)->send(new WelcomeEmail($user));
+        return Mail::to($user->email)->queue(new WelcomeEmail($user));
     }
 
     /**

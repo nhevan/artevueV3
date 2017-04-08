@@ -85,3 +85,5 @@ Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsControll
 
 Route::middleware('auth:api')->get('/news', 'NewsController@index');
 Route::middleware('auth:api')->get('/events', 'EventsController@index');
+
+Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
