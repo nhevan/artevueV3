@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,3 +23,12 @@ Route::get('/home', 'HomeController@index');
 Route::get('/manage-tokens', function() {
     return view('tokens');
 })->middleware('auth');
+
+Route::get('/test-pdf', function () {
+	$data['gate'] = 420;
+
+	$pdf = App::make('snappy.pdf.wrapper');
+	$pdf->loadView('pdf.gallery', compact('data'));
+	$pdf->setPaper('a4')->setOption('margin-bottom', '0mm');
+	return $pdf->inline();
+});
