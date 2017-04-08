@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
+use App\Jobs\SendNewFollowerNotification;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\FollowingTransformer;
 
@@ -144,7 +145,8 @@ class FollowersController extends ApiController
     	$this->incrementFollowingCount(Auth::user()->id);
     	$this->incrementFollowerCount($user_id);
 
-        event(new NewFollower($user_id));
+        // event(new NewFollower($user_id));
+        dispatch(new SendNewFollowerNotification($user_id));
     	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
     }
 
