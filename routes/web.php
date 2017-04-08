@@ -31,7 +31,7 @@ Route::get('/test-pdf', function () {
 	$data['gallery_description'] = 'ArteVue is the first art ecosystem for artists, art lovers, collectors, art professionals and art institutions to discover, buy, collect, curate, and catalogue art. 
 www.artevue.co.uk
 Info@artevue.co.uk';
-	$data['gallery_images'] = $posts;
+	$data['posts'] = $posts;
 
 	// return view('pdf.gallery', compact('data'));
 

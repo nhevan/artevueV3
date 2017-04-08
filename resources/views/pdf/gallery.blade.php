@@ -24,7 +24,7 @@
 				@php 
 					$count = 0;
 				@endphp
-				@foreach ($data['gallery_images'] as $image)
+				@foreach ($data['posts'] as $image)
 					@php
 					if ($count == 0)
 						echo "<tr style='margin: 2cm;page-break-inside:avoid;'>";

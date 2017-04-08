@@ -11,9 +11,11 @@ use App\Artist;
 use App\Hashtag;
 use App\Follower;
 use App\PostHashtag;
+use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\LikeTransformer;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Support\Facades\Storage;
@@ -575,5 +577,20 @@ class PostsController extends ApiController
                 break;
         }
         return $period;
+    }
+
+    /**
+     * emails a genrated pdf with the given posts and description
+     * @return [type] [description]
+     */
+    public function emailGalleryPdf()
+    {
+        $data['gallery_name'] = $this->request->user()->metadata->gallery_name;
+        $data['gallery_description'] = $this->request->user()->metadata->gallery_description;
+        $data['posts'] = $this->request->posts;
+
+        Mail::to(Auth::user()->email)->queue(new SendGalleryPdf($data));
+
+        return $this->respond(['message' => 'Requested pdf will be emailed to you shortly.']);
     }
 }
