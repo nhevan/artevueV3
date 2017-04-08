@@ -62,6 +62,7 @@ Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@ta
 Route::middleware('auth:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth:api')->get('/feed', 'PostsController@feed');
 Route::middleware('auth:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
+Route::middleware('auth:api')->get('/advance-search', 'PostsController@advanceSearch');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');

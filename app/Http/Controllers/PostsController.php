@@ -26,6 +26,7 @@ class PostsController extends ApiController
 
     protected $post;
     protected $request;
+    protected $filtered_posts;
     
     /**
      * Acme/Transformers/postTransformer
@@ -482,5 +483,97 @@ class PostsController extends ApiController
 
         return $this->respondWithPagination($feed_posts, $this->postTransformer);
         var_dump($feed_posts);
+    }
+
+    /**
+     * advance search for posts using artist, keyword and date-range
+     * @return [type] [description]
+     */
+    public function advanceSearch()
+    {
+        $this->filtered_posts = $this->post;
+        if ($this->request->artist) {
+            $this->filtered_posts = $this->searchByArtist();
+        }
+        if ($this->request->keyword) {
+            $this->filtered_posts = $this->searchByKeyword();
+        }
+        if ($this->request->date_range) {
+            $this->filtered_posts = $this->searchByDateRange();
+        }
+
+        $posts = $this->fetchAllFilteredPosts();
+
+        return $this->respondWithPagination($posts, $this->postTransformer);
+    }
+
+    /**
+     * returns all the filtered posts in paginated format
+     * @return [type] [description]
+     */
+    protected function fetchAllFilteredPosts()
+    {
+        return $this->filtered_posts->with('owner', 'artist', 'tags')->latest()->paginate(20);
+    }
+
+    /**
+     * return posts that matches the artists name
+     * @return [type] [description]
+     */
+    protected function searchByArtist()
+    {
+        $artist_name = $this->request->artist;
+        $artist_ids = Artist::where('title', 'like', '%'.$artist_name.'%')->pluck('id');
+
+        $posts = $this->filtered_posts->whereIn('artist_id', $artist_ids);
+
+        return $posts;
+    }
+
+    /**
+     * returns posts whose description contains the given keyword
+     * @return [type] [description]
+     */
+    protected function searchByKeyword()
+    {
+        return $this->filtered_posts->where('description', 'like', '%'.$this->request->keyword.'%');
+    }
+
+    /**
+     * returns posts created within the given date range
+     * @return [type] [description]
+     */
+    protected function searchByDateRange()
+    {
+        $period = $this->getPeriodFromDateRange($this->request->date_range);
+        return $this->filtered_posts->where('created_at', '>=', new \DateTime($period));
+    }
+
+    /**
+     * returns actual time period from a given date_range integer 
+     * @param  integer $date_range [description]
+     * @return [type]             [description]
+     */
+    protected function getPeriodFromDateRange($date_range)
+    {
+        $period = '';
+        switch ($date_range) {
+            case 0:
+                $period = '-3 years';
+                break;
+            case 1:
+                $period = '-1 month';
+                break;
+            case 3:
+                $period = '-3 months';
+                break;
+            case 6:
+                $period = '-6 months';
+                break;
+            case 12:
+                $period = '-1 year';
+                break;
+        }
+        return $period;
     }
 }
