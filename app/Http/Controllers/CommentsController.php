@@ -8,6 +8,7 @@ use App\Hashtag;
 use App\CommentHashtag;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use App\Jobs\SendNewCommentNotification;
 use Acme\Transformers\CommentTransformer;
 
 class CommentsController extends ApiController
