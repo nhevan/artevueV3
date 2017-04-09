@@ -575,7 +575,7 @@ class UsersController extends ApiController
      */
     public function getFollowingActivitiesForFollowingUsers($user_ids)
     {
-        $following = Follower::whereIn('follower_id', $user_ids)->where('user_id', '<>', $this->request->user()->id)->with('followerDetail')->get();
+        $following = Follower::whereIn('follower_id', $user_ids)->where('is_still_following', 1)->where('user_id', '<>', $this->request->user()->id)->with('followerDetail')->get();
         $following->map(function ($following) {
             $following['type'] = 'following';
             return $following;
@@ -591,7 +591,7 @@ class UsersController extends ApiController
      */
     public function getFollowingActivities()
     {
-        $following = Follower::where('user_id', $this->request->user()->id)->with('followerDetail')->get();
+        $following = Follower::where('user_id', $this->request->user()->id)->where('is_still_following', 1)->with('followerDetail')->get();
         $following->map(function ($following) {
             $following['type'] = 'following';
             return $following;
