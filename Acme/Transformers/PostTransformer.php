@@ -21,7 +21,9 @@ class PostTransformer extends Transformer
             foreach ($post['tags'] as $tag) {
                 $tmp = [
                     'user_id' => $tag['user_id'],
-                    'username' => $tag['username']
+                    'username' => $tag['username'],
+                    'x' => $tag['x'],
+                    'y' => $tag['y']
                 ];
                 array_push($tags, $tmp);
             }
