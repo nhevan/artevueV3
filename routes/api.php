@@ -71,6 +71,7 @@ Route::middleware('auth:api')->get('/feed', 'PostsController@feed');
 Route::middleware('auth:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
 Route::middleware('auth:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
+Route::middleware('auth:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');

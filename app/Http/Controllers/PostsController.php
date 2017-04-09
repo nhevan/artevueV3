@@ -594,4 +594,56 @@ class PostsController extends ApiController
 
         return $this->respond(['message' => 'Requested pdf will be emailed to you shortly.']);
     }
+
+    /**
+     * returns gallery posts of a user
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function getGallery($user_id)
+    {
+        $limit = 20;
+        $user = User::find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+        $gallery_posts = $this->getGalleryPosts($user_id);
+        $pinned_posts = $this->getPinnedPosts($user_id);
+
+        $all_posts = $gallery_posts->merge($pinned_posts);
+        $all_posts = $all_posts->sortByDesc('created_at')->values()->all();
+
+        $paginated_result = $this->getPaginated($all_posts, $limit);
+
+        return $this->respondWithPagination($paginated_result, $this->postTransformer);
+    }
+
+    /**
+     * returns posts of a user that are marked as gallery item
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    protected function getGalleryPosts($user_id)
+    {
+        $gallery_posts = Post::where('owner_id', $user_id)->where('is_gallery_item', 1)->with('owner', 'artist', 'tags');
+        if(Auth::user()->id != $user_id){
+            $gallery_posts = $gallery_posts->where('is_locked', 0);
+        }
+
+        return $gallery_posts->get();
+    }
+
+    /**
+     * returns pinned posts of a user
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    protected function getPinnedPosts($user_id)
+    {
+        $pinned_posts_ids = Pin::where('user_id', $user_id)->pluck('post_id');
+
+        $pinned_posts = Post::whereIn('id', $pinned_posts_ids)->with('owner', 'artist', 'tags')->get();
+
+        return $pinned_posts;
+    }
 }
