@@ -182,7 +182,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function fetchUserIdByUsername(Request $request)
+    public function fetchUserByUsername(Request $request)
     {
         $rules = [
             'username' => 'required|min:4|max:20',
@@ -192,7 +192,7 @@ class UsersController extends ApiController
         }
         $user = $this->user->where('username', $request->username)->first();
         if ($user) {
-            return $this->respond(['user_id' => $user->id]);
+            return $this->show($user->id);
         }
         return $this->responseNotFound('No such user exists.');
     }
