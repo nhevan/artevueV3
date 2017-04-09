@@ -38,7 +38,7 @@ class MessagesController extends ApiController
 		if(!$friend){
 			return $this->responseNotFound('User does not exist.');
 		}
-		$limit = 2;
+		$limit = 15;
         if((int)$this->request->limit >= $limit) $limit = (int)$this->request->limit ?: $limit;
 
 		$conversation = $this->findPaginatedConversation($friend_id, $limit);
