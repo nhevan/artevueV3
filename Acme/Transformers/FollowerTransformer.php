@@ -36,9 +36,9 @@ class FollowerTransformer extends Transformer
      */
     public function getIsFollowing($follower)
     {
-    	if (Auth::user()->id == $follower['user_id']) {
-    		return 1;
-    	}
+    	// if (Auth::user()->id == $follower['user_id']) {
+    	// 	return 1;
+    	// }
 
     	$is_follower = Follower::where('user_id', $follower['follower_id'])->where('follower_id', Auth::user()->id)->where('is_still_following', 1)->first();
     	if ($is_follower) {
