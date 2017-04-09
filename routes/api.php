@@ -82,6 +82,7 @@ Route::middleware('auth:api')->delete('/like/{post_id}', 'LikesController@delete
 Route::middleware('auth:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
 Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');
 Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
+Route::middleware('auth:api')->get('/hashtag-by-name', 'HashtagsController@getHashtagByName');
 
 Route::middleware('auth:api')->get('/artist', 'ArtistsController@index');
 Route::middleware('auth:api')->get('/search-artist', 'ArtistsController@searchArtist');

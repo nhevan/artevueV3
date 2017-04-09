@@ -71,4 +71,26 @@ class HashtagsController extends ApiController
 
         return $this->respond(['data' => $hashtags]);
     }
+
+    /**
+     * returns a 
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getHashtagByName(Request $request)
+    {
+        $rules = [
+            'hashtag' => 'required',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $hashtag = Hashtag::where('hashtag', 'like', '%'.$request->hashtag.'%')->first();
+        if ($hashtag) {
+            $hashtag_title = ltrim($hashtag->hashtag, '#');
+
+            return $this->topPosts($hashtag_title);
+        }
+        return $this->responseNotFound('No such hashtag exists.');
+    }
 }
