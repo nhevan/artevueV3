@@ -655,7 +655,7 @@ class PostsController extends ApiController
     {
         $count = 1;
         foreach ($this->request->posts as $post) {
-            if($post['owner_id'] == Auth::user()->id){ //post owner
+            if($post['owner']['owner_id'] == Auth::user()->id){ //post owner
                 $post = $this->post->find($post['id']);
                 $post->sequence = $count;
                 $post->save();
