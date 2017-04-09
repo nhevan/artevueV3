@@ -183,6 +183,24 @@ $factory->define(App\Tag::class, function ($faker) {
     ];
 });
 
+$factory->define(App\Pin::class, function ($faker) {
+    $posts = Post::pluck('id');
+    $users = User::pluck('id');
+    return [
+        'post_id' => $faker->randomElement($posts->toArray()),
+        'user_id' => $faker->randomElement($users->toArray())
+    ];
+});
+
+$factory->define(App\Like::class, function ($faker) {
+    $posts = Post::pluck('id');
+    $users = User::pluck('id');
+    return [
+        'post_id' => $faker->randomElement($posts->toArray()),
+        'user_id' => $faker->randomElement($users->toArray())
+    ];
+});
+
 $factory->define(App\News::class, function ($faker) {
     return [
         'headline' => $faker->sentence,

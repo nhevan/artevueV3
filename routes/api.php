@@ -41,6 +41,8 @@ Route::middleware('auth:api')->patch('/update-settings', 'UsersController@update
 Route::middleware('auth:api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
 Route::middleware('auth:api')->get('/discover-users', 'DiscoverController@discoverUsers');
+Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActivities');
+Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');

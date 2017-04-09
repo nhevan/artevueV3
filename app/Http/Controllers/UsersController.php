@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Pin;
+use App\Like;
+use App\Post;
 use App\User;
+use App\Comment;
 use App\Follower;
 use App\UserMetadata;
 use App\ArtPreference;
@@ -11,9 +15,12 @@ use App\UserArtPreference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Input;
 use Acme\Transformers\UserTransformer;
+use Acme\Transformers\ActivityTransformer;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\UserSearchTransformer;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
@@ -409,5 +416,187 @@ class UsersController extends ApiController
         $user->save();
 
         return $this->respond(['message'=>'Profile picture has been successfully updated.']);
+    }
+
+    /**
+     * returns a list of user activities
+     * @return [type] [description]
+     */
+    public function userActivities()
+    {
+        $limit = 10;
+        $user = $this->request->user();
+
+        $my_post_ids = Post::where('owner_id', $user->id)->pluck('id')->toArray();
+
+        $like_activities = $this->getLikeActivities($my_post_ids);
+        $comment_activities = $this->getCommentActivities($my_post_ids);
+        $pin_activities = $this->getPinActivities($my_post_ids);
+        $following_activities = $this->getFollowingActivities();
+
+        $all_activities = $like_activities->merge($comment_activities);
+        $all_activities = $all_activities->merge($pin_activities);
+        $all_activities = $all_activities->merge($following_activities);
+
+        $all_activities = $all_activities->sortByDesc('created_at')->values()->all();
+
+        $paginated_result = $this->getPaginated($all_activities, $limit);
+
+        return $this->respondWithPagination($paginated_result, new ActivityTransformer);
+    }
+
+    /**
+     * returns a list of user's followers activities
+     * @return [type] [description]
+     */
+    public function followerActivities()
+    {
+        $limit = 10;
+        $user = $this->request->user();
+
+        $following_user_ids = Follower::where('follower_id', $user->id)->pluck('user_id')->toArray();
+
+        $like_activities = $this->getLikeActivitiesForFollowingUsers($following_user_ids);
+        $comment_activities = $this->getCommentActivitiesForFollowingUsers($following_user_ids);
+        $pin_activities = $this->getPinActivitiesForFollowingUsers($following_user_ids);
+        $following_activities = $this->getFollowingActivitiesForFollowingUsers($following_user_ids);
+
+        $all_activities = $like_activities->merge($comment_activities);
+        $all_activities = $all_activities->merge($pin_activities);
+        $all_activities = $all_activities->merge($following_activities);
+
+        $all_activities = $all_activities->sortByDesc('created_at')->values()->all();
+
+        $paginated_result = $this->getPaginated($all_activities, $limit);
+
+        return $this->respondWithPagination($paginated_result, new ActivityTransformer);
+    }
+
+    /**
+     * get all like activities
+     * @param  [type] $user_ids [description]
+     * @return [type]           [description]
+     */
+    public function getLikeActivitiesForFollowingUsers($user_ids)
+    {
+        $likes = Like::whereIn('user_id', $user_ids)->where('user_id', '<>', $this->request->user()->id)->with('user', 'post')->select(['id', 'user_id', 'post_id', 'created_at'])->get();
+        $likes->map(function ($like) {
+            $like['type'] = 'like';
+            return $like;
+        });
+
+        return $likes;
+    }
+
+    /**
+     * get all like activities
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getLikeActivities($post_ids)
+    {
+        $likes = Like::whereIn('post_id', $post_ids)->where('user_id', '<>', $this->request->user()->id)->with('user', 'post')->select(['id', 'user_id', 'post_id', 'created_at'])->get();
+        $likes->map(function ($like) {
+            $like['type'] = 'like';
+            return $like;
+        });
+
+        return $likes;
+    }
+
+    /**
+     * get all comment activities
+     * @param  [type] $user_ids [description]
+     * @return [type]           [description]
+     */
+    public function getCommentActivitiesForFollowingUsers($user_ids)
+    {
+        $comments = Comment::whereIn('user_id', $user_ids)->where('user_id', '<>', $this->request->user()->id)->with('commentor', 'post')->get();
+        $comments->map(function ($comment) {
+            $comment['type'] = 'comment';
+            return $comment;
+        });
+
+        return $comments;
+    }
+
+    /**
+     * get all comment activities
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getCommentActivities($post_ids)
+    {
+        $comments = Comment::whereIn('post_id', $post_ids)->where('user_id', '<>', $this->request->user()->id)->with('commentor', 'post')->get();
+        $comments->map(function ($comment) {
+            $comment['type'] = 'comment';
+            return $comment;
+        });
+
+        return $comments;
+    }
+
+    /**
+     * get all pin activities
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getPinActivitiesForFollowingUsers($user_ids)
+    {
+        $pins = Pin::whereIn('user_id', $user_ids)->where('user_id', '<>', $this->request->user()->id)->with('user', 'post')->get();
+        $pins->map(function ($pin) {
+            $pin['type'] = 'pin';
+            return $pin;
+        });
+
+        return $pins;
+    }
+
+    /**
+     * get all pin activities
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getPinActivities($post_ids)
+    {
+        $pins = Pin::whereIn('post_id', $post_ids)->where('user_id', '<>', $this->request->user()->id)->with('user', 'post')->get();
+        $pins->map(function ($pin) {
+            $pin['type'] = 'pin';
+            return $pin;
+        });
+
+        return $pins;
+    }
+
+    /**
+     * get all following type activity
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getFollowingActivitiesForFollowingUsers($user_ids)
+    {
+        $following = Follower::whereIn('follower_id', $user_ids)->where('user_id', '<>', $this->request->user()->id)->with('followerDetail')->get();
+        $following->map(function ($following) {
+            $following['type'] = 'following';
+            return $following;
+        });
+
+        return $following;
+    }
+
+    /**
+     * get all following type activity
+     * @param  [type] $post_ids [description]
+     * @return [type]           [description]
+     */
+    public function getFollowingActivities()
+    {
+        $following = Follower::where('user_id', $this->request->user()->id)->with('followerDetail')->get();
+        $following->map(function ($following) {
+            $following['type'] = 'following';
+            return $following;
+        });
+
+        return $following;
     }
 }

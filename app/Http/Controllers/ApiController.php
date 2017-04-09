@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Acme\Transformers\Transformer;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Response as IlluminateResponse;
 
 
@@ -204,6 +206,23 @@ class ApiController extends Controller
     public function responseUnauthorized($message = 'Unauthorized action.')
     {
         return $this->setStatusCode(IlluminateResponse::HTTP_UNAUTHORIZED)->respond(['message' => $message]);
+    }
+
+    public function getPaginated($data, $limit = 10)
+    {
+        $page = Input::get('page', 1);
+        $perPage = $limit;
+        $offset = ($page * $perPage) - $perPage;
+
+        $paginated_result = new LengthAwarePaginator(
+            array_slice($data, $offset, $perPage, true), // Only grab the items we need
+            count($data), // Total items
+            $perPage, // Items per page
+            $page, // Current page
+            ['path' => $this->request->url(), 'query' => $this->request->query()] // We need this so we can keep all old query parameters from the url
+        );
+
+        return $paginated_result;
     }
     
 }
