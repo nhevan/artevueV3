@@ -97,3 +97,5 @@ Route::middleware('auth:api')->get('/news', 'NewsController@index');
 Route::middleware('auth:api')->get('/events', 'EventsController@index');
 
 Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
+
+Route::middleware('auth:api')->get('/art-preferences', 'ArtPreferencesController@index');
