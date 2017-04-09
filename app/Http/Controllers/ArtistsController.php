@@ -46,6 +46,25 @@ class ArtistsController extends ApiController
 
         return $this->respondWithPagination($posts, new PostTransformer);
 	}
+
+	/**
+	 * returns posts by a given artist name
+	 * @return Response [description]
+	 */
+	public function getPostsByArtistName()
+	{
+		$rules = [
+            'name' => 'required',
+        ];
+        if (!$this->setRequest($this->request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+        $artist = $this->artist->where('title', $this->request->name)->first();
+        if ($artist) {
+            return $this->posts($artist->id);
+        }
+        return $this->responseNotFound('No such artist exists.');
+	}
     
     /**
      * searches users with a possible given search string
