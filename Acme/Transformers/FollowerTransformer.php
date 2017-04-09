@@ -40,7 +40,7 @@ class FollowerTransformer extends Transformer
     		return 1;
     	}
 
-    	$is_follower = Follower::where('user_id', $follower['follower_id'])->where('follower_id', Auth::user()->id)->first();
+    	$is_follower = Follower::where('user_id', $follower['follower_id'])->where('follower_id', Auth::user()->id)->where('is_still_following', 1)->first();
     	if ($is_follower) {
     		return 1;
     	}
