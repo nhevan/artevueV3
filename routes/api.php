@@ -18,6 +18,13 @@ Route::middleware('auth:api')->get('/test-user/{user}', function (User $user) {
     return $user->load('metadata', 'userType');
 });
 
+Route::middleware('auth:api')->get('/feed-top-bar', function(){
+	$data['news_image'] = '/news.jpg';
+	$data['events_image'] = '/event.jpg';
+
+	return response()->json(['data' => $data], 200);
+});
+
 //User APIs
 // Route::middleware('auth:api')->get('/user', 'UsersController@index');
 Route::middleware('auth:api')->get('/user/{user}', 'UsersController@show');
