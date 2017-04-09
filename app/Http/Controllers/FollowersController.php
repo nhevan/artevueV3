@@ -159,4 +159,18 @@ class FollowersController extends ApiController
         $followings = $request->user()->following->load('user')->toArray();
         return $this->respondAsTransformattedArray($followings, new FollowingTransformer);
     }
+
+    /**
+     * fetches all the following users of a given user
+     * @return [type] [description]
+     */
+    public function getFollowingUsersByUser($user_id, Request $request)
+    {
+        $user = User::find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }   
+        $followings = $user->following->load('user')->toArray();
+        return $this->respondAsTransformattedArray($followings, new FollowingTransformer);
+    }
 }
