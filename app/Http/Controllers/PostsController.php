@@ -134,7 +134,8 @@ class PostsController extends ApiController
     public function show(Post $post)
     {
         $post->load('owner','artist', 'tags');
-        return $this->respond(['data' => $post]);
+
+        return $this->respondTransformattedModel($post->toArray(), $this->postTransformer);
     }
 
     /**
