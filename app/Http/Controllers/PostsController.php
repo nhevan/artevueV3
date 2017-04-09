@@ -270,7 +270,7 @@ class PostsController extends ApiController
      */
     public function isPostOwner()
     {
-    	return $this->post->owner->id == $this->request->user()->id;
+        	return $this->post->owner->id == $this->request->user()->id;
     }
 
     /**
@@ -645,5 +645,27 @@ class PostsController extends ApiController
         $pinned_posts = Post::whereIn('id', $pinned_posts_ids)->with('owner', 'artist', 'tags')->get();
 
         return $pinned_posts;
+    }
+
+    /**
+     * arranges a users gallery posts
+     * @return [type] [description]
+     */
+    public function arrangeGalleryPosts()
+    {
+        $count = 1;
+        foreach ($this->request->posts as $post) {
+            if($post['owner_id'] == Auth::user()->id){ //post owner
+                $post = $this->post->find($post['id']);
+                $post->sequence = $count;
+                $post->save();
+            }else{ //pinned post
+                $pin = Pin::where('post_id', $post['id'])->where('user_id', Auth::user()->id)->first();
+                $pin->sequence = $count;
+                $pin->save();
+            }
+            $count++;
+        }
+        return $this->respond(['message' => 'Gallery successfully arranged.']);
     }
 }
