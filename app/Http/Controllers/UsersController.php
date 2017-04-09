@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Follower;
 use App\UserMetadata;
+use App\ArtPreference;
 use App\Mail\WelcomeEmail;
+use App\UserArtPreference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -23,11 +25,13 @@ class UsersController extends ApiController
      * @var userTransformer
      */
     protected $userTransformer;
+    protected $request;
 
-    public function __construct(User $user, UserTransformer $userTransformer)
+    public function __construct(User $user, UserTransformer $userTransformer, Request $request)
     {
         $this->user = $user;
         $this->userTransformer = $userTransformer;
+        $this->request = $request;
     }
 
     /**
@@ -272,10 +276,26 @@ class UsersController extends ApiController
         $user->biography = $request->biography;
         $user->phone = $request->phone;
         $user->sex = $request->sex;
+         
+        $this->request = $request;
+        $this->updateArtPreferences($user);
         
         $user->save();
 
         return $this->respond( [ 'message' => 'The user has been updated.' ] );
+    }
+
+    /**
+     * updates selected art preferences of the current user
+     * @return [type] [description]
+     */
+    public function updateArtPreferences(User $user)
+    {
+        UserArtPreference::where('user_id', $user->id)->delete();
+
+        foreach ($this->request->art_prefs as $art_pref) {
+            UserArtPreference::create(['user_id' => $user->id, 'art_preference_id' => $art_pref['id'] ]);
+        }
     }
 
     /**
