@@ -3,6 +3,7 @@
 namespace Acme\Transformers;
 
 use App\Pin;
+use App\Like;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -69,7 +70,11 @@ class PostTransformer extends Transformer
      */
     public function isPostLiked($post_id)
     {
-    	return 0;
+    	$is_liked = Like::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        if ($is_liked) {
+            return 1;
+        }
+        return 0;
     }
 
     /**
