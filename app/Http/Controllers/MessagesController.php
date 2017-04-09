@@ -200,7 +200,7 @@ class MessagesController extends ApiController
 	        );
     	}
     	if ($request->is_post) {
-    		$message->is_post = 1;
+    		$message->is_post = $request->is_post;
     		$message->url = $request->url;
     	}
 
