@@ -96,7 +96,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password', 'user_type_id', 'profile_picture'
+        'name', 'username', 'email', 'password', 'user_type_id', 'profile_picture', 'gcm_registration_key'
     ];
 
     /**

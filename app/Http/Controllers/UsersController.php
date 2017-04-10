@@ -295,6 +295,7 @@ class UsersController extends ApiController
         $user->biography = $request->biography;
         $user->phone = $request->phone;
         $user->sex = $request->sex;
+        $user->gcm_registration_key = $request->gcm_registration_key;
          
         $this->request = $request;
         $this->updateArtPreferences($user);
