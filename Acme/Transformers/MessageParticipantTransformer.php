@@ -21,6 +21,7 @@ class MessageParticipantTransformer extends Transformer
 
         return [
                 'id' => $message_participant['id'],
+                'user_id' => $participant['id'],
                 'username' => $participant['username'],
                 'name' => $participant['name'],
                 'profile_picture' => $participant['profile_picture'],
