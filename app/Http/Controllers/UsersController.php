@@ -13,6 +13,7 @@ use App\ArtPreference;
 use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
+use App\Mail\NewPasswordEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -634,6 +635,29 @@ class UsersController extends ApiController
         }
         
         return $this->responseUnauthorized('Your old password did not match our record.');
+    }
+
+    /**
+     * sends a new generated password to users email address
+     * @return [type] [description]
+     */
+    public function sendNewPasswordEmail()
+    {
+        $rules = [
+            'email' => 'required|email',
+        ];
+        if (!$this->setRequest($this->request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $user = $this->user->where('email', $this->request->email)->first();
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        Mail::to($user->email)->queue(new NewPasswordEmail($user));
+
+        return $this->respond(['message' => 'An email has been sent to your email with the new password']);
     }
 
     /**
