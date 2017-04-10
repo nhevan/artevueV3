@@ -45,6 +45,8 @@ class PostTransformer extends Transformer
                 'is_locked' => $post['is_locked'],
                 'sequence' => $post['sequence'],
 
+                'google_place_id' => $post['google_place_id'],
+                'address' => $post['address'],
                 'address_title' => $post['address_title'],
 
                 'pin_count' => $post['pin_count'],
