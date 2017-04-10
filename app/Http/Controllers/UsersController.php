@@ -90,6 +90,7 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+        $this->startFollowingArtevue($user->id);
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
@@ -170,12 +171,23 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+        $this->startFollowingArtevue($user->id);
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
         //start following ArteVue
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
+    }
+
+    /**
+     * starts following artevue account
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingArtevue($user_id)
+    {
+        Follower::create(['user_id'=> 33, 'follower_id' => $user_id]);
     }
 
     /**
