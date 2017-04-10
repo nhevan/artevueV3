@@ -43,6 +43,7 @@ Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@
 Route::middleware('auth:api')->get('/discover-users', 'DiscoverController@discoverUsers');
 Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActivities');
 Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
+Route::middleware('auth:api')->patch('/password', 'UsersController@changePassword');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');

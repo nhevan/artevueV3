@@ -14,6 +14,7 @@ use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Input;
 use Acme\Transformers\UserTransformer;
@@ -611,5 +612,47 @@ class UsersController extends ApiController
         });
 
         return $following;
+    }
+
+    /**
+     * changes the password of a user
+     * @return [type] [description]
+     */
+    public function changePassword()
+    {
+        $rules = [
+            'old_password' => 'required|min:6',
+            'new_password' => 'required|min:6',
+        ];
+        if (!$this->setRequest($this->request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        if ($this->oldPasswordMatches()) {
+            $this->updatePassword();
+            return $this->respond(['message' => 'Password changed successfully.']);
+        }
+        
+        return $this->responseUnauthorized('Your old password did not match our record.');
+    }
+
+    /**
+     * returns true if old password matches
+     * @return [type] [description]
+     */
+    public function oldPasswordMatches()
+    {
+        return Hash::check($this->request->old_password, $this->request->user()->password);
+    }
+
+    /**
+     * updates a users password to a given new one
+     * @return [type] [description]
+     */
+    public function updatePassword()
+    {
+        $this->request->user()->password = bcrypt($this->request->new_password);
+
+        $this->request->user()->save();
     }
 }
