@@ -611,7 +611,7 @@ class PostsController extends ApiController
         $pinned_posts = $this->getPinnedPosts($user_id);
 
         $all_posts = $gallery_posts->merge($pinned_posts);
-        $all_posts = $all_posts->sortByDesc('created_at')->values()->all();
+        $all_posts = $all_posts->sortByDesc('sequence')->values()->all();
 
         $paginated_result = $this->getPaginated($all_posts, $limit);
 
