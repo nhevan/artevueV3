@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,16 +15,18 @@ class SendNewFollowerNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NotificationSwissKnife;
 
-    protected $user;
+    protected $user_id;
+    protected $follower_name;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user_id)
+    public function __construct($user_id, $follower_name)
     {
-        $user = User::find($user_id);
-        $this->user = $user;
+        // $user = User::find($user_id);
+        $this->user_id = $user_id;
+        $this->follower_name = $follower_name;
     }
 
     /**
@@ -33,7 +36,8 @@ class SendNewFollowerNotification implements ShouldQueue
      */
     public function handle()
     {
-        echo $this->user->id.' - '.Auth::user()->name;
-        $this->sendFcmMessage($this->user->id, 'New Follower', Auth::user()->name.' started following you.');
+        $user = User::find($this->user_id);
+
+        $this->sendFcmMessage($user, 'New Comment', $this->follower_name.' commented on your post.');
     }
 }
