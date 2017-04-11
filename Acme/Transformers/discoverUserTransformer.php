@@ -16,6 +16,7 @@ class DiscoverUserTransformer extends Transformer
         $user_metadata = [
                 'id' => $user_metadata['user']['id'],
                 'username' => $user_metadata['user']['username'],
+                'name' => $user_metadata['user']['name'],
                 'profile_picture' => $user_metadata['user']['profile_picture'],
                 'latest_posts' => $latest_posts,
                 'is_following' => 0
