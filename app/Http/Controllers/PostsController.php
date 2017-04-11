@@ -640,7 +640,9 @@ class PostsController extends ApiController
      */
     protected function getPinnedPosts($user_id)
     {
-        $pinned_posts_ids = Pin::where('user_id', $user_id)->pluck('post_id');
+        $my_posts_ids = Post::where('owner_id', $user_id)->pluck('id')->toArray();
+
+        $pinned_posts_ids = Pin::where('user_id', $user_id)->whereNotIn('post_id', $my_posts_ids)->pluck('post_id');
 
         $pinned_sequence = Pin::where('user_id', $user_id)->pluck('sequence');
         $reversed_pin_sequence = $pinned_sequence->reverse();
