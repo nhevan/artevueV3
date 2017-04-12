@@ -45,6 +45,7 @@ Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActi
 Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
 Route::middleware('auth:api')->patch('/password', 'UsersController@changePassword');
 Route::middleware('auth:api')->get('/forgot-password', 'UsersController@sendNewPasswordEmail');
+Route::middleware('auth:api')->get('/test-slack', 'UsersController@testSlack');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
