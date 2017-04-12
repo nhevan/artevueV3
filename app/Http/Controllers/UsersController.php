@@ -288,7 +288,7 @@ class UsersController extends ApiController
         if(!$this->emailIsUnique($request)){
             return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError([ 'message' => [ 'email' => 'The email has already been taken.' ] ] );
         }
-
+        // return $request->all();
         $user = $request->user();
 
         $user->email = $request->email;
