@@ -215,7 +215,7 @@ class ApiController extends Controller
         $offset = ($page * $perPage) - $perPage;
 
         $paginated_result = new LengthAwarePaginator(
-            array_slice($data, $offset, $perPage, true), // Only grab the items we need
+            array_slice($data, $offset, $perPage), // Only grab the items we need
             count($data), // Total items
             $perPage, // Items per page
             $page, // Current page
