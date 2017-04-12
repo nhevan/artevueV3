@@ -8,6 +8,7 @@ use App\Post;
 use App\User;
 use App\Comment;
 use App\Follower;
+use App\UserArtType;
 use App\UserMetadata;
 use App\ArtPreference;
 use App\Mail\WelcomeEmail;
@@ -301,6 +302,7 @@ class UsersController extends ApiController
          
         $this->request = $request;
         $this->updateArtPreferences($user);
+        $this->updateArtTypes($user);
         
         $user->save();
 
@@ -313,11 +315,27 @@ class UsersController extends ApiController
      */
     public function updateArtPreferences(User $user)
     {
-        if($this->request->art_prefs){
+        if($this->request->art_preferences){
             UserArtPreference::where('user_id', $user->id)->delete();
 
-            foreach ($this->request->art_prefs as $art_pref) {
+            foreach ($this->request->art_preferences as $art_pref) {
                 UserArtPreference::create(['user_id' => $user->id, 'art_preference_id' => $art_pref['id'] ]);
+            }
+        }
+    }
+
+    /**
+     * updates selected art types of the given user
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function updateArtTypes(User $user)
+    {
+        if($this->request->art_types){
+            UserArtType::where('user_id', $user->id)->delete();
+
+            foreach ($this->request->art_types as $art_type) {
+                UserArtType::create(['user_id' => $user->id, 'art_type_id' => $art_type['id'] ]);
             }
         }
     }
