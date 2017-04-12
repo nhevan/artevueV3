@@ -106,3 +106,4 @@ Route::middleware('auth:api')->get('/events', 'EventsController@index');
 Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
 
 Route::middleware('auth:api')->get('/art-preferences', 'ArtPreferencesController@index');
+Route::middleware('auth:api')->get('/art-types', 'ArtTypesController@index');
