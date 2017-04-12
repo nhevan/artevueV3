@@ -41,6 +41,7 @@ class UserTransformer extends Transformer
                 'social_media_access_token' => $user['social_media_access_token'],
                 'profile_picture' => $user['profile_picture'],
                 
+                'user_type_id' => $user['usertype']['id'],
                 'user_type' => $user['usertype']['title'],
 
                 'gallery_name' => $user['metadata']['gallery_name'],
