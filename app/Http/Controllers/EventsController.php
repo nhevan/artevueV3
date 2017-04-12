@@ -15,7 +15,7 @@ class EventsController extends ApiController
      */
     public function index()
     {
-        $events = Event::latest()->paginate(20);
+        $events = Event::latest()->paginate(10);
 
         return $this->respondWithPagination($events, New EventTransformer);
     }

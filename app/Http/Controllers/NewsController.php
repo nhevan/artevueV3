@@ -15,7 +15,7 @@ class NewsController extends ApiController
      */
     public function index()
     {
-        $news = News::latest()->paginate(20);
+        $news = News::latest()->paginate(10);
 
         return $this->respondWithPagination($news, New NewsTransformer);
     }
