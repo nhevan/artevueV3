@@ -313,10 +313,12 @@ class UsersController extends ApiController
      */
     public function updateArtPreferences(User $user)
     {
-        UserArtPreference::where('user_id', $user->id)->delete();
+        if($this->request->art_prefs){
+            UserArtPreference::where('user_id', $user->id)->delete();
 
-        foreach ($this->request->art_prefs as $art_pref) {
-            UserArtPreference::create(['user_id' => $user->id, 'art_preference_id' => $art_pref['id'] ]);
+            foreach ($this->request->art_prefs as $art_pref) {
+                UserArtPreference::create(['user_id' => $user->id, 'art_preference_id' => $art_pref['id'] ]);
+            }
         }
     }
 
