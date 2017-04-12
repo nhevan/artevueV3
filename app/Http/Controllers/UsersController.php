@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Input;
 use Acme\Transformers\UserTransformer;
+use App\Notifications\QueuedJobFailed;
 use Acme\Transformers\ActivityTransformer;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\UserSearchTransformer;
@@ -698,5 +699,17 @@ class UsersController extends ApiController
         $this->request->user()->password = bcrypt($this->request->new_password);
 
         $this->request->user()->save();
+    }
+
+    /**
+     * test method to check if slack notifications are working
+     * @return [type] [description]
+     */
+    public function testSlack()
+    {
+        $user = new User;
+        $user->notify(new QueuedJobFailed());
+
+        return $this->respond(['message' => 'Message successfully posted to slack webhook.']);
     }
 }
