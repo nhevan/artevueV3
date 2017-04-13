@@ -91,17 +91,33 @@ class ActivityTransformer extends Transformer
      */
     public function followingType($activity)
     {
-        $is_following = $this->isFollowing($activity['user_id']);
+        if($this->isFollowerActivty($activity['user_id'])){
+            $is_following = $this->isFollowing($activity['user_id']);
+        }else{
+            $is_following = $this->isFollowing($activity['follower_id']);
+        }
 
         $following = [
                 'type' => $activity['type'],
-                'user_id' => $activity['follower_id'],
-                'username' => $activity['follower_detail']['username'],
+                'follower_id' => $activity['follower_id'],
+                'follower_username' => $activity['follower_detail']['username'],
+                'user_id' => $activity['user_id'],
+                'username' => $activity['user']['username'],
                 'profile_picture' => $activity['follower_detail']['profile_picture'],
                 'is_following' => $is_following,
                 'created_at' => $activity['created_at'],
             ];
         return $following;
+    }
+
+    /**
+     * checks of we are transforming a follower type event for the user or for follower activities
+     * @param  [type]  $user_id [description]
+     * @return boolean          [description]
+     */
+    public function isFollowerActivty($user_id)
+    {
+        return $user_id != Auth::user()->id;
     }
 
     /**
