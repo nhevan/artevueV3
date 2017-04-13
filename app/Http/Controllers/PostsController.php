@@ -55,7 +55,7 @@ class PostsController extends ApiController
             return $this->responseNotFound('User does not exist.');
         }
 
-    	$posts = $owner->posts()->with('artist', 'owner', 'tags')->orderBy('id','DESC')->paginate(20);
+    	$posts = $owner->posts()->with('artist', 'owner', 'tags')->orderBy('id','DESC')->paginate(30);
     	return $this->respondWithPagination($posts, $this->postTransformer );
     }
 
@@ -450,7 +450,7 @@ class PostsController extends ApiController
 
         $post_ids = $user->tags->pluck('post_id')->toArray();
 
-        $posts = $this->post->whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->paginate(20);
+        $posts = $this->post->whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->paginate(30);
 
         return $this->respondWithPagination($posts, $this->postTransformer);
     }
@@ -602,7 +602,7 @@ class PostsController extends ApiController
      */
     public function getGallery($user_id)
     {
-        $limit = 20;
+        $limit = 30;
         $user = User::find($user_id);
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
