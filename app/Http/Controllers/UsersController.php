@@ -278,10 +278,10 @@ class UsersController extends ApiController
             'name' => 'required|max:50',
             'email' => 'required|email',
             'user_type_id' => 'required|not_in:1,2',
+            'sex' => 'required',
             'website' =>'nullable|url',
             'biography' => 'nullable|max:250',
             'phone' => 'nullable',
-            'sex' => 'required',
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
@@ -295,6 +295,8 @@ class UsersController extends ApiController
         $user->email = $request->email;
         $user->name = $request->name;
         $user->user_type_id = $request->user_type_id;
+        $user->sex = $request->sex;
+
         if ($request->website) {
             $user->website = $request->website;
         }
@@ -304,8 +306,9 @@ class UsersController extends ApiController
         if ($request->phone) {
             $user->phone = $request->phone;
         }
-        $user->sex = $request->sex;
-        $user->gcm_registration_key = $request->gcm_registration_key;
+        if ($request->gcm_registration_key) {
+            $user->gcm_registration_key = $request->gcm_registration_key;
+        }
          
         $this->request = $request;
         $this->updateArtPreferences($user);
