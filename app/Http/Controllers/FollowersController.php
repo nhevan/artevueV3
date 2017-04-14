@@ -170,7 +170,7 @@ class FollowersController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }   
-        $followings = $this->follower->where('follower_id', $user_id)->latest()->with('user')->paginate(20);
+        $followings = $this->follower->where('follower_id', $user_id)->where('is_still_following', 1)->latest()->with('user')->paginate(20);
         return $this->respondWithPagination($followings, new FollowingTransformer);
     }
 }
