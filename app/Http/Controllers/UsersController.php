@@ -295,9 +295,15 @@ class UsersController extends ApiController
         $user->email = $request->email;
         $user->name = $request->name;
         $user->user_type_id = $request->user_type_id;
-        $user->website = $request->website;
-        $user->biography = $request->biography;
-        $user->phone = $request->phone;
+        if ($request->website) {
+            $user->website = $request->website;
+        }
+        if ($request->biography) {
+            $user->biography = $request->biography;
+        }
+        if ($request->phone) {
+            $user->phone = $request->phone;
+        }
         $user->sex = $request->sex;
         $user->gcm_registration_key = $request->gcm_registration_key;
          
