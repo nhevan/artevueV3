@@ -32,6 +32,6 @@ Thank you and we look forward to seeing your art.
 Sho Ahad-Choudhury<br>
 <br>
 <strong>Founder and Chief Executive Officer</strong><br>
-Email : submissions@artevue.co.uk<br>
-Website : www.artevue.co.uk
+Email : <submissions@artevue.co.uk><br>
+Website : [www.artevue.co.uk](www.artevue.co.uk)
 @endcomponent
