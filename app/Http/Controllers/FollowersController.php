@@ -12,6 +12,7 @@ use App\Traits\NotificationSwissKnife;
 use App\Jobs\SendNewFollowerNotification;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\FollowingTransformer;
+use Illuminate\Http\Response as IlluminateResponse;
 
 class FollowersController extends ApiController
 {
@@ -132,7 +133,7 @@ class FollowersController extends ApiController
     public function startFollowing($user_id)
     {
     	if (Auth::user()->id == $user_id) {
-    		return $this->respondWithError(['message'=>'User can not follow him/herself']);
+    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'User can not follow him/herself']);
     	}
     	$was_once_follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
     	if ($was_once_follower) {
@@ -169,7 +170,7 @@ class FollowersController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }   
-        $followings = $user->following->load('user')->toArray();
-        return $this->respondAsTransformattedArray($followings, new FollowingTransformer);
+        $followings = $this->follower->where('follower_id', $user_id)->latest()->with('user')->paginate(20);
+        return $this->respondWithPagination($followings, new FollowingTransformer);
     }
 }
