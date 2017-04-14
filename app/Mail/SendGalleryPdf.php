@@ -41,6 +41,7 @@ class SendGalleryPdf extends Mailable
 
         return $this->from('noreply@artevue.co.uk')
                     ->markdown('mails.sendGalleryPdf')
+                    ->subject("Gallery PDF Generate")
                     ->attachData($attachment, 'gallery-pdf.pdf', [
                         'mime' => 'application/pdf',
                     ]);

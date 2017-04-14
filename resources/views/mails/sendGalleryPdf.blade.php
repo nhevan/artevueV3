@@ -1,9 +1,11 @@
 @component('mail::message')
-# Gallery PDF Attached
+# Gallery PDF Generated
 
-Thanks for using ArteVue
+Dear User,
+<br>
+Your generated pdf is attached with this email.
 
 
-Thanks,<br>
-{{ config('app.name') }}
+Best Regards,<br>
+ArteVue Team
 @endcomponent
