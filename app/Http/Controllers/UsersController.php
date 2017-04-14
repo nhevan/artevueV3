@@ -15,6 +15,7 @@ use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
+use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -29,6 +30,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
 {
+    use CounterSwissKnife;
     protected $user;
     
     /**
@@ -219,6 +221,9 @@ class UsersController extends ApiController
     public function startFollowing($user_id, $follower_id)
     {
         Follower::create(['user_id'=> $user_id, 'follower_id' => $follower_id]);
+
+        $this->incrementFollowerCount($user_id);
+        $this->incrementFollowingCount($follower_id);
     }
 
     /**
