@@ -3,7 +3,7 @@ Dear {{$user->name}},
 
 # Welcome to ArteVue - Your Art Scene.
 
-<strong>Your Login details are::</strong><br>
+<strong>Your Login details are:</strong><br>
 <strong>Username : {{$user->username}}</strong>
 <br>
 <br>
