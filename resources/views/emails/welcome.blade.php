@@ -23,8 +23,7 @@ ArteVue is about making the art world accessible to everyone, anywhere in the wo
 * Be directly in touch with art professionals for advice or to just to find out which art fairs to go to
 * Buy/sell and even trade artworks by interacting with artists, collectors, galleries and professionals through the App
 * Keep ahead of the latest developments globally through our art daily news and events feed
-<br>
-<br>
+
 Thank you and we look forward to seeing your art.
 <br>
 <br>
