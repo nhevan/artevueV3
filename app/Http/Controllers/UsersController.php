@@ -94,7 +94,10 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+
         $this->startFollowingArtevue($user->id);
+        $this->startFollowingHarpersBazaar($user->id);
+        
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
@@ -175,7 +178,10 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
+
         $this->startFollowingArtevue($user->id);
+        $this->startFollowingHarpersBazaar($user->id);
+
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
@@ -189,9 +195,30 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingArtevue($user_id)
+    public function startFollowingArtevue($follower_id)
     {
-        Follower::create(['user_id'=> 33, 'follower_id' => $user_id]);
+        $this->startFollowing(33, $follower_id);
+    }
+
+    /**
+     * starts following Harpers Bazaar account
+     * @param  [type] $follower_id [description]
+     * @return [type]              [description]
+     */
+    public function startFollowingHarpersBazaar($follower_id)
+    {
+        $this->startFollowing(204, $follower_id);
+    }
+
+    /**
+     * starts following a specific user
+     * @param  [type] $user_id     [description]
+     * @param  [type] $follower_id [description]
+     * @return [type]              [description]
+     */
+    public function startFollowing($user_id, $follower_id)
+    {
+        Follower::create(['user_id'=> $user_id, 'follower_id' => $follower_id]);
     }
 
     /**
