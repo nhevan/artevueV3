@@ -1,10 +1,9 @@
 @component('mail::message')
 # Gallery PDF Generated
 
-Dear User,
+Dear {{ $user->name }},
 <br>
-Your generated pdf is attached with this email.
-
+Please find attached your requested PDF catalogue, made from the selected artwork in your gallery.
 
 Best Regards,<br>
 ArteVue Team
