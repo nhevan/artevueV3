@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\App;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class SendGalleryPdf extends Mailable
 {
     protected $data;
+    protected $user;
 
     use Queueable, SerializesModels;
 
@@ -19,9 +21,9 @@ class SendGalleryPdf extends Mailable
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($data, User $user)
     {
-        //
+        $this->user = $user;
         $this->data = $data;
     }
 
@@ -41,7 +43,10 @@ class SendGalleryPdf extends Mailable
 
         return $this->from('noreply@artevue.co.uk')
                     ->markdown('mails.sendGalleryPdf')
-                    ->subject("Gallery PDF Generate")
+                    ->subject("Your ArteVue Gallery PDF Catalogue")
+                    ->with([
+                        'user' => $this->user
+                    ])
                     ->attachData($attachment, 'gallery-pdf.pdf', [
                         'mime' => 'application/pdf',
                     ]);
