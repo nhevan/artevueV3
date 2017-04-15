@@ -29,7 +29,7 @@ class MessageParticipantsController extends ApiController
      */
 	public function index(Request $request)
 	{
-		$message_history = $this->messageParticipant->where('participant_one', $request->user()->id)->orWhere('participant_two', $request->user()->id)->with('lastMessage', 'participantOneData', 'participantTwoData')->paginate(10);
+		$message_history = $this->messageParticipant->where('participant_one', $request->user()->id)->orWhere('participant_two', $request->user()->id)->orderBy('last_message_id', 'DESC')->with('lastMessage', 'participantOneData', 'participantTwoData')->paginate(10);
 
 		return $this->respondWithPagination($message_history, $this->messageParticipantTransformer);
 	}
