@@ -206,14 +206,10 @@ class PostsController extends ApiController
         }
 
         $this->decrementUserPostCount($this->post->owner_id);
-        
-        //decrease user like count 
-        //decrease user tag count 
-        //decrease pin count for all users who pinned this post
         $this->decrementUserPinCountWhoPinnedThisPost($this->post->id);
-        //decrease like count for all users who liked this post
-        //decrease comment count for all users who commented on this post
-        //decrease tag count for all users who were tagged in this post
+        $this->decrementUserLikeCountWhoLikedThisPost($this->post->id);
+        $this->decrementUserCommentCountWhoCommentedOnThisPost($this->post->id);
+        $this->decrementUserTagCountWhoWereTaggedOnThisPost($this->post->id);
         
         if ($this->post->artist_id) {
             $this->decreasePreviousArtistPostCount($this->post->artist_id);

@@ -3,8 +3,11 @@
 namespace App\Traits;
 
 use App\Pin;
+use App\Tag;
+use App\Like;
 use App\Post;
 use App\Artist;
+use App\Comment;
 use App\Follower;
 use App\UserMetadata;
 use App\MessageParticipant;
@@ -146,6 +149,45 @@ trait CounterSwissKnife{
         $pins = Pin::where(['post_id'=>$post_id])->get();
         foreach ($pins as $pin) {
             $this->decrementUserPinCount($pin->user_id);
+        }
+    }
+
+    /**
+     * decrease like count for all users who liked a given post, as the post is being deleted
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserLikeCountWhoLikedThisPost($post_id)
+    {
+        $likes = Like::where(['post_id'=>$post_id])->get();
+        foreach ($likes as $like) {
+            $this->decrementUserLikeCount($like->user_id);
+        }
+    }
+
+    /**
+     * decrease comment count for all users who commented on the given post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserCommentCountWhoCommentedOnThisPost($post_id)
+    {
+        $comments = Comment::where(['post_id'=>$post_id])->get();
+        foreach ($comments as $comment) {
+            $this->decrementUserCommentCount($comment->user_id);
+        }
+    }
+
+    /**
+     * decrease tag count for all users that were tagged on this post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function decrementUserTagCountWhoWereTaggedOnThisPost($post_id)
+    {
+        $tags = Tag::where(['post_id'=>$post_id])->get();
+        foreach ($tags as $tag) {
+            $this->decrementUserTaggedCount($tag->user_id);
         }
     }
 
