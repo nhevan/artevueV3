@@ -43,3 +43,9 @@ Info@artevue.co.uk';
 	$pdf->setPaper('a4')->setOption('margin-bottom', '0mm');
 	return $pdf->inline();
 });
+
+Route::get('events', 'EventsController@show');
+Route::get('events/create', 'EventsController@create');
+Route::post('events/store', 'EventsController@store');
+Route::get('events/view/{event_id}', 'EventsController@view');
+Route::get('events/delete/{event_id}', 'EventsController@delete');

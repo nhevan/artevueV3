@@ -8,6 +8,18 @@ use Acme\Transformers\EventTransformer;
 
 class EventsController extends ApiController
 {
+    protected $request;
+    
+    /**
+     * Acme/Transformers/postTransformer
+     * @var postTransformer
+     */
+    protected $postTransformer;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -28,6 +40,7 @@ class EventsController extends ApiController
     public function create()
     {
         //
+        return view('events.add');
     }
 
     /**
@@ -36,9 +49,36 @@ class EventsController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+
+
+        $path = $this->uploadEventImageTos3();
+
+        $this->request->merge(['image' => $path]);
+        $event =  New Event;
+        $event->fill($this->request->all());
+
+        // var_dump($this->request->all());
+
+        
+        $event->save();
+
+
+        return redirect()->action(
+            'EventsController@show'
+        );
+        
+    }
+
+    public function uploadEventImageTos3()
+    {
+        $storage = config('app.storage');
+        $path = $this->request->file('image_url')->store(
+            'img/events', 's3'
+        );
+        
+        return $path;
     }
 
     /**
@@ -50,6 +90,25 @@ class EventsController extends ApiController
     public function show(Event $event)
     {
         //
+        $events = Event::all();
+        return view('events.index',compact('events'));
+    }
+
+    public function view($id)
+    {
+        //
+        $event = Event::where('id', '=', $id)->first();
+        return view('events.view',compact('event'));
+    }
+
+    public function delete($id)
+    {
+        //
+        Event::where(['id' => $id])->delete();
+
+        return redirect()->action(
+            'EventsController@show'
+        );
     }
 
     /**
