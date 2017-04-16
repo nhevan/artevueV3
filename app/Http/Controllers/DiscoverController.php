@@ -40,7 +40,11 @@ class DiscoverController extends ApiController
     	$limit = 20;
 
 		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
-		$undiscovered_users = $this->getPaginatedUsers($users_my_followers_are_following, $limit);
+        $followers_not_connected_to_me = $this->getNotConectedFollowers();
+        $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
+        // var_dump($merged);
+        // exit();
+		$undiscovered_users = $this->getPaginatedUsers($merged_users, $limit);
 
 		return $this->respondWithPagination($undiscovered_users, $this->discoverUserTransformer);
     }
@@ -69,6 +73,21 @@ class DiscoverController extends ApiController
     	$users_my_followers_are_following = $this->getIdsOfUsersMyFollowersAreFollowing();
 
     	return $users_my_followers_are_following;
+    }
+
+    public function getNotConectedFollowers()
+    {
+        $my_other_known_users = $this->getIdsOfUsersMyFollowersAreFollowing();
+        
+        $my_followers = $this->getMyFollowersIds();
+        // var_dump($my_followers);
+        // exit();
+
+        $all_known_users = $my_followers->merge($my_other_known_users)->all();
+
+        $users = User::whereNotIn('id', $all_known_users)->pluck('id')->toArray();
+        
+        return $users;
     }
 
     /**
