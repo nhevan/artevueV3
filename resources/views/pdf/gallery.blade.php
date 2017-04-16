@@ -29,7 +29,7 @@
 					if ($count == 0)
 						echo "<tr style='margin: 2cm;page-break-inside:avoid;'>";
 					@endphp
-					<td style="text-align: center;border: 0px solid red">
+					<td style="text-align: center;border: 0px solid red;vertical-align: top;">
 						<img style="width: 6cm;" src="http://dy01r176shqrv.cloudfront.net/{{$image['image']}}"/>
 						<p style="width: 6cm;font-size: 3mm;text-align: center;margin:0 auto;">{{ $image['description'] }}</p>
 					</td>
