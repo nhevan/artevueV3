@@ -4,6 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+        <a href="/events/show-create-form" class="btn btn-primary pull-right">Add Event</a>
             <table class="table table-striped">
                 <thead>
                   <tr>

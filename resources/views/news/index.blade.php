@@ -4,6 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+        <a href="/news/show-create-form" class="btn btn-primary pull-right">Add News</a>
             <table class="table table-striped">
                 <thead>
                   <tr>
