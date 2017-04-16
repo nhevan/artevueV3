@@ -41,14 +41,15 @@ trait NotificationSwissKnife{
      */
     public function sendFcmMessage(User $receiver, $title, $message)
     {
+
         $gcm_registration_key = $receiver->gcm_registration_key;
         $params = [
             'registration_ids' => [$gcm_registration_key],
             'notification' => array('body'=>$message, 'title'=>$title,'sound'=>'default','content_available'=>1,'type'=>1),
             'priority' => "high"
         ];
-        
-        $response = $this->postToFCM($params);
+        if($receiver->metadata->is_notification_enabled)
+            $response = $this->postToFCM($params);
     }
 
     /**

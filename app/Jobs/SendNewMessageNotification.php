@@ -32,7 +32,7 @@ class SendNewMessageNotification implements ShouldQueue
      */
     public function handle()
     {
-        $this->sendFcmMessage($this->message->receiver, 'New Message', $this->message->receiver->username.' : '.$this->message->message);
+        $this->sendFcmMessage($this->message->receiver, 'New Message', $this->message->sender->username.' : '.$this->message->message);
 
         $this->sendPusherNotification('message_channel', 'personal-messaging', $this->message);
         $this->sendPusherNotification($this->message->receiver_id.'-message-channel', 'new-message', $this->message, ['type'=>'new message']);

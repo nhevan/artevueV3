@@ -37,6 +37,7 @@ class HashtagsController extends ApiController
      */
     public function latestPosts($hashtag_title)
     {
+        $limit = 20;
     	$hashtag_title = '#'.$hashtag_title;
     	$hashtag = Hashtag::where('hashtag', $hashtag_title)->first();
 
@@ -45,7 +46,7 @@ class HashtagsController extends ApiController
     	}
     	$top_posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->limit(9)->get()->pluck('post_id')->toArray();
 
-    	$posts = $hashtag->posts()->whereNotIn('post_id', $top_posts)->with('artist', 'owner', 'tags')->latest()->paginate(5);
+    	$posts = $hashtag->posts()->whereNotIn('post_id', $top_posts)->with('artist', 'owner', 'tags')->latest()->paginate($limit);
 
     	return $this->respondWithPagination($posts, New PostTransformer);
     }
