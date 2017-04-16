@@ -8,6 +8,18 @@ use Acme\Transformers\NewsTransformer;
 
 class NewsController extends ApiController
 {
+    protected $request;
+    
+    /**
+     * Acme/Transformers/postTransformer
+     * @var postTransformer
+     */
+    protected $postTransformer;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +39,7 @@ class NewsController extends ApiController
      */
     public function create()
     {
-        //
+        return view('news.add');
     }
 
     /**
@@ -36,29 +48,60 @@ class NewsController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $path = $this->uploadNewsImageTos3();
+        $this->request->merge(['image' => $path]);
+        $news =  New News;
+        $news->fill($this->request->all());
+        $news->save();
+        return redirect()->action(
+            'NewsController@show'
+        );     
+    }
+
+    public function uploadNewsImageTos3()
+    {
+        $storage = config('app.storage');
+        $path = $this->request->file('image_url')->store(
+            'img/news', 's3'
+        );   
+        return $path;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\News  $news
+     * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
     public function show(News $news)
     {
-        //
+        $newses = News::all();
+        return view('news.index',compact('newses'));
+    }
+
+    public function view($id)
+    {
+        $news = News::where('id', '=', $id)->first();
+        return view('news.view',compact('news'));
+    }
+
+    public function delete($id)
+    {
+        News::where(['id' => $id])->delete();
+        return redirect()->action(
+            'NewsController@show'
+        );
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\News  $news
+     * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function edit(News $news)
+    public function edit(Event $news)
     {
         //
     }
@@ -67,10 +110,10 @@ class NewsController extends ApiController
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\News  $news
+     * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(Request $request, Event $news)
     {
         //
     }
@@ -78,10 +121,10 @@ class NewsController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\News  $news
+     * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy(Event $news)
     {
         //
     }

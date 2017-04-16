@@ -11,7 +11,7 @@
           <p>Start Date: {{ $event->start_date }}</p>
           <p>End Date: {{ $event->end_date }}</p>
           <p>Publish Date: {{ $event->publish_date }}</p>
-          <p><img src="{{ URL::asset('images/events/al-marsa.jpg') }}" style="width: 70%;"/></p>
+          <p><img src="http://dy01r176shqrv.cloudfront.net/{{$event->image}}" style="width: 70%;"/></p>
           <p>{{ $event->description }}</p>
         </div>
     </div>

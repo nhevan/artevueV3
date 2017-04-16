@@ -39,7 +39,6 @@ class EventsController extends ApiController
      */
     public function create()
     {
-        //
         return view('events.add');
     }
 
@@ -51,24 +50,14 @@ class EventsController extends ApiController
      */
     public function store()
     {
-
-
         $path = $this->uploadEventImageTos3();
-
         $this->request->merge(['image' => $path]);
         $event =  New Event;
         $event->fill($this->request->all());
-
-        // var_dump($this->request->all());
-
-        
         $event->save();
-
-
         return redirect()->action(
             'EventsController@show'
-        );
-        
+        );       
     }
 
     public function uploadEventImageTos3()
@@ -96,16 +85,13 @@ class EventsController extends ApiController
 
     public function view($id)
     {
-        //
         $event = Event::where('id', '=', $id)->first();
         return view('events.view',compact('event'));
     }
 
     public function delete($id)
     {
-        //
         Event::where(['id' => $id])->delete();
-
         return redirect()->action(
             'EventsController@show'
         );

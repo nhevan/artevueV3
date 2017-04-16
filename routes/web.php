@@ -49,3 +49,9 @@ Route::get('events/create', 'EventsController@create');
 Route::post('events/store', 'EventsController@store');
 Route::get('events/view/{event_id}', 'EventsController@view');
 Route::get('events/delete/{event_id}', 'EventsController@delete');
+
+Route::get('news', 'NewsController@show');
+Route::get('news/create', 'NewsController@create');
+Route::post('news/store', 'NewsController@store');
+Route::get('news/view/{news_id}', 'NewsController@view');
+Route::get('news/delete/{news_id}', 'NewsController@delete');
