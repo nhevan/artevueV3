@@ -44,11 +44,11 @@ Info@artevue.co.uk';
 	return $pdf->inline();
 });
 
-Route::get('events', 'EventsController@show');
-Route::get('events/create', 'EventsController@create');
-Route::post('events/store', 'EventsController@store');
-Route::get('events/view/{event_id}', 'EventsController@view');
-Route::get('events/delete/{event_id}', 'EventsController@delete');
+Route::get('events/all', 'EventsController@show')->middleware('auth');
+Route::get('events/show-create-form', 'EventsController@create')->middleware('auth');
+Route::post('events/store', 'EventsController@store')->middleware('auth');
+Route::get('events/view/{event_id}', 'EventsController@view')->middleware('auth');
+Route::get('events/delete/{event_id}', 'EventsController@delete')->middleware('auth');
 
 Route::get('news', 'NewsController@show');
 Route::get('news/create', 'NewsController@create');
