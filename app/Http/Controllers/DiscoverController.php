@@ -125,7 +125,7 @@ class DiscoverController extends ApiController
         $posted_at = Carbon::createFromFormat('Y-m-d H:i:s', $created_at);
 
         $difference = $posted_at->diffInHours($now);
-        if (!$difference) {
+        if ($difference) {
             return $difference;
         }
         return 1;
