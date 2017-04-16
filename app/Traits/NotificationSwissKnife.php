@@ -42,6 +42,7 @@ trait NotificationSwissKnife{
     public function sendFcmMessage(User $receiver, $title, $message)
     {
 
+        $receiver->load('metadata');
         $gcm_registration_key = $receiver->gcm_registration_key;
         $params = [
             'registration_ids' => [$gcm_registration_key],
