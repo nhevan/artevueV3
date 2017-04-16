@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\User;
 use App\Follower;
+use Carbon\Carbon;
 use App\UserMetadata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Acme\Transformers\DiscoverUserTransformer;
 class DiscoverController extends ApiController
 {
     protected $user;
+    protected $request;
     
     /**
      * Acme/Transformers/discoverUserTransformer
@@ -22,9 +24,10 @@ class DiscoverController extends ApiController
      */
     protected $discoverUserTransformer;
 
-    public function __construct(DiscoverUserTransformer $discoverUserTransformer)
+    public function __construct(DiscoverUserTransformer $discoverUserTransformer, Request $request)
     {
     	$this->discoverUserTransformer = $discoverUserTransformer;
+        $this->request = $request;
     }
 
     /**
@@ -92,7 +95,35 @@ class DiscoverController extends ApiController
      */
     public function getPaginatedPosts($user_ids, $limit)
     {
-    	return Post::whereIn('owner_id', $user_ids)->latest()->with('owner', 'tags', 'artist')->paginate($limit);
+    	$posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
+            ->whereIn('owner_id', $user_ids)
+            ->latest()
+            ->with('owner', 'tags', 'artist')
+            ->get();
+
+        $posts->map(function ($post) {
+            $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
+            $post['score'] = $post['total_count'] / $hours_till_posted;
+            return $post;
+        });
+
+        $posts = $posts->sortByDesc('score')->values()->all();
+        
+        $paginated_result = $this->getPaginated($posts, $limit);
+        
+        return $paginated_result;
+    }
+
+    /**
+     * fetch the number hours from till and when the post was actually created
+     * @param  [type] $created_at [description]
+     * @return [type]             [description]
+     */
+    public function getHoursTillPosted($created_at)
+    {
+        $now = Carbon::now();
+        $posted_at = Carbon::createFromFormat('Y-m-d H:i:s', $created_at);
+        return $posted_at->diffInHours($now);
     }
 
     /**
