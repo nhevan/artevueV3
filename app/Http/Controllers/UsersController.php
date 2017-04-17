@@ -15,13 +15,16 @@ use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Input;
+use Acme\Transformers\PostTransformer;
 use Acme\Transformers\UserTransformer;
 use App\Notifications\QueuedJobFailed;
+use App\Traits\NotificationSwissKnife;
 use Acme\Transformers\ActivityTransformer;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\UserSearchTransformer;
@@ -30,7 +33,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
 {
-    use CounterSwissKnife;
+    use CounterSwissKnife, NotificationSwissKnife;
     protected $user;
     
     /**
@@ -752,5 +755,16 @@ class UsersController extends ApiController
         $user->notify(new QueuedJobFailed());
 
         return $this->respond(['message' => 'Message successfully posted to slack webhook.']);
+    }
+
+    /**
+     * test mix panel integration
+     * @return [type] [description]
+     */
+    public function testMixpanel()
+    {
+        dispatch( new SendMixpanelAction(Auth::user(), "New Action Dispatched.", ['test' => 'properties']));
+
+        return $this->respond(['message' => 'Test Mix Panel action successfully sent.']);
     }
 }
