@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\LikeTransformer;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\SendPostDeletedNotification;
 use Illuminate\Http\Response as IlluminateResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -214,7 +215,7 @@ class PostsController extends ApiController
         if ($this->post->artist_id) {
             $this->decreasePreviousArtistPostCount($this->post->artist_id);
         }
-
+        dispatch(new SendPostDeletedNotification($this->post));
         $this->post->delete();
 
         return $this->respond(['message' => 'Post successfully deleted']);

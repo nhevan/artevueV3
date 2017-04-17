@@ -39,7 +39,7 @@ trait NotificationSwissKnife{
      * @param  [type] $message  [description]
      * @return GuzzleHttp\Psr7\Response           [description]
      */
-    public function sendFcmMessage(User $receiver, $title, $message)
+    public function sendFcmMessage(User $receiver, $title, $message, $priority = "high")
     {
 
         $receiver->load('metadata');
@@ -47,7 +47,7 @@ trait NotificationSwissKnife{
         $params = [
             'registration_ids' => [$gcm_registration_key],
             'notification' => array('body'=>$message, 'title'=>$title,'sound'=>'default','content_available'=>1,'type'=>1),
-            'priority' => "high"
+            'priority' => $priority
         ];
         if($receiver->metadata->is_notification_enabled)
             $response = $this->postToFCM($params);
