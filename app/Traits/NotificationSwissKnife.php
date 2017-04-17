@@ -92,27 +92,4 @@ trait NotificationSwissKnife{
             $this->sendPusherNotification($channel, $event, $data);
         }
     }
-
-    /**
-     * sends a action to mixpanel
-     * @param  User    $user   [description]
-     * @param  string  $action actions like "New Like", "PDF Generate Request" etc.
-     * @param  array  $properties additional properties like profile_id, age, gender to pass along with the event
-     * @param  integer $ip     [description]
-     */
-    public function sendMixpanelAction(User $user, $action, array $properties = [], $ip = 0)
-    {
-        $token = config('app.mixpanel_project_token');
-
-        $mp = \Mixpanel::getInstance($token);
-        $mp->people->set($user->id, array(
-            '$name'       => $user->name,
-            '$email'      => $user->email,
-            '$username'   => $user->username,
-        ), $ip, $ignore_time = true);
-
-        $mp->identify($user->id);
-
-        $mp->track($action, $properties);
-    }
 }

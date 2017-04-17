@@ -15,6 +15,7 @@ use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -762,6 +763,8 @@ class UsersController extends ApiController
      */
     public function testMixpanel()
     {
-        $this->sendMixpanelAction(Auth::user(), "New Comment");
+        dispatch( new SendMixpanelAction(Auth::user(), "New Action Dispatched.", ['test' => 'properties']));
+
+        return $this->respond(['message' => 'Test Mix Panel action successfully sent.']);
     }
 }
