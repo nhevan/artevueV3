@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
+use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
