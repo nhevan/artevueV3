@@ -52,7 +52,7 @@ class EventsController extends ApiController
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'publish_date' => 'required|date',
-            'image' => 'required|file',
+            'image_url' => 'required|file',
         ]);
         $path = $this->uploadEventImageTos3();
         $this->request->merge(['image' => $path]);
@@ -67,7 +67,7 @@ class EventsController extends ApiController
     public function uploadEventImageTos3()
     {
         $storage = config('app.storage');
-        $path = $this->request->file('image')->store(
+        $path = $this->request->file('image_url')->store(
             'img/events', 's3'
         );
         

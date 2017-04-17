@@ -14,7 +14,7 @@
               </div>
               <div class="form-group">
                 <label>Description</label>
-                <textarea name="description" class="form-control" value="{{ old('description') }}" required></textarea>
+                <textarea name="description" class="form-control" required>{{ old('description') }}</textarea>
               </div>
               <div class="form-group">
                 <label>Location</label>
@@ -22,7 +22,7 @@
               </div>
               <div class="form-group">
                 <label>Image</label>
-                <input type="file" name="image" class="" value="{{ old('image') }}" required>
+                <input type="file" name="image_url" class="" value="{{ old('image_url') }}" required>
               </div>
               <div class="form-group">
                 <label>Url</label>

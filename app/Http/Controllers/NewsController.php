@@ -50,6 +50,13 @@ class NewsController extends ApiController
      */
     public function store()
     {
+        $this->validate($this->request, [
+            'headline' => 'required|max:255',
+            'description' => 'required',
+            'url' => 'required|url',
+            'publish_date' => 'required|date',
+            'image_url' => 'required|file',
+        ]);
         $path = $this->uploadNewsImageTos3();
         $this->request->merge(['image' => $path]);
         $news =  New News;
