@@ -2,6 +2,9 @@
 
 return [
     'fcm_server_key' => env('FCM_SERVER_KEY'),
+
+    'mixpanel_project_token' => env('MIXPANEL_PROJECT_TOKEN'),
+
     'storage' => env('STORAGE', 'local'),
     /*
     |--------------------------------------------------------------------------

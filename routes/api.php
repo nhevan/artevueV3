@@ -108,3 +108,5 @@ Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@
 
 Route::middleware('auth:api')->get('/art-preferences', 'ArtPreferencesController@index');
 Route::middleware('auth:api')->get('/art-types', 'ArtTypesController@index');
+
+Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');

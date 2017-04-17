@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Input;
 use Acme\Transformers\UserTransformer;
 use App\Notifications\QueuedJobFailed;
+use App\Traits\NotificationSwissKnife;
 use Acme\Transformers\ActivityTransformer;
 use Acme\Transformers\FollowerTransformer;
 use Acme\Transformers\UserSearchTransformer;
@@ -30,7 +31,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
 {
-    use CounterSwissKnife;
+    use CounterSwissKnife, NotificationSwissKnife;
     protected $user;
     
     /**
@@ -752,5 +753,10 @@ class UsersController extends ApiController
         $user->notify(new QueuedJobFailed());
 
         return $this->respond(['message' => 'Message successfully posted to slack webhook.']);
+    }
+
+    public function testMixpanel()
+    {
+        $this->sendMixpanelAction(Auth::user()->id, "New Like");
     }
 }

@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\User;
 use App\Follower;
+use Illuminate\Support\Facades\Auth;
 
 trait NotificationSwissKnife{
 
@@ -90,5 +91,15 @@ trait NotificationSwissKnife{
             $channel = $follower_id.'-activity-channel';
             $this->sendPusherNotification($channel, $event, $data);
         }
+    }
+
+    public function sendMixpanelAction($user_id, $action)
+    {
+        $token = config('app.mixpanel_project_token');
+
+        $mp = \Mixpanel::getInstance($token);
+        $mp->identify($user_id);
+
+        $mp->track($action);
     }
 }
