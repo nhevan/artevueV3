@@ -33,7 +33,7 @@ class SendPostDeletedNotification implements ShouldQueue
      */
     public function handle()
     {
-        $this->sendFcmMessage($this->post->owner, 'Post Deleted', "You deleted one of your post", "low");
-        $this->sendPusherNotification('post_deleted', 'general-notification', ["message" => "A post has been deleted."]);
+        $this->sendFcmMessage($this->post->owner, 'Post Deleted', "You deleted one of your post", "normal");
+        // $this->sendPusherNotification('post_deleted', 'general-notification', ["message" => "A post has been deleted."]);
     }
 }
