@@ -9,12 +9,6 @@ use Acme\Transformers\EventTransformer;
 class EventsController extends ApiController
 {
     protected $request;
-    
-    /**
-     * Acme/Transformers/postTransformer
-     * @var postTransformer
-     */
-    protected $postTransformer;
 
     public function __construct(Request $request)
     {
@@ -37,7 +31,7 @@ class EventsController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function showAddForm()
     {
         return view('events.add');
     }
@@ -56,7 +50,7 @@ class EventsController extends ApiController
         $event->fill($this->request->all());
         $event->save();
         return redirect()->action(
-            'EventsController@show'
+            'EventsController@all'
         );       
     }
 
@@ -78,23 +72,17 @@ class EventsController extends ApiController
      */
     public function show(Event $event)
     {
-        //
-        $events = Event::all();
-        return view('events.index',compact('events'));
-    }
-
-    public function view($id)
-    {
-        $event = Event::where('id', '=', $id)->first();
         return view('events.view',compact('event'));
     }
 
-    public function delete($id)
+    /**
+     * displays list of all events
+     * @return [type] [description]
+     */
+    public function all()
     {
-        Event::where(['id' => $id])->delete();
-        return redirect()->action(
-            'EventsController@show'
-        );
+        $events = Event::all();
+        return view('events.index', compact('events'));
     }
 
     /**
@@ -128,6 +116,9 @@ class EventsController extends ApiController
      */
     public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return redirect()->action(
+            'EventsController@all'
+        );
     }
 }
