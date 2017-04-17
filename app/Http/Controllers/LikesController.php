@@ -39,6 +39,7 @@ class LikesController extends ApiController
     		$new_like = $this->like->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
 
             dispatch(new SendNewLikeNotification($new_like));
+            dispatch(new SendMixpanelAction(Auth::user(), "New Like"));
 
     		$this->incrementPostLikeCount($post_id);
 	    	$this->incrementUserLikeCount($this->request->user()->id);

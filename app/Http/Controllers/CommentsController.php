@@ -66,6 +66,7 @@ class CommentsController extends ApiController
             $this->incrementCommentCountInFollowersTable($post->owner_id);
             
             dispatch(new SendNewCommentNotification($new_comment));
+            dispatch(new SendMixpanelAction(Auth::user(), "New Comment"));
 
         	return $this->respond(['message' => 'comment successfully posted.']);
         }

@@ -42,6 +42,8 @@ class PinsController extends ApiController
 	    	$this->incrementUserPinCount($this->request->user()->id);
             $this->updatePinCountInFollowersTable($post->owner_id);
 
+            dispatch( new SendMixpanelAction(Auth::user(), "New Pin"));
+
     		return $this->respond([ 'message' => 'Post successfully pinned.' ]);
     	}
     	return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user already pinned this post.');

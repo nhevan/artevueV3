@@ -96,6 +96,8 @@ class FollowersController extends ApiController
         	return $this->removeFollower($user_id);
         }
         
+        dispatch(new SendMixpanelAction(Auth::user(), "New Follower"));
+
         return $this->startFollowing($user_id);
     }
 

@@ -152,6 +152,8 @@ class MessagesController extends ApiController
     	}
     	
     	dispatch(new SendNewMessageNotification($message));
+    	dispatch(new SendMixpanelAction(Auth::user(), "New Message"));
+
     	$this->incrementMessageCount($request->user()->id);
     	$this->updateTotalMessageCountInParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
     	$this->updateMessageCountInFollowersTable($request->receiver_id);
