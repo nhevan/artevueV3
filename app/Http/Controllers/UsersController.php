@@ -757,6 +757,8 @@ class UsersController extends ApiController
 
     public function testMixpanel()
     {
-        $this->sendMixpanelAction(Auth::user()->id, "New Like");
+        // var_dump($this->request->ip());
+        // exit();
+        $this->sendMixpanelAction(Auth::user(), "New Comment");
     }
 }

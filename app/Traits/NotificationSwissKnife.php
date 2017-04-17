@@ -93,12 +93,18 @@ trait NotificationSwissKnife{
         }
     }
 
-    public function sendMixpanelAction($user_id, $action)
+    public function sendMixpanelAction(User $user, $action, $ip = 0)
     {
         $token = config('app.mixpanel_project_token');
 
         $mp = \Mixpanel::getInstance($token);
-        $mp->identify($user_id);
+        $mp->people->set($user->id, array(
+            '$name'       => $user->name,
+            '$email'      => $user->email,
+            '$username'   => $user->username,
+        ), $ip, $ignore_time = true);
+
+        $mp->identify($user->id);
 
         $mp->track($action);
     }
