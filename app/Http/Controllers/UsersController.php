@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Input;
+use Acme\Transformers\PostTransformer;
 use Acme\Transformers\UserTransformer;
 use App\Notifications\QueuedJobFailed;
 use App\Traits\NotificationSwissKnife;
@@ -755,10 +756,12 @@ class UsersController extends ApiController
         return $this->respond(['message' => 'Message successfully posted to slack webhook.']);
     }
 
+    /**
+     * test mix panel integration
+     * @return [type] [description]
+     */
     public function testMixpanel()
     {
-        // var_dump($this->request->ip());
-        // exit();
         $this->sendMixpanelAction(Auth::user(), "New Comment");
     }
 }
