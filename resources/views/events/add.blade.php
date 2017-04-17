@@ -10,41 +10,50 @@
               {{ csrf_field() }}
               <div class="form-group">
                 <label>Headline</label>
-                <input type="text" name="headline" class="form-control" required>
+                <input type="text" name="headline" class="form-control" value="{{ old('headline') }}" required>
               </div>
               <div class="form-group">
                 <label>Description</label>
-                <input type="text" name="description" class="form-control" required>
+                <textarea name="description" class="form-control" value="{{ old('description') }}" required></textarea>
               </div>
               <div class="form-group">
                 <label>Location</label>
-                <input type="text" name="location" class="form-control" required>
+                <input type="text" name="location" class="form-control" value="{{ old('location') }}" required>
               </div>
               <div class="form-group">
                 <label>Image</label>
-                <input type="file" name="image_url" class="" required>
+                <input type="file" name="image" class="" value="{{ old('image') }}" required>
               </div>
               <div class="form-group">
                 <label>Url</label>
-                <input type="text" name="url" class="form-control" required>
+                <input type="text" name="url" class="form-control" value="{{ old('url') }}" required>
               </div>
               <div class="form-group">
                 <label>Start Date</label>
-                <input type="text" name="start_date" class="datepicker form-control" required>
+                <input type="text" name="start_date" class="datepicker form-control" value="{{ old('start_date') }}" required>
               </div>
               <div class="form-group">
                 <label>End Date</label>
-                <input type="text" name="end_date" class="datepicker form-control" required>
+                <input type="text" name="end_date" class="datepicker form-control" value="{{ old('end_date') }}" required>
               </div>
               <div class="form-group">
                 <label>Publish Date</label>
-                <input type="text" name="publish_date" class="datepicker form-control" required>
+                <input type="text" name="publish_date" class="datepicker form-control" value="{{ old('publish_date') }}" required>
               </div>
               <div class="form-group">
                 <button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Submit</button>
               </div>
             
             </form>
+            @if (count($errors) > 0)
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
 </div>
