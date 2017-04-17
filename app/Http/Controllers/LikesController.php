@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Like;
 use App\Post;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use App\Jobs\SendNewLikeNotification;
 use App\Traits\NotificationSwissKnife;

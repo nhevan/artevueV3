@@ -13,6 +13,7 @@ use App\Follower;
 use App\PostHashtag;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;

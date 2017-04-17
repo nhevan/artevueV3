@@ -6,6 +6,7 @@ use App\Pin;
 use App\Post;
 use App\User;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Http\Response as IlluminateResponse;

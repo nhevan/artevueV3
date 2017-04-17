@@ -7,6 +7,7 @@ use App\Comment;
 use App\Hashtag;
 use App\CommentHashtag;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use App\Jobs\SendNewCommentNotification;
 use Acme\Transformers\CommentTransformer;

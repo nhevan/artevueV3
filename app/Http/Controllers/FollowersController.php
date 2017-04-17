@@ -6,6 +6,7 @@ use App\User;
 use App\Follower;
 use App\Events\NewFollower;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
