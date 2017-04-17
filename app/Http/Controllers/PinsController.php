@@ -6,7 +6,9 @@ use App\Pin;
 use App\Post;
 use App\User;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
+use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
@@ -41,6 +43,8 @@ class PinsController extends ApiController
     		$this->incrementPostPinCount($post_id);
 	    	$this->incrementUserPinCount($this->request->user()->id);
             $this->updatePinCountInFollowersTable($post->owner_id);
+
+            dispatch( new SendMixpanelAction(Auth::user(), "New Pin"));
 
     		return $this->respond([ 'message' => 'Post successfully pinned.' ]);
     	}

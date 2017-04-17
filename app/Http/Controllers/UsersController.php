@@ -106,7 +106,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        //start following ArteVue
+        dispatch( new SendMixpanelAction($user, "New Signup", ['media' => 'App']));
         $this->sendWelcomeEmail($user);
 
         return $this->respond(['message' => 'User successfully signed up.']);
@@ -190,7 +190,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        //start following ArteVue
+        dispatch( new SendMixpanelAction($user, "New Signup", ['media' => 'Facebook']));
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
     }

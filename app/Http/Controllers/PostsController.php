@@ -13,6 +13,7 @@ use App\Follower;
 use App\PostHashtag;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -78,6 +79,8 @@ class PostsController extends ApiController
         $this->saveTaggedUsers();
         $this->saveHashtags();
         $this->sendNewPostEvent(); //need to implement
+
+        dispatch( new SendMixpanelAction(Auth::user(), "New Post"));
         
         return $this->respond(['message'=>'New Post created.']);
     }
@@ -481,6 +484,8 @@ class PostsController extends ApiController
 
         $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->paginate(20);
 
+        dispatch( new SendMixpanelAction(Auth::user(), "Feed View"));
+
         return $this->respondWithPagination($feed_posts, $this->postTransformer);
         var_dump($feed_posts);
     }
@@ -503,6 +508,8 @@ class PostsController extends ApiController
         }
 
         $posts = $this->fetchAllFilteredPosts();
+
+        dispatch( new SendMixpanelAction(Auth::user(), "Advance Search"));
 
         return $this->respondWithPagination($posts, $this->postTransformer);
     }
@@ -588,6 +595,7 @@ class PostsController extends ApiController
         $data['posts'] = $this->request->posts;
 
         Mail::to(Auth::user()->email)->queue(new SendGalleryPdf($data, Auth::user()));
+        dispatch( new SendMixpanelAction(Auth::user(), "Request Gallery PDF"));
 
         return $this->respond(['message' => 'Requested pdf will be emailed to you shortly.']);
     }
@@ -611,6 +619,8 @@ class PostsController extends ApiController
         $all_posts = $all_posts->sortBy('sequence')->values()->all();
 
         $paginated_result = $this->getPaginated($all_posts, $limit);
+
+        dispatch( new SendMixpanelAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]));
 
         return $this->respondWithPagination($paginated_result, $this->postTransformer);
     }
