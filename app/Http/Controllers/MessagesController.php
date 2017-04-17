@@ -11,6 +11,7 @@ use App\Traits\CounterSwissKnife;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Database\QueryException;
 use App\Jobs\SendNewMessageNotification;
+use App\Jobs\SendMessagesReadNotification;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class MessagesController extends ApiController
