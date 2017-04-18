@@ -19,6 +19,7 @@ class FollowersController extends ApiController
 	use CounterSwissKnife, NotificationSwissKnife;
 
     protected $follower;
+    protected $request;
     
     /**
      * Acme/Transformers/followerTransformer
@@ -26,10 +27,11 @@ class FollowersController extends ApiController
      */
     protected $followerTransformer;
 
-    public function __construct(Follower $follower, FollowerTransformer $followerTransformer)
+    public function __construct(Follower $follower, FollowerTransformer $followerTransformer, Request $request)
     {
         $this->follower = $follower;
         $this->followerTransformer = $followerTransformer;
+        $this->request = $request;
     }
 
     /**
