@@ -85,7 +85,7 @@ class DiscoverController extends ApiController
 
         $all_known_users = $my_followers->merge($my_other_known_users)->all();
 
-        $users = User::whereNotIn('id', $all_known_users)->pluck('id')->toArray();
+        $users = User::whereNotIn('id', $all_known_users)->where('id', '<>', Auth::user()->id)->pluck('id')->toArray();
         
         return $users;
     }
