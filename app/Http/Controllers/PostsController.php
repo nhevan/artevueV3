@@ -218,7 +218,8 @@ class PostsController extends ApiController
         if ($this->post->artist_id) {
             $this->decreasePreviousArtistPostCount($this->post->artist_id);
         }
-        dispatch(new SendPostDeletedNotification($this->post));
+        $owner = User::find($this->post->owner_id);
+        dispatch(new SendPostDeletedNotification($owner));
         $this->post->delete();
 
         return $this->respond(['message' => 'Post successfully deleted']);
