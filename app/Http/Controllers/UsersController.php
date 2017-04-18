@@ -15,7 +15,6 @@ use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
-use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -106,7 +105,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        dispatch( new SendMixpanelAction($user, "New Signup", ['media' => 'App']));
+        $this->trackAction(Auth::user(), "New Signup", ['media' => 'App']);
         $this->sendWelcomeEmail($user);
 
         return $this->respond(['message' => 'User successfully signed up.']);
@@ -190,7 +189,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        dispatch( new SendMixpanelAction($user, "New Signup", ['media' => 'Facebook']));
+        $this->trackAction(Auth::user(), "New Signup", ['media' => 'Facebook']);
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
     }

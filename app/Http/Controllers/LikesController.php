@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Like;
 use App\Post;
 use Illuminate\Http\Request;
-use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\SendNewLikeNotification;
@@ -41,7 +40,7 @@ class LikesController extends ApiController
     		$new_like = $this->like->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
 
             dispatch(new SendNewLikeNotification($new_like));
-            dispatch(new SendMixpanelAction(Auth::user(), "New Like"));
+            $this->trackAction(Auth::user(), "New Like");
 
     		$this->incrementPostLikeCount($post_id);
 	    	$this->incrementUserLikeCount($this->request->user()->id);

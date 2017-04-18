@@ -7,7 +7,6 @@ use App\Comment;
 use App\Hashtag;
 use App\CommentHashtag;
 use Illuminate\Http\Request;
-use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\SendNewCommentNotification;
@@ -68,7 +67,7 @@ class CommentsController extends ApiController
             $this->incrementCommentCountInFollowersTable($post->owner_id);
             
             dispatch(new SendNewCommentNotification($new_comment));
-            dispatch(new SendMixpanelAction(Auth::user(), "New Comment"));
+            $this->trackAction(Auth::user(), "New Comment");
 
         	return $this->respond(['message' => 'comment successfully posted.']);
         }

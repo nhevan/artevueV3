@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
+use App\Jobs\SendMixpanelAction;
 use Acme\Transformers\Transformer;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -225,4 +228,18 @@ class ApiController extends Controller
         return $paginated_result;
     }
     
+    /**
+     * registers a action to MixPanel
+     * @param  User    $user       [description]
+     * @param  string  $action     [description]
+     * @param  array   $properties [description]
+     * @param  integer $ip         [description]
+     * @return [type]              [description]
+     */
+    public function trackAction(User $user, $action, array $properties = [], $ip = 0)
+    {
+        $ip = $this->request->ip();
+        $job = (new SendMixpanelAction($user, $action, $properties, $ip))->onConnection('sync');
+        dispatch($job);
+    }
 }

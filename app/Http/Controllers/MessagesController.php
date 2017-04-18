@@ -7,7 +7,6 @@ use App\Message;
 use App\Events\MessageSent;
 use App\MessageParticipant;
 use Illuminate\Http\Request;
-use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
@@ -155,7 +154,7 @@ class MessagesController extends ApiController
     	}
     	
     	dispatch(new SendNewMessageNotification($message));
-    	dispatch(new SendMixpanelAction(Auth::user(), "New Message"));
+    	$this->trackAction(Auth::user(), "New Message");
 
     	$this->incrementMessageCount($request->user()->id);
     	$this->updateTotalMessageCountInParticipantsTable($request->user()->id, $request->receiver_id, $message->id);

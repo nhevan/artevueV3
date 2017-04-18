@@ -6,7 +6,6 @@ use App\User;
 use App\Follower;
 use App\Events\NewFollower;
 use Illuminate\Http\Request;
-use App\Jobs\SendMixpanelAction;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
@@ -97,7 +96,7 @@ class FollowersController extends ApiController
         	return $this->removeFollower($user_id);
         }
         
-        dispatch(new SendMixpanelAction(Auth::user(), "New Follower"));
+        $this->trackAction(Auth::user(), "New Follower");
 
         return $this->startFollowing($user_id);
     }
