@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Database\QueryException;
 use App\Jobs\SendNewMessageNotification;
+use Acme\Transformers\MessageTransformer;
 use App\Jobs\SendMessagesReadNotification;
 use Illuminate\Http\Response as IlluminateResponse;
 
@@ -21,11 +22,13 @@ class MessagesController extends ApiController
 
 	protected $message;
 	protected $request;
+	protected $messageTransformer;
 
-	public function __construct(Message $message, Request $request)
+	public function __construct(Message $message, Request $request, MessageTransformer $messageTransformer)
 	{
 		$this->message = $message;
 		$this->request = $request;
+		$this->messageTransformer = $messageTransformer;
 	}
 
 	/**
@@ -52,7 +55,7 @@ class MessagesController extends ApiController
 			$this->notifyFriend($friend_id);
 		}
 		
-		return $this->respond($conversation);
+		return $this->respondWithPagination($conversation, $this->messageTransformer);
 	}
 
 	/**
