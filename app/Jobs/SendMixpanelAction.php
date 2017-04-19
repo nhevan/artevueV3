@@ -59,7 +59,7 @@ class SendMixpanelAction implements ShouldQueue
             '$name'       => $this->user->name,
             '$email'      => $this->user->email,
             '$username'   => $this->user->username,
-        ), $this->ip, $ignore_time = false);
+        ), $this->ip, $ignore_time = true);
 
         $mp->identify($this->user->id);
 
