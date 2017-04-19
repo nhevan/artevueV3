@@ -138,6 +138,8 @@ class PostsController extends ApiController
     {
         $post->load('owner','artist', 'tags');
 
+        $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
+
         return $this->respondTransformattedModel($post->toArray(), $this->postTransformer);
     }
 
@@ -165,6 +167,8 @@ class PostsController extends ApiController
         $this->updateTaggedUsers();
     	$this->post->fill($this->request->all());
     	$this->post->save();
+
+        $this->trackAction(Auth::user(), "Edit Post", ['Post ID' => $post->id]);
 
     	return $this->respond(['message' => 'Post Successfully Updated.']);
     }
@@ -220,6 +224,8 @@ class PostsController extends ApiController
         $owner = User::find($this->post->owner_id);
         dispatch(new SendPostDeletedNotification($owner));
         $this->post->delete();
+
+        $this->trackAction(Auth::user(), "Delete Post");
 
         return $this->respond(['message' => 'Post successfully deleted']);
     }

@@ -43,7 +43,7 @@ class PinsController extends ApiController
 	    	$this->incrementUserPinCount($this->request->user()->id);
             $this->updatePinCountInFollowersTable($post->owner_id);
 
-            $this->trackAction(Auth::user(), "New Pin");
+            $this->trackAction(Auth::user(), "New Pin", ['Post ID' => $post_id]);
 
     		return $this->respond([ 'message' => 'Post successfully pinned.' ]);
     	}
@@ -70,6 +70,8 @@ class PinsController extends ApiController
 
     	$this->decrementPostPinCount($post_id);
     	$this->decrementUserPinCount($this->request->user()->id);
+
+        $this->trackAction(Auth::user(), "Remove Pin", ['Post ID' => $post_id]);
 
 		return $this->respond([ 'message' => 'Post successfully unpinned.' ]);
     }

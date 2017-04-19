@@ -38,6 +38,8 @@ class CommentsController extends ApiController
         }
         $comments = $this->comment->where('post_id', $post->id)->with('commentor')->paginate(15);
 
+        $this->trackAction(Auth::user(), "View Comments", ['Post ID' => $post_id]);
+
         return $this->respondWithPagination($comments, new CommentTransformer);
 	}
 	/**
@@ -95,6 +97,9 @@ class CommentsController extends ApiController
     		$this->decrementPostCommentCount($post_id);
 	    	$this->decrementUserCommentCount($this->request->user()->id);
             // $this->incrementCommentCountInFollowersTable($post->owner_id);
+            
+            $this->trackAction(Auth::user(), "Delete Comment", ['Post ID' => $post_id]); 
+            
     		return $this->respond(['message' => 'The comment has been successfully deleted.']);
     	}
     }

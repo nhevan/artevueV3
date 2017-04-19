@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\NewsTransformer;
 
 class NewsController extends ApiController
@@ -28,6 +29,8 @@ class NewsController extends ApiController
     public function index()
     {
         $news = News::latest()->paginate(10);
+
+        $this->trackAction(Auth::user(), "View News Feed");
 
         return $this->respondWithPagination($news, New NewsTransformer);
     }

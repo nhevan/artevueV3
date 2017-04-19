@@ -40,7 +40,7 @@ class LikesController extends ApiController
     		$new_like = $this->like->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
 
             dispatch(new SendNewLikeNotification($new_like));
-            $this->trackAction(Auth::user(), "New Like");
+            $this->trackAction(Auth::user(), "New Like", ['Post ID' => $post_id]);
 
     		$this->incrementPostLikeCount($post_id);
 	    	$this->incrementUserLikeCount($this->request->user()->id);
@@ -72,6 +72,8 @@ class LikesController extends ApiController
     	$this->decrementPostLikeCount($post_id);
     	$this->decrementUserLikeCount($this->request->user()->id);
     	$this->decrementLikeCountInFollowersTable($post->owner_id);
+
+        $this->trackAction(Auth::user(), "Remove Like", ['Post ID' => $post_id]);
 
 		return $this->respond([ 'message' => 'Post successfully unliked.' ]);
     }

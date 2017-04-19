@@ -124,6 +124,8 @@ class FollowersController extends ApiController
     	$follower->is_still_following = 0;
     	$follower->save();
 
+        $this->trackAction(Auth::user(), "Remove Follower");
+
     	$this->decrementFollowingCount(Auth::user()->id);
     	$this->decrementFollowerCount($user_id);
     	return $this->respond(['message' => Auth::user()->name.' stopped following a user.']);

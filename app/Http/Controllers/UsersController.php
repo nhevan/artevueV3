@@ -78,6 +78,8 @@ class UsersController extends ApiController
             return $this->responseNotFound('User does not exist.');
         }
 
+        $this->trackAction(Auth::user(), "View Profile", ['User ID' => $id]);
+
         return $this->respondTransformattedModel($user, $this->userTransformer);
     }
 
@@ -109,7 +111,7 @@ class UsersController extends ApiController
         $this->startFollowingArtevue($user->id);
         $this->startFollowingHarpersBazaar($user->id);
 
-        $this->trackAction(Auth::user(), "New Signup", ['media' => 'App']);
+        $this->trackAction($user, "New Signup", ['media' => 'App']);
         $this->sendWelcomeEmail($user);
 
         return $this->respond(['message' => 'User successfully signed up.']);
@@ -193,7 +195,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        $this->trackAction(Auth::user(), "New Signup", ['media' => 'Facebook']);
+        $this->trackAction($user, "New Signup", ['media' => 'Facebook']);
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
     }

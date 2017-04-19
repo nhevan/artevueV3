@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\EventTransformer;
 
 class EventsController extends ApiController
@@ -22,6 +23,8 @@ class EventsController extends ApiController
     public function index()
     {
         $events = Event::latest()->paginate(10);
+
+        $this->trackAction(Auth::user(), "View Events Feed");
 
         return $this->respondWithPagination($events, New EventTransformer);
     }
