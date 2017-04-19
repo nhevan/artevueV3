@@ -20,6 +20,7 @@ class MessageTransformer extends Transformer
                 'is_post' => $message['is_post'],
                 'url' => $message['url'],
                 'created_at' => $message['created_at'],
+                'updated_at' => $message['updated_at'],
             ];
     }
 }
