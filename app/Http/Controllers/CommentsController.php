@@ -36,7 +36,7 @@ class CommentsController extends ApiController
         if (!$post) {
             return $this->responseNotFound('Post does not exist.');
         }
-        $comments = $this->comment->where('post_id', $post->id)->with('commentor')->paginate(15);
+        $comments = $this->comment->where('post_id', $post->id)->latest()->with('commentor')->paginate(15);
 
         $this->trackAction(Auth::user(), "View Comments", ['Post ID' => $post_id]);
 
