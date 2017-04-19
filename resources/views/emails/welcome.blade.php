@@ -27,7 +27,7 @@ ArteVue is about making the art world accessible to everyone, anywhere in the wo
 Thank you and we look forward to seeing your art.
 <br>
 <br>
-![ArteVue Logo](http://dy01r176shqrv.cloudfront.net/artevue-only-logo-resized.png)
+![ArteVue Logo](http://dy01r176shqrv.cloudfront.net/artevue-only-logo-resized-v2.png)
 <br/>
 Sho Ahad-Choudhury<br>
 <br>
