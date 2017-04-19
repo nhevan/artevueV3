@@ -7,12 +7,16 @@ use App\Like;
 use App\Post;
 use App\User;
 use App\Comment;
+use App\Message;
 use App\Follower;
+use App\BlockedUser;
 use App\UserArtType;
+use App\ReportedUser;
 use App\UserMetadata;
 use App\ArtPreference;
 use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
+use App\MessageParticipant;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
 use App\Traits\CounterSwissKnife;
@@ -742,6 +746,38 @@ class UsersController extends ApiController
         $this->request->user()->password = bcrypt($this->request->new_password);
 
         $this->request->user()->save();
+    }
+
+    /**
+     * deletes a user object
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function destroy(User $user)
+    {
+        $followers = Follower::where('user_id', $user->id)->orWhere('follower_id', $user->id)->get();
+        $messages = Message::where('sender_id', $user->id)->orWhere('receiver_id', $user->id)->get();
+        $participants = MessageParticipant::where('participant_one', $user->id)->orWhere('participant_two', $user->id)->get();
+        $reported_users = ReportedUser::where('user_id', $user->id)->orWhere('suspect_id', $user->id)->get();
+        $blocks = BlockedUser::where('user_id', $user->id)->orWhere('blocked_user_id', $user->id)->get();
+
+        foreach ($followers as $follower) {
+            $follower->delete();
+        }
+        foreach ($messages as $message) {
+            $message->delete();
+        }
+        foreach ($participants as $participant) {
+            $participant->delete();
+        }
+        foreach ($reported_users as $report) {
+            $report->delete();
+        }
+        foreach ($blocks as $block) {
+            $block->delete();
+        }
+
+        $user->delete();
     }
 
     /**
