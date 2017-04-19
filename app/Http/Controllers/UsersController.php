@@ -98,12 +98,12 @@ class UsersController extends ApiController
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
 
         $user = $this->user->create($request->all());
-
-        $this->startFollowingArtevue($user->id);
-        $this->startFollowingHarpersBazaar($user->id);
         
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
+
+        $this->startFollowingArtevue($user->id);
+        $this->startFollowingHarpersBazaar($user->id);
 
         $this->trackAction(Auth::user(), "New Signup", ['media' => 'App']);
         $this->sendWelcomeEmail($user);
