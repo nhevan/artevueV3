@@ -39,6 +39,11 @@ class PinsController extends ApiController
     	if (!$is_existing) {
     		$this->pin->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
 
+            if ($this->isPostOwner($post)) {
+                $post->is_gallery_item = 1;
+                $post->save();
+            }
+
     		$this->incrementPostPinCount($post_id);
 	    	$this->incrementUserPinCount($this->request->user()->id);
             $this->updatePinCountInFollowersTable($post->owner_id);
@@ -67,6 +72,11 @@ class PinsController extends ApiController
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user have not pinned this post yet.');
     	}
     	$is_existing->delete();
+        
+        if ($this->isPostOwner($post)) {
+            $post->is_gallery_item = 0;
+            $post->save();
+        }
 
     	$this->decrementPostPinCount($post_id);
     	$this->decrementUserPinCount($this->request->user()->id);
@@ -93,5 +103,14 @@ class PinsController extends ApiController
         $posts = Post::whereIn('id', $post_ids)->with('artist', 'owner', 'tags')->latest()->paginate(20);
 
         return $this->respondWithPagination($posts, New PostTransformer);
+    }
+
+    /**
+     * checks for post ownership
+     * @return boolean       [description]
+     */
+    public function isPostOwner(Post $post)
+    {
+            return $post->owner->id == $this->request->user()->id;
     }
 }
