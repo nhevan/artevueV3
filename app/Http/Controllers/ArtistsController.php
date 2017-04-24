@@ -73,6 +73,7 @@ class ArtistsController extends ApiController
      */
     public function searchArtist(Request $request)
     {
+        $limit = 100;
     	$rules = [
             'search_string' => 'required',
         ];
@@ -82,7 +83,7 @@ class ArtistsController extends ApiController
         $this->request = $request;
         $search_string = $this->request->search_string;
 
-        $matching_artists = $this->artist->where('title', 'like', '%'.$search_string.'%')->get()->toArray();
-        return $this->respondAsTransformattedArray($matching_artists, new ArtistTransformer);
+        $matching_artists = $this->artist->where('title', 'like', '%'.$search_string.'%')->paginate($limit);
+        return $this->respondWithPagination($matching_artists, new ArtistTransformer);
     }
 }

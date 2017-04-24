@@ -291,6 +291,7 @@ class UsersController extends ApiController
      */
     public function searchUser(Request $request)
     {
+        $limit = 100;
         $rules = [
             'search_string' => 'required',
         ];
@@ -299,8 +300,6 @@ class UsersController extends ApiController
         }
         $search_string = $request->search_string;
 
-        $limit = 5;
-        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
         $users = $this->user->where('username', 'like', '%'.$search_string.'%')->orWhere('name', 'like', '%'.$search_string.'%')->orWhere('email', 'like', '%'.$search_string.'%')->with('usertype', 'metadata', 'artPreferences', 'arttypes')->paginate($limit);
 
         $userSearchTransformer = new UserSearchTransformer;

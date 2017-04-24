@@ -8,6 +8,7 @@ use App\PostHashtag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Acme\Transformers\PostTransformer;
+use Acme\Transformers\HashtagTransformer;
 
 class HashtagsController extends ApiController
 {
@@ -58,6 +59,7 @@ class HashtagsController extends ApiController
      */
     public function searchHashtag(Request $request)
     {
+        $limit = 100;
     	$rules = [
             'search_string' => 'required',
         ];
@@ -66,11 +68,9 @@ class HashtagsController extends ApiController
         }
         $search_string = $request->search_string;
 
-        $limit = 5;
-        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
-        $hashtags = Hashtag::where('hashtag', 'like', '%'.$search_string.'%')->orderBy('use_count', 'DESC')->get();
+        $hashtags = Hashtag::where('hashtag', 'like', '%'.$search_string.'%')->orderBy('use_count', 'DESC')->paginate($limit);
 
-        return $this->respond(['data' => $hashtags]);
+        return $this->respondWithPagination($hashtags, new HashtagTransformer);
     }
 
     /**
