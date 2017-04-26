@@ -488,7 +488,9 @@ class PostsController extends ApiController
         $following_user_ids = Follower::where('follower_id', $this->request->user()->id)->where('is_still_following', 1)->pluck('user_id')->toArray();
         array_push($following_user_ids, $this->request->user()->id);
 
-        $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->paginate(20);
+        $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->take(200)->get()->toArray();
+
+        $feed_posts = $this->getPaginated($feed_posts, 20);
 
         $this->trackAction(Auth::user(), "Feed View");
 
