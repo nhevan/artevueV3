@@ -75,6 +75,7 @@ class PinsController extends ApiController
         
         if ($this->isPostOwner($post)) {
             $post->is_gallery_item = 0;
+            $post->sequence = 0;
             $post->save();
         }
 
