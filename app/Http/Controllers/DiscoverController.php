@@ -59,7 +59,11 @@ class DiscoverController extends ApiController
     	$limit = 20;
 
 		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
-		$undiscovered_posts = $this->getPaginatedPosts($users_my_followers_are_following, $limit);
+        $followers_not_connected_to_me = $this->getNotConectedFollowers();
+
+        $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
+        
+		$undiscovered_posts = $this->getPaginatedPosts($merged_users, $limit);
 
 		return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
     }
