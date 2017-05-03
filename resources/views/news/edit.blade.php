@@ -19,6 +19,7 @@
               <div class="form-group">
                 <label>Image</label>
                 <p><img src="http://dy01r176shqrv.cloudfront.net/{{$news->image}}" style="width: 30%;margin-bottom: 20px;"/></p>
+                <p class="get_choose_option" style="cursor: pointer;color: red;"><b>Edit Image</b></p>
                 <input type="file" name="image_url" class="choose_image">
               </div>
               <div class="form-group">
@@ -46,6 +47,14 @@
         </div>
     </div>
 </div>
-
-
+@stop
+@section('script')
+<script>
+    $( document ).ready(function() {
+      $('.choose_image').hide();
+    });
+    $('.get_choose_option').click(function(){
+      $('.choose_image').show();
+    });
+</script>
 @endsection
