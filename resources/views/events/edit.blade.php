@@ -23,7 +23,7 @@
               <div class="form-group">
                 <label>Image</label>
                 <p><img src="http://dy01r176shqrv.cloudfront.net/{{$event->image}}" style="width: 30%;margin-bottom: 20px;"/></p>
-                <input type="file" name="image_url" class="" data-buttonText="Your label here.">
+                <input type="file" name="image_url" class="">
               </div>
               <div class="form-group">
                 <label>Url</label>

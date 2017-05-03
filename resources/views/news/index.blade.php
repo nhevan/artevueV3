@@ -21,6 +21,7 @@
                     <td>{{ $news->description }}</td>
                     <td>{{ $news->publish_date }}</td>
                     <td><a href="/news/{{ $news->id}}" class="btn btn-primary pull-right">View</a></td>
+                    <td><a href="/news/edit/{{ $news->id }}" class="btn btn-primary pull-right">Edit</a></td>
                     <td><a href="/news/delete/{{ $news->id}}" class="btn btn-primary pull-right" onclick="return confirm('Are you sure you want to delete this news?');">Delete</a></td>
                   </tr>
                   @endforeach

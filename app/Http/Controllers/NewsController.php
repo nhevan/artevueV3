@@ -100,6 +100,15 @@ class NewsController extends ApiController
         return view('news.index',compact('newses'));
     }
 
+    /**
+     * Show the form for editing a resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showEditForm(News $news)
+    {
+        return view('news.edit',compact('news'));
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -109,7 +118,15 @@ class NewsController extends ApiController
      */
     public function edit(News $news)
     {
-        //
+        if($this->request->hasFile('image_url')) {
+            $path = $this->uploadNewsImageTos3();
+            $this->request->merge(['image' => $path]);
+        }
+        $news->fill($this->request->all());
+        $news->save();
+        return redirect()->action(
+            'NewsController@all'
+        );
     }
 
     /**

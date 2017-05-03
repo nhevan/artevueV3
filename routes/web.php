@@ -56,4 +56,6 @@ Route::get('/news', 'NewsController@all')->middleware('auth');
 Route::get('/news/show-create-form', 'NewsController@showAddForm')->middleware('auth');
 Route::post('/news', 'NewsController@store')->middleware('auth');
 Route::get('/news/{news}', 'NewsController@show')->middleware('auth');
+Route::get('/news/edit/{news}', 'NewsController@showEditForm')->middleware('auth');
+Route::post('/news/edit/{news}', 'NewsController@edit')->middleware('auth');
 Route::get('/news/delete/{news}', 'NewsController@destroy')->middleware('auth');
