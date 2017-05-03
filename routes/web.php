@@ -52,8 +52,8 @@ Route::get('/events/edit/{event}', 'EventsController@showEditForm')->middleware(
 Route::post('/events/edit/{event}', 'EventsController@edit')->middleware('auth');
 Route::get('/events/delete/{event}', 'EventsController@destroy')->middleware('auth');
 
-Route::get('/news', 'NewsController@show')->middleware('auth');
-Route::get('/news/show-create-form', 'NewsController@create')->middleware('auth');
-Route::post('/news/store', 'NewsController@store')->middleware('auth');
-Route::get('/news/view/{news_id}', 'NewsController@view')->middleware('auth');
-Route::get('/news/delete/{news_id}', 'NewsController@delete')->middleware('auth');
+Route::get('/news', 'NewsController@all')->middleware('auth');
+Route::get('/news/show-create-form', 'NewsController@showAddForm')->middleware('auth');
+Route::post('/news', 'NewsController@store')->middleware('auth');
+Route::get('/news/{news}', 'NewsController@show')->middleware('auth');
+Route::get('/news/delete/{news}', 'NewsController@destroy')->middleware('auth');

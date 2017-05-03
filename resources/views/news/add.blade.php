@@ -6,7 +6,7 @@
         <div class="col-md-10 col-md-offset-1">
             <h3 class="text-center">Add a new news</h3>
             <hr>
-            <form method="POST" action="/news/store" enctype="multipart/form-data">
+            <form method="POST" action="/news" enctype="multipart/form-data">
               {{ csrf_field() }}
               <div class="form-group">
                 <label>Headline</label>
