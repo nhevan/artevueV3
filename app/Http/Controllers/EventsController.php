@@ -99,6 +99,16 @@ class EventsController extends ApiController
     }
 
     /**
+     * Show the form for editing a resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showEditForm(Event $event)
+    {
+        return view('events.edit',compact('event'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Event  $event
@@ -106,7 +116,15 @@ class EventsController extends ApiController
      */
     public function edit(Event $event)
     {
-        //
+        if($this->request->hasFile('image_url')) {
+            $path = $this->uploadEventImageTos3();
+            $this->request->merge(['image' => $path]);
+        }
+        $event->fill($this->request->all());
+        $event->save();
+        return redirect()->action(
+            'EventsController@all'
+        );
     }
 
     /**

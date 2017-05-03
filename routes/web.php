@@ -48,6 +48,8 @@ Route::get('/events', 'EventsController@all')->middleware('auth');
 Route::get('/events/show-create-form', 'EventsController@showAddForm')->middleware('auth');
 Route::post('/events', 'EventsController@store')->middleware('auth');
 Route::get('/events/{event}', 'EventsController@show')->middleware('auth');
+Route::get('/events/edit/{event}', 'EventsController@showEditForm')->middleware('auth');
+Route::post('/events/edit/{event}', 'EventsController@edit')->middleware('auth');
 Route::get('/events/delete/{event}', 'EventsController@destroy')->middleware('auth');
 
 Route::get('/news', 'NewsController@show')->middleware('auth');
