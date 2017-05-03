@@ -54,7 +54,7 @@
       $('.choose_image').hide();
     });
     $('.get_choose_option').click(function(){
-      $('.choose_image').show();
+      $('.choose_image').toggle();
     });
 </script>
 @endsection

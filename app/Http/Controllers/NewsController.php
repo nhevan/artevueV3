@@ -118,6 +118,13 @@ class NewsController extends ApiController
      */
     public function edit(News $news)
     {
+        $this->validate($this->request, [
+            'headline' => 'required|max:255',
+            'description' => 'required',
+            'url' => 'required|url',
+            'publish_date' => 'required|date'
+        ]);
+
         if($this->request->hasFile('image_url')) {
             $path = $this->uploadNewsImageTos3();
             $this->request->merge(['image' => $path]);

@@ -116,6 +116,16 @@ class EventsController extends ApiController
      */
     public function edit(Event $event)
     {
+        $this->validate($this->request, [
+            'headline' => 'required|max:255',
+            'description' => 'required',
+            'location' => 'required|max:255',
+            'url' => 'required|url',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'publish_date' => 'required|date'
+        ]);
+
         if($this->request->hasFile('image_url')) {
             $path = $this->uploadEventImageTos3();
             $this->request->merge(['image' => $path]);
