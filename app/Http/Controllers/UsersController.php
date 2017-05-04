@@ -189,11 +189,11 @@ class UsersController extends ApiController
 
         $user = $this->user->create($request->all());
 
-        $this->startFollowingArtevue($user->id);
-        $this->startFollowingHarpersBazaar($user->id);
-
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
+
+        $this->startFollowingArtevue($user->id);
+        $this->startFollowingHarpersBazaar($user->id);
 
         $this->trackAction($user, "New Signup", ['media' => 'Facebook']);
         $this->sendWelcomeEmail($user);
