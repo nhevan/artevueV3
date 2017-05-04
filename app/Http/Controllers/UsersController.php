@@ -157,7 +157,7 @@ class UsersController extends ApiController
         if ($user) {
             return $this->respondWithAccessToken($user);
         }
-        return $this->responseNotFound('This email address is not associated with any user. Try signing up first.');
+        return $this->setStatusCode(IlluminateResponse::HTTP_OK)->respondWithError('This email address is not associated with any user. Try signing up first.');
         
     }
 
