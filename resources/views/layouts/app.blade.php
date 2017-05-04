@@ -95,6 +95,8 @@
             changeYear: true
         });
       } );
+
   </script>
+  @yield('script')
 </body>
 </html>

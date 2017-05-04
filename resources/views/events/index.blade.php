@@ -23,6 +23,7 @@
                     <td>{{ $event->location }}</td>
                     <td>{{ $event->publish_date }}</td>
                     <td><a href="/events/{{ $event->id }}" class="btn btn-primary pull-right">View</a></td>
+                    <td><a href="/events/edit/{{ $event->id }}" class="btn btn-primary pull-right">Edit</a></td>
                     <td><a href="/events/delete/{{ $event->id }}" class="btn btn-primary pull-right" onclick="return confirm('Are you sure you want to delete this event?');">Delete</a></td>
                   </tr>
                   @endforeach

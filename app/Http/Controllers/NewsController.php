@@ -40,7 +40,7 @@ class NewsController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function showAddForm()
     {
         return view('news.add');
     }
@@ -66,7 +66,7 @@ class NewsController extends ApiController
         $news->fill($this->request->all());
         $news->save();
         return redirect()->action(
-            'NewsController@show'
+            'NewsController@all'
         );     
     }
 
@@ -87,22 +87,27 @@ class NewsController extends ApiController
      */
     public function show(News $news)
     {
+        return view('news.view',compact('news'));
+    }
+
+     /**
+     * displays list of all events
+     * @return [type] [description]
+     */
+    public function all()
+    {
         $newses = News::all();
         return view('news.index',compact('newses'));
     }
 
-    public function view($id)
+    /**
+     * Show the form for editing a resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showEditForm(News $news)
     {
-        $news = News::where('id', '=', $id)->first();
-        return view('news.view',compact('news'));
-    }
-
-    public function delete($id)
-    {
-        News::where(['id' => $id])->delete();
-        return redirect()->action(
-            'NewsController@show'
-        );
+        return view('news.edit',compact('news'));
     }
 
     /**
@@ -111,9 +116,24 @@ class NewsController extends ApiController
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function edit(Event $news)
+    public function edit(News $news)
     {
-        //
+        $this->validate($this->request, [
+            'headline' => 'required|max:255',
+            'description' => 'required',
+            'url' => 'required|url',
+            'publish_date' => 'required|date'
+        ]);
+
+        if($this->request->hasFile('image_url')) {
+            $path = $this->uploadNewsImageTos3();
+            $this->request->merge(['image' => $path]);
+        }
+        $news->fill($this->request->all());
+        $news->save();
+        return redirect()->action(
+            'NewsController@all'
+        );
     }
 
     /**
@@ -123,7 +143,7 @@ class NewsController extends ApiController
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Event $news)
+    public function update(Request $request, News $news)
     {
         //
     }
@@ -134,8 +154,11 @@ class NewsController extends ApiController
      * @param  \App\Event  $event
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event $news)
+    public function destroy(News $news)
     {
-        //
+        $news->delete();
+        return redirect()->action(
+            'NewsController@all'
+        );
     }
 }
