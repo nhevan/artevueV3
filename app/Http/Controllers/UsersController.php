@@ -186,6 +186,7 @@ class UsersController extends ApiController
 
         $request->merge(array( 'name' => $request->first_name.' '.$request->last_name ));
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
+        $request->merge(array( 'user_type_id' => 7 )); //for the time being we are hardcoding all users to be professional when they signup using facebook
 
         $user = $this->user->create($request->all());
 
