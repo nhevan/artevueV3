@@ -31,7 +31,10 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret'),
-        'user_type_id' =>$faker->randomElement($user_types->toArray()),
+        // 'user_type_id' =>$faker->randomElement($user_types->toArray()),
+        'user_type_id' => function(){
+            return factory('App\UserType')->create()->id;
+        },
         'remember_token' => str_random(10),
     ];
 });
@@ -103,8 +106,14 @@ $factory->define(App\Follower::class, function (Faker\Generator $faker) {
     $users = User::pluck('id');
 
     return [
-        'user_id' => $faker->randomElement($users->toArray()),
-        'follower_id' => $faker->randomElement($users->toArray())
+        // 'user_id' => $faker->randomElement($users->toArray()),
+        // 'follower_id' => $faker->randomElement($users->toArray())
+        'user_id' => function(){
+            return factory('App\User')->create()->id;
+        },
+        'follower_id' => function(){
+            return factory('App\User')->create()->id;
+        }
     ];
 });
 $factory->define(App\BlockedUser::class, function (Faker\Generator $faker) {
@@ -147,7 +156,10 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
     return [
         'image' => $faker->sentence(1),
         'description' => $faker->sentence(1),
-        'owner_id' => $faker->randomElement($users->toArray()),
+        // 'owner_id' => $faker->randomElement($users->toArray()),
+        'owner_id' => function(){
+            return factory('App\User')->create()->id;
+        },
         'artist_id' => $faker->randomElement($artists->toArray()),
     ];
 });
@@ -196,8 +208,14 @@ $factory->define(App\Like::class, function ($faker) {
     $posts = Post::pluck('id');
     $users = User::pluck('id');
     return [
-        'post_id' => $faker->randomElement($posts->toArray()),
-        'user_id' => $faker->randomElement($users->toArray())
+        // 'post_id' => $faker->randomElement($posts->toArray()),
+        // 'user_id' => $faker->randomElement($users->toArray())
+        'post_id' => function(){
+            return factory('App\Post')->create()->id;
+        },
+        'user_id' => function(){
+            return factory('App\User')->create()->id;
+        }
     ];
 });
 

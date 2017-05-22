@@ -29,7 +29,7 @@ class PostTransformer extends Transformer
             }
         }
 
-    	$post = [
+    	$transformatted_post = [
                 'id' => $post['id'],
                 'image' => $post['image'],
                 'description' => $post['description'],
@@ -64,7 +64,11 @@ class PostTransformer extends Transformer
                 'is_pinned' => $is_pinned,
                 'tagged_users' => $tags
             ];
-        return $post;
+
+            if (array_key_exists('score', $post)) {
+                $transformatted_post['score'] = $post['score'];
+            }
+        return $transformatted_post;
     }
 
     /**

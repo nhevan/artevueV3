@@ -118,15 +118,25 @@ class DiscoverController extends ApiController
      */
     public function getPaginatedPosts($user_ids, $limit)
     {
+        $weight = [
+            'follower_like_count' => .25,
+            'chronological' => .25,
+            'like_count' => .40,
+            'pin_count' => .10
+        ];
+
     	$posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
             ->whereIn('owner_id', $user_ids)
-            ->latest()
+            // ->latest()
             ->with('owner', 'tags', 'artist')
             ->get();
 
-        $posts->map(function ($post) {
+        $posts->map(function ($post) use($weight) {
             $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
-            $post['score'] = $post['total_count'] / $hours_till_posted;
+            $post['score'] = ( 1/$hours_till_posted ) * $weight['chronological'];
+            $post['score'] += $post['like_count'] * $weight['like_count'];
+            $post['score'] += $post['pin_count'] * $weight['pin_count'];
+            // $post['score'] = $post['total_count'] / $hours_till_posted;
             return $post;
         });
 
