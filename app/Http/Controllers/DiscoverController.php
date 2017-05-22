@@ -118,33 +118,96 @@ class DiscoverController extends ApiController
      */
     public function getPaginatedPosts($user_ids, $limit)
     {
+        $posts_of_given_users = $this->usersPosts($user_ids);
+
+        $sorted_posts = $this->sortPostsByRelevancy($posts_of_given_users);
+        
+        $paginated_posts = $this->getPaginated($sorted_posts, $limit);
+        
+        return $paginated_posts;
+    }
+
+    /**
+     * fetches posts of a given set of users
+     * @param  [type] $user_ids [description]
+     * @return [type]           [description]
+     */
+    private function usersPosts($user_ids)
+    {
+        $posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
+            ->whereIn('owner_id', $user_ids)
+            ->with('owner', 'tags', 'artist')
+            ->get();
+
+        $posts->map(function ($post){
+            return $this->assignPostRelevancy($post);
+        });
+
+        return $posts;
+    }
+
+    /**
+     * sorts a collection of post by its score
+     * @param  [type] $posts [description]
+     * @return [type]        [description]
+     */
+    private function sortPostsByRelevancy($posts)
+    {
+        return $posts->sortByDesc('score')->values()->all();
+    }
+
+    /**
+     * calculates the relevancy of a post
+     * @param  [type] $post [description]
+     * @return [type]       [description]
+     */
+    private function assignPostRelevancy($post)
+    {
         $weight = [
             'follower_like_count' => .25,
             'chronological' => .25,
             'like_count' => .40,
-            'pin_count' => .10
+            'pin_count' => .10,
         ];
 
-    	$posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
-            ->whereIn('owner_id', $user_ids)
-            // ->latest()
-            ->with('owner', 'tags', 'artist')
-            ->get();
+        $this->assignChronologyRelevancy($post, $weight);
+        $this->assignLikeRelevancy($post, $weight);
+        $this->assignPinRelevancy($post, $weight);
 
-        $posts->map(function ($post) use($weight) {
-            $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
-            $post['score'] = ( 1/$hours_till_posted ) * $weight['chronological'];
-            $post['score'] += $post['like_count'] * $weight['like_count'];
-            $post['score'] += $post['pin_count'] * $weight['pin_count'];
-            // $post['score'] = $post['total_count'] / $hours_till_posted;
-            return $post;
-        });
+        return $post;
+    }
 
-        $posts = $posts->sortByDesc('score')->values()->all();
-        
-        $paginated_result = $this->getPaginated($posts, $limit);
-        
-        return $paginated_result;
+    /**
+     * assigns chronology relevancy to a post
+     * @param  [type] &$post  [description]
+     * @param  [type] $weight [description]
+     * @return [type]         [description]
+     */
+    private function assignChronologyRelevancy(&$post, $weight)
+    {
+        $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
+        $post['score'] = ( 1/$hours_till_posted ) * $weight['chronological'];
+    }
+
+    /**
+     * assigns like relevancy to a post
+     * @param  [type] &$post  [description]
+     * @param  [type] $weight [description]
+     * @return [type]         [description]
+     */
+    private function assignLikeRelevancy(&$post, $weight)
+    {
+        $post['score'] += $post['like_count'] * $weight['like_count'];
+    }
+
+    /**
+     * assingns Pin Relevancy to a post
+     * @param  [type] &$post [description]
+     * @return [type]        [description]
+     */
+    private function assignPinRelevancy(&$post, $weight)
+    {
+        $post['score'] += $post['pin_count'] * $weight['pin_count'];
     }
 
     /**
