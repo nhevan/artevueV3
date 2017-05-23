@@ -96,8 +96,8 @@ class NewsController extends ApiController
      */
     public function all()
     {
-        $newses = News::all();
-        return view('news.index',compact('newses'));
+        $all_news = News::latest()->paginate(10);
+        return view('news.index',compact('all_news'));
     }
 
     /**

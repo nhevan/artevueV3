@@ -15,7 +15,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                @foreach($newses as $news)
+                @foreach($all_news as $news)
                   <tr>
                     <td>{{ $news->headline }}</td>
                     <td>{{ $news->description }}</td>
@@ -27,6 +27,9 @@
                   @endforeach
                 </tbody>
           </table>
+        </div>
+        <div class="text-center">
+          {{$all_news->links()}}
         </div>
     </div>
 </div>
