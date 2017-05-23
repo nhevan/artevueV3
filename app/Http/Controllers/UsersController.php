@@ -59,9 +59,14 @@ class UsersController extends ApiController
      */
     public function index(Request $request)
     {
-        $limit = 5;
-        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
-        $users = $this->user->with('metadata')->paginate($limit);
+        $limit = 18;
+        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 18;
+        $users = $this->user->latest()->with(['metadata', 'userType'])->paginate($limit);
+
+        if(!request()->wantsJson()){
+            // return $users;
+            return view('users.index', compact('users'));
+        }
 
         return $this->respondWithPagination($users, $this->userTransformer);
     }

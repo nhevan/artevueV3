@@ -44,6 +44,8 @@ Info@artevue.co.uk';
 	return $pdf->inline();
 });
 
+Route::get('/users', 'UsersController@index')->middleware('auth');
+
 Route::get('/events', 'EventsController@all')->middleware('auth');
 Route::get('/events/show-create-form', 'EventsController@showAddForm')->middleware('auth');
 Route::post('/events', 'EventsController@store')->middleware('auth');

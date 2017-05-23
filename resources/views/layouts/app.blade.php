@@ -22,6 +22,24 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+    <style>
+        .mark{
+            border: 2px solid black;
+        }
+        .user-holder-block{
+            border: 2px solid black;
+            margin-bottom: 30px;
+            height: 387px;
+        }
+        .user-holder-block:hover{
+            box-shadow: 0 2px 12px;
+        }
+        .user-holder-block .profile-picture-holder img{
+            border-top: 2px solid black;
+            width: 100%;
+            max-height: 280px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -46,6 +64,7 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
+                        <li><a href="{{ url('/users') }}">Users</a></li>
                         <li><a href="{{ url('/events') }}">Events</a></li>
                         <li><a href="{{ url('/news') }}">News</a></li>
                     </ul>

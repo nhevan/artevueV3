@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\User;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Queue;
 use App\Notifications\QueuedJobFailed;
 use Illuminate\Queue\Events\JobFailed;
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
         Queue::failing(function (JobFailed $event) {
             $user = new User;
             $user->notify(new QueuedJobFailed());
+        });
+
+        View::composer('*', function ($view) {
+            $view->with('cloudfront_url', 'http://dy01r176shqrv.cloudfront.net/');
         });
     }
 
