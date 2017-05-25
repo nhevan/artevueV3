@@ -50,6 +50,11 @@ class PostsController extends ApiController
      */
     public function index()
     {
+        if (!request()->wantsJson()) {
+            $all_posts =  $this->post->latest()->paginate(20);
+            // return $all_posts;
+            return view('posts.index', ['posts' => $all_posts]);
+        }
 		$owner_id = $this->request->owner_id ? (int)$this->request->owner_id : Auth::user()->id;
 		$owner = User::find($owner_id);
         if (!$owner) {
@@ -137,6 +142,10 @@ class PostsController extends ApiController
     public function show(Post $post)
     {
         $post->load('owner','artist', 'tags');
+        if (!request()->wantsJson()) {
+            // return $post;
+            return view('posts.show');
+        }
 
         $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
 

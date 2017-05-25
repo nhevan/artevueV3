@@ -93,6 +93,7 @@
                         <li><a href="{{ url('/users') }}">Users</a></li>
                         <li><a href="{{ url('/events') }}">Events</a></li>
                         <li><a href="{{ url('/news') }}">News</a></li>
+                        <li><a href="{{ url('/posts') }}">Posts</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
