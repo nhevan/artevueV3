@@ -17,6 +17,7 @@ use App\ArtPreference;
 use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use App\MessageParticipant;
+use App\UserArtInteraction;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
 use App\Traits\CounterSwissKnife;
@@ -81,6 +82,11 @@ class UsersController extends ApiController
         $user = $this->user->find($id);
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
+        }
+        if (!request()->wantsJson()) {
+            $user->load(['userType', 'metadata', 'artPreferences', 'artTypes']);
+            // return $user;
+            return view('users.show', compact('user'));
         }
 
         $this->trackAction(Auth::user(), "View Profile", ['User ID' => $id]);
@@ -767,6 +773,9 @@ class UsersController extends ApiController
         $participants = MessageParticipant::where('participant_one', $user->id)->orWhere('participant_two', $user->id)->get();
         $reported_users = ReportedUser::where('user_id', $user->id)->orWhere('suspect_id', $user->id)->get();
         $blocks = BlockedUser::where('user_id', $user->id)->orWhere('blocked_user_id', $user->id)->get();
+        $art_interactions = UserArtInteraction::where('user_id', $user->id)->get();
+        $art_preferences = UserArtPreference::where('user_id', $user->id)->get();
+        $art_types = UserArtType::where('user_id', $user->id)->get();
 
         foreach ($followers as $follower) {
             $follower->delete();
@@ -783,8 +792,19 @@ class UsersController extends ApiController
         foreach ($blocks as $block) {
             $block->delete();
         }
+        foreach ($art_interactions as $art_interaction) {
+            $art_interaction->delete();
+        }
+        foreach ($art_preferences as $art_preference) {
+            $art_preference->delete();
+        }
+        foreach ($art_types as $art_type) {
+            $art_type->delete();
+        }
 
         $user->delete();
+
+        return redirect()->route('users.index')->with('status', 'User deleted!');
     }
 
     /**
