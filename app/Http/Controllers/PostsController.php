@@ -51,7 +51,7 @@ class PostsController extends ApiController
     public function index()
     {
         if (!request()->wantsJson()) {
-            $all_posts =  $this->post->latest()->paginate(20);
+            $all_posts =  $this->post->latest()->with(['owner'])->paginate(20);
             // return $all_posts;
             return view('posts.index', ['posts' => $all_posts]);
         }
@@ -144,7 +144,10 @@ class PostsController extends ApiController
         $post->load('owner','artist', 'tags');
         if (!request()->wantsJson()) {
             // return $post;
-            return view('posts.show');
+            // echo "<pre>";
+            // print_r($post);
+            // echo "</pre>";
+            return view('posts.show', compact('post'));
         }
 
         $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
