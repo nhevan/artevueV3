@@ -92,7 +92,7 @@ class UsersController extends ApiController
     {
         $rules = [
             'name' => 'required|max:50',
-            'username' => 'required|min:4|max:20|unique:users,username',
+            'username' => 'required|max:20|unique:users,username',
             'password' => 'required|min:6',
             'email' => 'required|email|unique:users,email',
             'user_type_id' => 'required'
@@ -171,7 +171,7 @@ class UsersController extends ApiController
         $rules = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|min:4|max:20|unique:users,username',
+            'username' => 'required|max:20|unique:users,username',
             'email' => 'required|email',
             'user_type_id' => 'required',
             'social_id' => 'required'
