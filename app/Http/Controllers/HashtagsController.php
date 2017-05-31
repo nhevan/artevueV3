@@ -26,9 +26,9 @@ class HashtagsController extends ApiController
     		return $this->responseNotFound('Hashtag does not exist.');
     	}
 
-    	$posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->with('artist', 'owner', 'tags')->limit(9)->get()->toArray();
+    	$posts = $hashtag->posts()->select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))->orderBy('total_count', 'DESC')->with('artist', 'owner', 'tags')->limit(9)->paginate(9);
 
-    	return $this->respondAsTransformattedArray($posts, New PostTransformer);
+        return $this->respondWithPagination($posts, New PostTransformer);
     }
 
     /**
