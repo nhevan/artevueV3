@@ -73,7 +73,7 @@ class UsersController extends ApiController
     }
 
     /**
-     * returns a single user detail
+     * returns a single user detail for web
      * @param  User   $user [description]
      * @return [type]       [description]
      */
@@ -83,10 +83,22 @@ class UsersController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }
-        if (!request()->wantsJson()) {
-            $user->load(['userType', 'metadata', 'artPreferences', 'artTypes']);
-            // return $user;
-            return view('users.show', compact('user'));
+
+        $user->load(['userType', 'metadata', 'artPreferences', 'artTypes']);
+
+        return view('users.show', compact('user'));
+    }
+
+    /**
+     * returns a single user detail for api
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function fetch($id)
+    {
+        $user = $this->user->find($id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
         }
 
         $this->trackAction(Auth::user(), "View Profile", ['User ID' => $id]);

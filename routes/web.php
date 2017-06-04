@@ -48,8 +48,8 @@ Route::get('/users', 'UsersController@index')->middleware('auth')->name('users.i
 Route::get('/users/{user}', 'UsersController@show')->middleware('auth')->name('users.show');
 Route::delete('/users/{user}', 'UsersController@destroy')->middleware('auth')->name('users.destroy');
 
-Route::get('/posts', 'PostsController@index')->middleware('auth')->name('posts.index');
-Route::get('/posts/{post}', 'PostsController@show')->middleware('auth')->name('posts.show');
+Route::get('/posts', 'PostsController@indexWeb')->middleware('auth')->name('posts.index');
+Route::get('/posts/{post}', 'PostsController@showWeb')->middleware('auth')->name('posts.show');
 Route::delete('/posts/{post}', 'PostsController@delete')->middleware('auth')->name('posts.destroy');
 
 Route::get('/events', 'EventsController@all')->middleware('auth');
