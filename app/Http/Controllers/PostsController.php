@@ -44,6 +44,13 @@ class PostsController extends ApiController
         $this->request = $request;
     }
 
+    public function indexWeb()
+    {
+        $all_posts =  $this->post->latest()->with(['owner'])->paginate(20);
+
+        return view('posts.index', ['posts' => $all_posts]);
+    }
+
     /**
      * list all posts of a user
      * @return [type] [description]
@@ -127,6 +134,13 @@ class PostsController extends ApiController
         $tags = json_decode($raw_tags, JSON_UNESCAPED_UNICODE);
 
         return $tags;
+    }
+
+    public function showWeb(Post $post)
+    {
+        $post->load('owner','artist', 'tags');
+
+        return view('posts.show', compact('post'));
     }
 
     /**

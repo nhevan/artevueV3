@@ -94,7 +94,7 @@ class EventsController extends ApiController
      */
     public function all()
     {
-        $events = Event::all();
+        $events = Event::latest()->paginate(10);
         return view('events.index', compact('events'));
     }
 

@@ -30,6 +30,9 @@
                 </tbody>
           </table>
         </div>
+        <div class="text-center">
+          {{$events->links()}}
+        </div>
     </div>
 </div>
 @endsection

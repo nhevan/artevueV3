@@ -17,6 +17,7 @@ use App\ArtPreference;
 use App\Mail\WelcomeEmail;
 use App\UserArtPreference;
 use App\MessageParticipant;
+use App\UserArtInteraction;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
 use App\Traits\CounterSwissKnife;
@@ -59,19 +60,41 @@ class UsersController extends ApiController
      */
     public function index(Request $request)
     {
-        $limit = 5;
-        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 5;
-        $users = $this->user->with('metadata')->paginate($limit);
+        $limit = 18;
+        if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 18;
+        $users = $this->user->latest()->with(['metadata', 'userType'])->paginate($limit);
+
+        if(!request()->wantsJson()){
+            // return $users;
+            return view('users.index', compact('users'));
+        }
 
         return $this->respondWithPagination($users, $this->userTransformer);
     }
 
     /**
-     * returns a single user detail
+     * returns a single user detail for web
      * @param  User   $user [description]
      * @return [type]       [description]
      */
     public function show($id)
+    {
+        $user = $this->user->find($id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        $user->load(['userType', 'metadata', 'artPreferences', 'artTypes']);
+
+        return view('users.show', compact('user'));
+    }
+
+    /**
+     * returns a single user detail for api
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function fetch($id)
     {
         $user = $this->user->find($id);
         if (!$user) {
@@ -762,6 +785,9 @@ class UsersController extends ApiController
         $participants = MessageParticipant::where('participant_one', $user->id)->orWhere('participant_two', $user->id)->get();
         $reported_users = ReportedUser::where('user_id', $user->id)->orWhere('suspect_id', $user->id)->get();
         $blocks = BlockedUser::where('user_id', $user->id)->orWhere('blocked_user_id', $user->id)->get();
+        $art_interactions = UserArtInteraction::where('user_id', $user->id)->get();
+        $art_preferences = UserArtPreference::where('user_id', $user->id)->get();
+        $art_types = UserArtType::where('user_id', $user->id)->get();
 
         foreach ($followers as $follower) {
             $follower->delete();
@@ -778,8 +804,19 @@ class UsersController extends ApiController
         foreach ($blocks as $block) {
             $block->delete();
         }
+        foreach ($art_interactions as $art_interaction) {
+            $art_interaction->delete();
+        }
+        foreach ($art_preferences as $art_preference) {
+            $art_preference->delete();
+        }
+        foreach ($art_types as $art_type) {
+            $art_type->delete();
+        }
 
         $user->delete();
+
+        return redirect()->route('users.index')->with('status', 'User deleted!');
     }
 
     /**

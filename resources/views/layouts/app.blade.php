@@ -22,6 +22,50 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+    <style>
+        .mark{
+            border: 2px solid black;
+        }
+        .user-holder-wrapper{
+            border: 2px solid black;
+            margin-bottom: 30px;
+            height: 409px;
+        }
+        .user-holder-wrapper:hover{
+            box-shadow: 0 2px 12px;
+        }
+        .user-holder-block > a:hover{
+            text-decoration: none;
+        }
+        .user-holder-wrapper .profile-picture-holder img{
+            border-top: 2px solid black;
+            width: 100%;
+            max-height: 280px;
+        }
+        .user-metainfo-holder{
+            border:2px solid black;
+            margin-bottom: 30px;
+            padding: 15px;
+        }
+        .user-metainfo-holder table.general-info tr > td:first-child{
+            min-width: 130px;
+            /*border:1px solid red;*/
+            vertical-align: top;
+        }
+        .user-metainfo-holder table tr > td:nth-child(2){
+            vertical-align: top;
+        }
+        .user-metainfo-holder table.activity-info tr > td:first-child{
+            padding-right: 6px;
+        }
+        }
+        .floating_alert {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 1px solid red;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -46,7 +90,10 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        &nbsp;
+                        <li><a href="{{ url('/users') }}">Users</a></li>
+                        <li><a href="{{ url('/events') }}">Events</a></li>
+                        <li><a href="{{ url('/news') }}">News</a></li>
+                        <li><a href="{{ url('/posts') }}">Posts</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -80,7 +127,18 @@
                 </div>
             </div>
         </nav>
-
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (session('status'))
+                        <div class="alert alert-success alert-dismissable floating_alert">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            {{ session('status') }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
         @yield('content')
     </div>
 
