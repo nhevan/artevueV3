@@ -51,6 +51,7 @@ Route::delete('/users/{user}', 'UsersController@destroy')->middleware('auth')->n
 Route::get('/posts', 'PostsController@indexWeb')->middleware('auth')->name('posts.index');
 Route::get('/posts/{post}', 'PostsController@showWeb')->middleware('auth')->name('posts.show');
 Route::delete('/posts/{post}', 'PostsController@delete')->middleware('auth')->name('posts.destroy');
+Route::patch('/posts/{post}/swap-discoverability', 'PostsController@swapDiscoverability')->middleware('auth')->name('posts.swapDiscoverability');
 
 Route::get('/events', 'EventsController@all')->middleware('auth');
 Route::get('/events/show-create-form', 'EventsController@showAddForm')->middleware('auth');

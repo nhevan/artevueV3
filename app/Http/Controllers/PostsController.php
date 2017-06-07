@@ -68,6 +68,18 @@ class PostsController extends ApiController
     }
 
     /**
+     * swaps the is_undiscoverable property of a given post
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function swapDiscoverability(Post $post)
+    {
+        $post->swapDiscoverability();
+
+        return back();
+    }
+
+    /**
      * Handles a new post request
      * @return [type] [description]
      */
