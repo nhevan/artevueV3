@@ -17,6 +17,18 @@ class DiscoverPostTest extends TestCase
 		'like_count' => .40,
 		'pin_count' => .10
 	];
+
+    protected $user;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $user = factory('App\User')->create();
+        $this->be($user);
+
+        $this->user = $user;
+    }
     
     /**
      * @test
@@ -24,9 +36,6 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_paginated_json_data()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertArrayHasKey('data', $response);
@@ -39,10 +48,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_does_not_return_posts_from_authenticated_users_followers()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $user->id]);
+    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
     	$post = factory('App\Post')->create(['owner_id' => $usersFollower->user_id]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
@@ -56,10 +62,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_from_followers_of_authenticated_users_followers()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $user->id]);
+    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
     	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
 
     	$post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id]);
@@ -75,9 +78,6 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_from_unrelated_users()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
     	$post = factory('App\Post')->create();
 
     	$response = $this->getJson('/api/discover-posts')->json();
@@ -91,10 +91,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_does_not_include_authenticated_users_posts()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$post = factory('App\Post')->create(['owner_id' => $user->id]);
+    	$post = factory('App\Post')->create(['owner_id' => $this->user->id]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
 
@@ -107,10 +104,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_chronologically()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $user->id]);
+    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
     	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
 
     	$old_post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'created_at' => Carbon::now()->subHours(2)]);
@@ -131,10 +125,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_by_like_count()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $user->id]);
+    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
     	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
 
     	$postWithTwoLike = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'like_count' => 2]);
@@ -152,10 +143,7 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_by_pin_count()
     {
-    	$user = factory('App\User')->create();
-    	$this->be($user);
-
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $user->id]);
+    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
     	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
 
     	$postWithTwoPins = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'pin_count' => 2]);
@@ -165,6 +153,20 @@ class DiscoverPostTest extends TestCase
 
     	$this->assertEquals([$postWithFivePins->id, $postWithTwoPins->id], array_column($response['data'], 'id'));
     	$this->assertScoreEquals(5*$this->weights['pin_count'], 2*$this->weights['pin_count'], $response);
+    }
+
+    /**
+     * @test
+     * it does not return posts with is_undiscoverable set to true
+     */
+    public function it_does_not_return_posts_with_undiscoverable_set_to_true()
+    {
+        //when we have a post with is_undiscoverable to true of a unrelated user
+        $post = factory('App\Post')->create(['is_undiscoverable' => true]);
+        //then if we hit the discover post endpoint
+        $response = $this->getJson('/api/discover-posts')->json();
+        //the post is not shown
+        $this->assertNotEquals([$post->id], array_column($response['data'], 'id'));
     }
 
     protected function assertScoreEquals($post_one_score, $post_two_score, $response){

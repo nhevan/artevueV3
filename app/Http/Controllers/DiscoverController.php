@@ -139,6 +139,7 @@ class DiscoverController extends ApiController
     {
         $posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
             ->whereIn('owner_id', $user_ids)
+            ->where('is_undiscoverable', false)
             ->with('owner', 'tags', 'artist')
             ->get();
 
