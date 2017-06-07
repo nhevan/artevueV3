@@ -42,9 +42,10 @@ class DiscoverController extends ApiController
 		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
         $followers_not_connected_to_me = $this->getNotConectedFollowers();
         $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
-        // var_dump($merged);
-        // exit();
+
 		$undiscovered_users = $this->getPaginatedUsers($merged_users, $limit);
+
+        $this->trackAction(Auth::user(), "Explore Users");
 
 		return $this->respondWithPagination($undiscovered_users, $this->discoverUserTransformer);
     }
@@ -64,6 +65,8 @@ class DiscoverController extends ApiController
         $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
         
 		$undiscovered_posts = $this->getPaginatedPosts($merged_users, $limit);
+
+        $this->trackAction(Auth::user(), "Explore Posts");
 
 		return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
     }
