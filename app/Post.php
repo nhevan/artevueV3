@@ -32,4 +32,22 @@ class Post extends Model
     {
         return $this->hasMany('app\Comment');
     }
+    public function swapDiscoverability()
+    {
+        if ($this->is_undiscoverable) {
+            return $this->makeDiscoverable();
+        }
+        
+        return $this->makeUndiscoverable();
+    }
+    public function makeDiscoverable()
+    {
+        $this->is_undiscoverable = false;
+        return $this->save();
+    }
+    public function makeUndiscoverable()
+    {
+        $this->is_undiscoverable = true;
+        return $this->save();
+    }
 }
