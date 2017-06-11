@@ -187,8 +187,17 @@ class ApiController extends Controller
     {
         $model_array = $model->toArray();
         return $this->respond([
-            'data'=>$transformer->transformCollection(array_pop($model_array)),
-            'pagination' => $model_array
+            'data'=>$transformer->transformCollection($model_array['data']),
+            'pagination' => [
+                'total' => $model_array['total'],
+                'per_page' => $model_array['per_page'],
+                'current_page' => $model_array['current_page'],
+                'last_page' => $model_array['last_page'],
+                'next_page_url' => $model_array['next_page_url'],
+                'prev_page_url' => $model_array['prev_page_url'],
+                'from' => $model_array['from'],
+                'to' => $model_array['to'],
+            ]
         ]);
     }
 
