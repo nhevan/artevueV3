@@ -131,8 +131,7 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        $this->startFollowingArtevue($user->id);
-        $this->startFollowingHarpersBazaar($user->id);
+        $this->startAutoFollowingUsers($user->id);
 
         $this->trackAction($user, "New Signup", ['media' => 'App']);
         $this->sendWelcomeEmail($user);
@@ -215,12 +214,72 @@ class UsersController extends ApiController
         $metadata = New UserMetadata;
         $user->metadata()->save($metadata);
 
-        $this->startFollowingArtevue($user->id);
-        $this->startFollowingHarpersBazaar($user->id);
+        $this->startAutoFollowingUsers($user->id);
 
         $this->trackAction($user, "New Signup", ['media' => 'Facebook']);
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
+    }
+
+    protected function startAutoFollowingUsers($user_id)
+    {
+        $this->startFollowingArtevue($user->id);
+        $this->startFollowingHarpersBazaar($user->id);
+        $this->startFollowingMestaria($user->id);
+        $this->startFollowingThirdline($user->id);
+        $this->startFollowingAfficheGallery($user->id);
+        $this->startFollowingShoChoudhury($user->id);
+        $this->startFollowingUnitGallery($user->id);
+    }
+
+    /**
+     * starts following Sho Choudhury
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingShoChoudhury($follower_id)
+    {
+        $this->startFollowing(74, $follower_id);
+    }
+
+    /**
+     * starts following Unit Gallery account
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingUnitGallery($follower_id)
+    {
+        $this->startFollowing(601, $follower_id);
+    }
+
+    /**
+     * starts following Thirdline account
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingThirdline($follower_id)
+    {
+        $this->startFollowing(594, $follower_id);
+    }
+
+    /**
+     * starts following Affiche Gallery account
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingAfficheGallery($follower_id)
+    {
+        $this->startFollowing(306, $follower_id);
+    }
+
+    /**
+     * starts following Mestaria account
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingMestaria($follower_id)
+    {
+        $this->startFollowing(128, $follower_id);
     }
 
     /**
