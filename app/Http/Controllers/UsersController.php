@@ -223,13 +223,13 @@ class UsersController extends ApiController
 
     protected function startAutoFollowingUsers($user_id)
     {
-        $this->startFollowingArtevue($user->id);
-        $this->startFollowingHarpersBazaar($user->id);
-        $this->startFollowingMestaria($user->id);
-        $this->startFollowingThirdline($user->id);
-        $this->startFollowingAfficheGallery($user->id);
-        $this->startFollowingShoChoudhury($user->id);
-        $this->startFollowingUnitGallery($user->id);
+        $this->startFollowingArtevue($user_id);
+        $this->startFollowingHarpersBazaar($user_id);
+        $this->startFollowingMestaria($user_id);
+        $this->startFollowingThirdline($user_id);
+        $this->startFollowingAfficheGallery($user_id);
+        $this->startFollowingShoChoudhury($user_id);
+        $this->startFollowingUnitGallery($user_id);
     }
 
     /**
