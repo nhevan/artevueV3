@@ -341,7 +341,7 @@ class UsersController extends ApiController
         }
         $user = $this->user->where('username', $request->username)->first();
         if ($user) {
-            return $this->show($user->id);
+            return $this->fetch($user->id);
         }
         return $this->responseNotFound('No such user exists.');
     }
