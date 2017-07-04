@@ -44,7 +44,7 @@ class LikesController extends ApiController
 
     		$this->incrementPostLikeCount($post_id);
 	    	$this->incrementUserLikeCount($this->request->user()->id);
-            $this->updatePinCountInFollowersTable($post->owner_id);
+            $this->updateLikeCountInFollowersTable($post->owner_id);
 
     		return $this->respond([ 'message' => 'Post successfully liked.' ]);
     	}
