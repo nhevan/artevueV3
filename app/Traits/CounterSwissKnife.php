@@ -336,7 +336,7 @@ trait CounterSwissKnife{
     public function decrementLikeCountInFollowersTable($post_owner_id)
     {
         $is_existing = Follower::where('follower_id',Auth::user()->id)->where('user_id', $post_owner_id)->first();
-        if ($is_existing) {
+        if ($is_existing && $is_existing->like_count >= 1) {
             $is_existing->like_count = $is_existing->like_count - 1;
             return $is_existing->save();
         }
