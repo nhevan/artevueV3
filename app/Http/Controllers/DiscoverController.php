@@ -169,8 +169,8 @@ class DiscoverController extends ApiController
     {
         $weight = [
             'follower_like_count' => .25,
-            'chronological' => .25,
-            'like_count' => .40,
+            'chronological' => 1.75,
+            'like_count' => .30,
             'pin_count' => .10,
         ];
 
@@ -189,8 +189,10 @@ class DiscoverController extends ApiController
      */
     private function assignChronologyRelevancy(&$post, $weight)
     {
+        $constant = 72; //a post with 1 like and 72 hours old is equivalent in score to a post that has been recently created
+
         $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
-        $post['score'] = ( 1/$hours_till_posted ) * $weight['chronological'];
+        $post['score'] = ( 1/ ( $hours_till_posted / $constant ) ) * $weight['chronological'];
     }
 
     /**
