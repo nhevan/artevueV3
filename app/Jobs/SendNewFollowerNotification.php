@@ -38,6 +38,6 @@ class SendNewFollowerNotification implements ShouldQueue
     {
         $user = User::find($this->user_id);
 
-        $this->sendFcmMessage($user, 'New Comment', $this->follower_name.' commented on your post.');
+        $this->sendFcmMessage($user, 'New Follower', $this->follower_name.' started following you.');
     }
 }
