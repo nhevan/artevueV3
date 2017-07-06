@@ -18,6 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/send-email-to-all', 'UsersController@sendEmailRegardingIssue');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');

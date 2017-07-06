@@ -9,6 +9,7 @@ use App\User;
 use App\Comment;
 use App\Message;
 use App\Follower;
+use Carbon\Carbon;
 use App\BlockedUser;
 use App\UserArtType;
 use App\ReportedUser;
@@ -20,6 +21,7 @@ use App\MessageParticipant;
 use App\UserArtInteraction;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
+use App\Mail\NotifyIssueEmail;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -324,6 +326,20 @@ class UsersController extends ApiController
     public function sendWelcomeEmail(User $user)
     {
         return Mail::to($user->email)->queue(new WelcomeEmail($user));
+    }
+
+    public function sendEmailRegardingIssue()
+    {
+        $user = User::find(33);
+        // $users = User::where('created_at', '<=', Carbon::createFromDate(2017, 5, 7))->orderBy('id', 'desc')->get();
+
+        // foreach ($users as $user) {
+        //     echo $user->email;
+        //     echo "<br/>";
+        // }
+
+        // exit();
+        return Mail::to($user->email)->queue(new NotifyIssueEmail($user));
     }
 
     /**
