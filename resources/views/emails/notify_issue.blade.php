@@ -19,6 +19,6 @@ Thank you,
 Sho Ahad-Choudhury<br>
 <br>
 <strong>Founder and Chief Executive Officer</strong><br>
-Email : <submissions@artevue.co.uk><br>
+Email : <hello@artevue.co.uk><br>
 Website : [www.artevue.co.uk](www.artevue.co.uk)
 @endcomponent

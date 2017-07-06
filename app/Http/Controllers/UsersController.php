@@ -330,16 +330,15 @@ class UsersController extends ApiController
 
     public function sendEmailRegardingIssue()
     {
-        $user = User::find(33);
-        // $users = User::where('created_at', '<=', Carbon::createFromDate(2017, 5, 7))->orderBy('id', 'desc')->get();
-
-        // foreach ($users as $user) {
-        //     echo $user->email;
-        //     echo "<br/>";
-        // }
-
-        // exit();
-        return Mail::to($user->email)->queue(new NotifyIssueEmail($user));
+        // $user = User::find(33);
+        $users = User::where('created_at', '<=', Carbon::createFromDate(2017, 6, 29))->orderBy('id', 'desc')->get();
+        // $users = User::where('id', 12)->orderBy('id', 'desc')->get();
+        
+        foreach ($users as $user) {
+            Mail::to($user->email)->queue(new NotifyIssueEmail($user));
+            echo "mail sent to {$user->name}. <br/>";
+        }
+        // return Mail::to($user->email)->queue(new NotifyIssueEmail($user));
     }
 
     /**
