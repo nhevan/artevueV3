@@ -231,7 +231,6 @@ class UsersController extends ApiController
         $this->startFollowingThirdline($user_id);
         $this->startFollowingAfficheGallery($user_id);
         $this->startFollowingShoChoudhury($user_id);
-        $this->startFollowingUnitGallery($user_id);
     }
 
     /**
@@ -261,7 +260,7 @@ class UsersController extends ApiController
      */
     public function startFollowingThirdline($follower_id)
     {
-        $this->startFollowing(594, $follower_id);
+        $this->startFollowing(663, $follower_id);
     }
 
     /**
