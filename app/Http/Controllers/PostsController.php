@@ -234,7 +234,7 @@ class PostsController extends ApiController
         }
 
         $this->post = $post;
-        if (!$this->isPostOwner()) {
+        if ( !($this->isAdmin() || $this->isPostOwner() ))  {
             return $this->responseUnauthorized('Only the owner of the post can delete it.');
         }
 
@@ -253,7 +253,12 @@ class PostsController extends ApiController
 
         $this->trackAction(Auth::user(), "Delete Post");
 
-        return $this->respond(['message' => 'Post successfully deleted']);
+        if ($this->request->wantsJson()) {
+            return $this->respond(['message' => 'Post successfully deleted']);
+        }
+
+        return redirect()->route('posts.index');
+
     }
 
     /**
@@ -303,6 +308,17 @@ class PostsController extends ApiController
     public function isPostOwner()
     {
         	return $this->post->owner->id == $this->request->user()->id;
+    }
+
+    /**
+     * checks if the current user is admin
+     * @return boolean [description]
+     */
+    public function isAdmin()
+    {
+        $allowed_user_types = [1, 2]; //allow super admin and admins only
+
+        return in_array($this->request->user()->user_type_id, $allowed_user_types);
     }
 
     /**
