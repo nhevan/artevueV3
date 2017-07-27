@@ -233,6 +233,7 @@ class UsersController extends ApiController
         $this->startFollowingShoChoudhury($user_id);
         $this->startFollowingDelfinaFoundation($user_id);
         $this->startFollowingEmergeast($user_id);
+        $this->startFollowingAndakulova($user_id);
     }
 
     /**
@@ -293,6 +294,16 @@ class UsersController extends ApiController
     public function startFollowingEmergeast($follower_id)
     {
         $this->startFollowing(567, $follower_id);
+    }
+
+    /**
+     * starts following Emergeast aka Natalya Andakulova
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function startFollowingAndakulova($follower_id)
+    {
+        $this->startFollowing(2523, $follower_id);
     }
 
     /**
