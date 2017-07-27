@@ -6,6 +6,8 @@ Dear User,
 <br>
 We have received a request to reset the password for your ArteVue account.
 <br><br>
+Your username is : <strong>{{ $username }}</strong>
+<br>
 Your new password is : <strong>{{ $new_password }}</strong>
 <br><br>
 Please log into the app using this username and the new password, which we have provided.

@@ -34,6 +34,7 @@ class NewPasswordEmail extends Mailable
     {
         $new_password = str_random(8);
         $this->user->password = bcrypt($new_password);
+        $username = $this->user->username;
 
         $this->user->save();
 
@@ -41,7 +42,8 @@ class NewPasswordEmail extends Mailable
                     ->markdown('mails.newPasswordEmail')
                     ->subject('Forgot password email')
                     ->with([
-                        'new_password' => $new_password
+                        'new_password' => $new_password,
+                        'username' => $username
                     ]);
     }
 }
