@@ -644,7 +644,8 @@ class PostsController extends ApiController
         $data['gallery_description'] = $this->request->user()->metadata->gallery_description;
         $data['posts'] = $this->request->posts;
 
-        Mail::to(Auth::user()->email)->queue(new SendGalleryPdf($data, Auth::user()));
+        $gallery_pdf = (new SendGalleryPdf($data, Auth::user()))->onQueue('high');
+        Mail::to(Auth::user()->email)->queue($gallery_pdf);
         $this->trackAction(Auth::user(), "Request Gallery PDF");
 
         return $this->respond(['message' => 'Requested pdf will be emailed to you shortly.']);
