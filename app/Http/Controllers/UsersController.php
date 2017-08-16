@@ -103,7 +103,9 @@ class UsersController extends ApiController
             return $this->responseNotFound('User does not exist.');
         }
 
-        $this->trackAction(Auth::user(), "View Profile", ['User ID' => $id]);
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "View Profile", ['User ID' => $id]);
+        }
 
         return $this->respondTransformattedModel($user, $this->userTransformer);
     }
