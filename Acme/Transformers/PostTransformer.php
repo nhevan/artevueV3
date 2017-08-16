@@ -78,7 +78,12 @@ class PostTransformer extends Transformer
      */
     public function isPostLiked($post_id)
     {
-    	$is_liked = Like::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        if (Auth::check()) {
+        	$is_liked = Like::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        }else{
+            $is_liked = false;
+        }
+
         if ($is_liked) {
             return 1;
         }
@@ -92,7 +97,11 @@ class PostTransformer extends Transformer
      */
     public function isPostPinned($post_id)
     {
-        $is_pinned = Pin::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        if (Auth::check()) {
+            $is_pinned = Pin::where(['user_id' => Auth::user()->id, 'post_id' => $post_id])->first();
+        }else{
+            $is_pinned = false;
+        }
         if ($is_pinned) {
             return 1;
         }
