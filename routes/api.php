@@ -58,56 +58,56 @@ Route::middleware('auth:api')->post('/block/{user_id}', 'BlockedUsersController@
 
 Route::middleware('auth:api')->post('/report/{user_id}', 'ReportedUsersController@store');
 
-Route::middleware('auth:api')->get('/usertypes', 'UserTypesController@index');
+Route::middleware('api')->get('/usertypes', 'UserTypesController@index');
 
 Route::middleware('auth:api')->post('/message', 'MessagesController@store');
 Route::middleware('auth:api')->get('/message-participants', 'MessageParticipantsController@index');
 Route::middleware('auth:api')->get('/message/{friend_id}', 'MessagesController@index');
 Route::middleware('auth:api')->delete('/conversation/{friend_id}', 'MessagesController@delete');
 
-Route::middleware('auth:api')->get('/post', 'PostsController@index');
-Route::middleware('auth:api')->get('/post/{owner_id}', 'PostsController@index');
-Route::middleware('auth:api')->get('/post/detail/{post}', 'PostsController@show');
+Route::middleware('auth.optional:api')->get('/post', 'PostsController@index');
+Route::middleware('auth.optional:api')->get('/post/{owner_id}', 'PostsController@index');
+Route::middleware('auth.optional:api')->get('/post/detail/{post}', 'PostsController@show');
 Route::middleware('auth:api')->post('/post', 'PostsController@store');
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
 Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGalleryAndLockStatus');
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
-Route::middleware('auth:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
+Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
 Route::middleware('auth:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
-Route::middleware('auth:api')->get('/advance-search', 'PostsController@advanceSearch');
+Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
-Route::middleware('auth:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
+Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
 Route::middleware('auth:api')->post('/arrange-gallery', 'PostsController@arrangeGalleryPosts');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@store');
 Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');
-Route::middleware('auth:api')->get('/pin/posts/{user_id}', 'PinsController@pinnedPosts');
+Route::middleware('auth.optional:api')->get('/pin/posts/{user_id}', 'PinsController@pinnedPosts');
 
 Route::middleware('auth:api')->post('/like/{post_id}', 'LikesController@store');
 Route::middleware('auth:api')->delete('/like/{post_id}', 'LikesController@delete');
 
-Route::middleware('auth:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
-Route::middleware('auth:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');
-Route::middleware('auth:api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
-Route::middleware('auth:api')->get('/hashtag-by-name', 'HashtagsController@getHashtagByName');
+Route::middleware('auth.optional:api')->get('/hashtag/top-posts/{hashtag}', 'HashtagsController@topPosts');
+Route::middleware('auth.optional:api')->get('/hashtag/latest-posts/{hashtag}', 'HashtagsController@latestPosts');
+Route::middleware('api')->get('/search-hashtag', 'HashtagsController@searchHashtag');
+Route::middleware('auth.optional:api')->get('/hashtag-by-name', 'HashtagsController@getHashtagByName');
 
-Route::middleware('auth:api')->get('/artist', 'ArtistsController@index');
-Route::middleware('auth:api')->get('/search-artist', 'ArtistsController@searchArtist');
-Route::middleware('auth:api')->get('/artist/posts/{artist_id}', 'ArtistsController@posts');
-Route::middleware('auth:api')->get('/artist-by-name', 'ArtistsController@getPostsByArtistName');
+Route::middleware('api')->get('/artist', 'ArtistsController@index');
+Route::middleware('api')->get('/search-artist', 'ArtistsController@searchArtist');
+Route::middleware('auth.optional:api')->get('/artist/posts/{artist_id}', 'ArtistsController@posts');
+Route::middleware('auth.optional:api')->get('/artist-by-name', 'ArtistsController@getPostsByArtistName');
 
 Route::middleware('auth:api')->post('/comment/{post_id}', 'CommentsController@store');
-Route::middleware('auth:api')->get('/comment/{post_id}', 'CommentsController@index');
+Route::middleware('api')->get('/comment/{post_id}', 'CommentsController@index');
 Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsController@delete');
 
-Route::middleware('auth:api')->get('/news', 'NewsController@index');
-Route::middleware('auth:api')->get('/events', 'EventsController@index');
+Route::middleware('api')->get('/news', 'NewsController@index');
+Route::middleware('api')->get('/events', 'EventsController@index');
 
 Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
 
-Route::middleware('auth:api')->get('/art-preferences', 'ArtPreferencesController@index');
-Route::middleware('auth:api')->get('/art-types', 'ArtTypesController@index');
+Route::middleware('api')->get('/art-preferences', 'ArtPreferencesController@index');
+Route::middleware('api')->get('/art-types', 'ArtTypesController@index');
 
 Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');

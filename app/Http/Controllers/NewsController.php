@@ -30,7 +30,9 @@ class NewsController extends ApiController
     {
         $news = News::latest()->paginate(10);
 
-        $this->trackAction(Auth::user(), "View News Feed");
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "View News Feed");
+        }
 
         return $this->respondWithPagination($news, New NewsTransformer);
     }

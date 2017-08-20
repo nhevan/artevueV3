@@ -164,7 +164,9 @@ class PostsController extends ApiController
     {
         $post->load('owner','artist', 'tags');
 
-        $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
+        if (Auth::check()) {
+            $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
+        }
 
         return $this->respondTransformattedModel($post->toArray(), $this->postTransformer);
     }
@@ -562,7 +564,9 @@ class PostsController extends ApiController
 
         $posts = $this->fetchAllFilteredPosts();
 
-        $this->trackAction(Auth::user(), "Advance Search");
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "Advance Search");
+        }
 
         return $this->respondWithPagination($posts, $this->postTransformer);
     }
@@ -674,7 +678,9 @@ class PostsController extends ApiController
 
         $paginated_result = $this->getPaginated($all_posts, $limit);
 
-        $this->trackAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]);
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]);
+        }
 
         return $this->respondWithPagination($paginated_result, $this->postTransformer);
     }
@@ -687,7 +693,7 @@ class PostsController extends ApiController
     protected function getGalleryPosts($user_id)
     {
         $gallery_posts = Post::where('owner_id', $user_id)->where('is_gallery_item', 1)->with('owner', 'artist', 'tags');
-        if(Auth::user()->id != $user_id){
+        if(!$this->userIsGuest() && Auth::user()->id != $user_id){
             $gallery_posts = $gallery_posts->where('is_locked', 0);
         }
 

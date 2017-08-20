@@ -24,7 +24,9 @@ class EventsController extends ApiController
     {
         $events = Event::latest()->paginate(10);
 
-        $this->trackAction(Auth::user(), "View Events Feed");
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "View Events Feed");
+        }
 
         return $this->respondWithPagination($events, New EventTransformer);
     }

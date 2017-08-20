@@ -38,7 +38,9 @@ class CommentsController extends ApiController
         }
         $comments = $this->comment->where('post_id', $post->id)->latest()->with('commentor')->paginate(15);
 
-        $this->trackAction(Auth::user(), "View Comments", ['Post ID' => $post_id]);
+        if(!$this->userIsGuest()){
+            $this->trackAction(Auth::user(), "View Comments", ['Post ID' => $post_id]);
+        }
 
         return $this->respondWithPagination($comments, new CommentTransformer);
 	}
