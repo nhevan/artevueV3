@@ -376,7 +376,7 @@ class UsersController extends ApiController
     }
 
     /**
-     * returns a user id if a user is found with the provided username
+     * returns a user if a user is found with the provided username
      * @param  Request $request [description]
      * @return [type]           [description]
      */
