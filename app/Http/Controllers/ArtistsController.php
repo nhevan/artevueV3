@@ -67,7 +67,7 @@ class ArtistsController extends ApiController
 	}
     
     /**
-     * searches users with a possible given search string
+     * searches artists by name
      * @param  Request $request [description]
      * @return [type]           [description]
      */

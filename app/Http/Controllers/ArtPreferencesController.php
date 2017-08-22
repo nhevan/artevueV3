@@ -24,6 +24,6 @@ class ArtPreferencesController extends ApiController
     {
     	$art_prefs = $this->art_prefs->select(['id', 'title'])->get();
 
-    	return $this->respond(['data' => $art_prefs]);
+    	return response()->json(['data' => $art_prefs]);
     }
 }

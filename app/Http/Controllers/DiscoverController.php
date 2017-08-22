@@ -36,8 +36,17 @@ class DiscoverController extends ApiController
      */
     public function discoverUsers()
     {
-    	$this->user = Auth::user();
     	$limit = 20;
+        if ($this->userIsGuest()) {
+            $my_followers_ids = $this->getAutoFollowersArray();
+            $users_my_followers_are_following = Follower::whereIn('follower_id', $my_followers_ids)->whereNotIn('user_id', $my_followers_ids)->get()->pluck('user_id');
+
+            $undiscovered_users = $this->getPaginatedUsers($users_my_followers_are_following, $limit);
+
+            return $this->respondWithPagination($undiscovered_users, $this->discoverUserTransformer);
+        }
+
+        $this->user = Auth::user();
 
 		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
         $followers_not_connected_to_me = $this->getNotConectedFollowers();
@@ -56,8 +65,16 @@ class DiscoverController extends ApiController
      */
     public function discoverPosts()
     {
-    	$this->user = Auth::user();
     	$limit = 20;
+        if ($this->userIsGuest()) {
+            $my_followers_ids = $this->getAutoFollowersArray();
+            $users_my_followers_are_following = Follower::whereIn('follower_id', $my_followers_ids)->whereNotIn('user_id', $my_followers_ids)->get()->pluck('user_id');
+
+            $undiscovered_posts = $this->getPaginatedPosts($users_my_followers_are_following, $limit);
+
+            return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
+        }
+        $this->user = Auth::user();
 
 		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
         $followers_not_connected_to_me = $this->getNotConectedFollowers();

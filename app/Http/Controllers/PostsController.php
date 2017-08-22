@@ -164,7 +164,9 @@ class PostsController extends ApiController
     {
         $post->load('owner','artist', 'tags');
 
-        $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
+        if (Auth::check()) {
+            $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
+        }
 
         return $this->respondTransformattedModel($post->toArray(), $this->postTransformer);
     }
@@ -527,17 +529,20 @@ class PostsController extends ApiController
      */
     public function feed()
     {
-        $following_user_ids = Follower::where('follower_id', $this->request->user()->id)->where('is_still_following', 1)->pluck('user_id')->toArray();
-        array_push($following_user_ids, $this->request->user()->id);
+        if ($this->userIsGuest()) {
+            $following_user_ids = $this->getAutoFollowersArray();
+        }else{
+            $following_user_ids = Follower::where('follower_id', $this->request->user()->id)->where('is_still_following', 1)->pluck('user_id')->toArray();
+            array_push($following_user_ids, $this->request->user()->id);
+
+            $this->trackAction(Auth::user(), "Feed View");
+        }
 
         $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->take(200)->get()->toArray();
 
         $feed_posts = $this->getPaginated($feed_posts, 20);
 
-        $this->trackAction(Auth::user(), "Feed View");
-
         return $this->respondWithPagination($feed_posts, $this->postTransformer);
-        var_dump($feed_posts);
     }
 
     /**
@@ -559,7 +564,9 @@ class PostsController extends ApiController
 
         $posts = $this->fetchAllFilteredPosts();
 
-        $this->trackAction(Auth::user(), "Advance Search");
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "Advance Search");
+        }
 
         return $this->respondWithPagination($posts, $this->postTransformer);
     }
@@ -671,7 +678,9 @@ class PostsController extends ApiController
 
         $paginated_result = $this->getPaginated($all_posts, $limit);
 
-        $this->trackAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]);
+        if (!$this->userIsGuest()) {
+            $this->trackAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]);
+        }
 
         return $this->respondWithPagination($paginated_result, $this->postTransformer);
     }
@@ -684,7 +693,7 @@ class PostsController extends ApiController
     protected function getGalleryPosts($user_id)
     {
         $gallery_posts = Post::where('owner_id', $user_id)->where('is_gallery_item', 1)->with('owner', 'artist', 'tags');
-        if(Auth::user()->id != $user_id){
+        if(!$this->userIsGuest() && Auth::user()->id != $user_id){
             $gallery_posts = $gallery_posts->where('is_locked', 0);
         }
 

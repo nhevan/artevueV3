@@ -251,4 +251,18 @@ class ApiController extends Controller
         $job = (new SendMixpanelAction($user, $action, $properties, $ip))->onConnection('sync');
         dispatch($job);
     }
+
+    /**
+     * checks if the current request consists of any access token or not
+     * @return boolean [description]
+     */
+    public function userIsGuest()
+    {
+        return !Auth::check();
+    }
+
+    public function getAutoFollowersArray()
+    {
+        return [33, 204, 128, 2523, 567, 1637, 306, 663, 74, 601];
+    }
 }
