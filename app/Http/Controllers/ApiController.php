@@ -263,6 +263,6 @@ class ApiController extends Controller
 
     public function getAutoFollowersArray()
     {
-        return [33, 204, 128, 2523, 567, 1637, 306, 663, 74, 601, 6689];
+        return [33, 204, 128, 2523, 567, 1637, 306, 663, 74, 601];
     }
 }

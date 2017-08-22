@@ -14,10 +14,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/test-user/{user}', function (User $user) {
-    return $user->load('metadata', 'userType');
-});
-
 Route::middleware('auth:api')->get('/feed-top-bar', function(){
 	$data['news_image'] = '/news.jpg';
 	$data['events_image'] = '/event.jpg';
@@ -25,8 +21,6 @@ Route::middleware('auth:api')->get('/feed-top-bar', function(){
 	return response()->json(['data' => $data], 200);
 });
 
-//User APIs
-// Route::middleware('auth:api')->get('/user', 'UsersController@index');
 Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
 Route::middleware('auth:api')->post('/user', 'UsersController@store');
 Route::middleware('auth:api')->put('/user', 'UsersController@edit');
@@ -40,12 +34,11 @@ Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@up
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
-Route::middleware('auth:api')->get('/discover-users', 'DiscoverController@discoverUsers');
+Route::middleware('auth.optional:api')->get('/discover-users', 'DiscoverController@discoverUsers');
 Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActivities');
 Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
 Route::middleware('auth:api')->patch('/password', 'UsersController@changePassword');
 Route::middleware('api')->get('/forgot-password', 'UsersController@sendNewPasswordEmail');
-Route::middleware('auth:api')->get('/test-slack', 'UsersController@testSlack');
 Route::middleware('auth:api')->delete('/user/{user}', 'UsersController@destroy');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
@@ -75,7 +68,7 @@ Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
-Route::middleware('auth:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
+Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
 Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
 Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
@@ -105,9 +98,9 @@ Route::middleware('auth:api')->delete('/comment/{comment_id}', 'CommentsControll
 Route::middleware('api')->get('/news', 'NewsController@index');
 Route::middleware('api')->get('/events', 'EventsController@index');
 
-Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
-
 Route::middleware('api')->get('/art-preferences', 'ArtPreferencesController@index');
 Route::middleware('api')->get('/art-types', 'ArtTypesController@index');
 
+Route::middleware('auth:api')->get('/test-slack', 'UsersController@testSlack');
+Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
 Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');
