@@ -111,3 +111,4 @@ Route::middleware('auth:api')->get('/art-preferences', 'ArtPreferencesController
 Route::middleware('auth:api')->get('/art-types', 'ArtTypesController@index');
 
 Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');
+Route::middleware('api')->get('/settings', 'SettingsController@index');
