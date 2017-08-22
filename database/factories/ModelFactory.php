@@ -241,3 +241,12 @@ $factory->define(App\Event::class, function ($faker) {
         'publish_date' => $faker->date
     ];
 });
+
+$factory->define(App\Settings::class, function ($faker) {
+    return [
+        'key' => $faker->sentence(1),
+        'value' => $faker->sentence(1),
+        'description' => $faker->sentence(5),
+        'message' => $faker->sentence(10),
+    ];
+});
