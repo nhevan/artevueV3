@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Settings;
 use Illuminate\Http\Request;
 
-class SettingsController extends Controller
+class SettingsController extends ApiController
 {
     protected $settings;
 
@@ -21,8 +21,21 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        $settings = $this->settings->all()->pluck('value', 'key')->toArray();
-        return response()->json($settings);
+        $platform = strtolower(request()->header("X-ARTEVUE-App-Platform"));
+        
+        if ($platform == 'android') {
+            $settings = $this->settings->where('key', 'LIKE', "%android%")->pluck('value', 'key')->toArray();    
+            return response()->json($settings);
+        }
+
+        if ($platform == 'ios') {
+            $settings = $this->settings->where('key', 'LIKE', "%ios%")->pluck('value', 'key')->toArray();    
+            return response()->json($settings);
+        }
+        
+        return $this
+                    ->setStatusCode(422)
+                    ->respondWithError("Please provide the X-ARTEVUE-App-Platform key with a valid value (iOS/Android) with the header.");
     }
 
     /**
