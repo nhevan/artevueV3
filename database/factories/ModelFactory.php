@@ -250,3 +250,15 @@ $factory->define(App\Settings::class, function ($faker) {
         'message' => $faker->sentence(10),
     ];
 });
+
+$factory->define(App\Comment::class, function ($faker) {
+    return [
+        'post_id' => function(){
+            return factory('App\Post')->create()->id;
+        },
+        'user_id' => function(){
+            return factory('App\User')->create()->id;
+        },
+        'comment' => $faker->sentence(5)
+    ];
+});

@@ -4,6 +4,7 @@ namespace Acme\Transformers;
 
 use App\Pin;
 use App\Like;
+use App\Comment;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -11,10 +12,12 @@ use Illuminate\Support\Facades\Auth;
 */
 class PostTransformer extends Transformer
 {
+    protected $comment_count = 0;
     public function transform($post)
     {
-    	$is_liked = $this->isPostLiked($post['id']);
-    	$is_pinned = $this->isPostPinned($post['id']);
+        $is_liked = $this->isPostLiked($post['id']);
+        $is_pinned = $this->isPostPinned($post['id']);
+        $comments = $this->fetchLatestThreeComments($post['id']);
 
         $tags = [];
         if($post['tags'] != null){
@@ -50,7 +53,7 @@ class PostTransformer extends Transformer
                 'address_title' => $post['address_title'],
 
                 'pin_count' => $post['pin_count'],
-                'comment_count' => $post['comment_count'],
+                'comment_count' => $this->comment_count,
                 'like_count' => $post['like_count'],
 
                 'created_at' => $post['created_at'],
@@ -62,7 +65,8 @@ class PostTransformer extends Transformer
                 ],
                 'is_liked' => $is_liked,
                 'is_pinned' => $is_pinned,
-                'tagged_users' => $tags
+                'tagged_users' => $tags,
+                'comments' => $comments
             ];
 
             if (array_key_exists('score', $post)) {
@@ -106,6 +110,23 @@ class PostTransformer extends Transformer
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * fetches the latest three comments of a given post
+     * @param  [type] $post_id [description]
+     * @return [type]          [description]
+     */
+    public function fetchLatestThreeComments($post_id)
+    {
+        $comment_count = Comment::where('post_id', $post_id)->count();
+        $this->comment_count = $comment_count;
+
+        if ($comment_count <= 3) {
+            return Comment::where('post_id', $post_id)->get()->toArray();
+        }
+        
+        return Comment::where('post_id', $post_id)->take(3)->get()->sortByDesc('id')->values()->all();
     }
 	
 }

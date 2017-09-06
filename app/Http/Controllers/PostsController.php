@@ -163,7 +163,7 @@ class PostsController extends ApiController
     public function show(Post $post)
     {
         $post->load('owner','artist', 'tags');
-
+        
         if (Auth::check()) {
             $this->trackAction(Auth::user(), "View Post", ['Post ID' => $post->id]);
         }
@@ -538,8 +538,16 @@ class PostsController extends ApiController
             $this->trackAction(Auth::user(), "Feed View");
         }
 
-        $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)->orderBy('created_at', 'DESC')->with('owner', 'artist', 'tags')->take(200)->get()->toArray();
-
+        $feed_posts = $this->post->whereIn('owner_id', $following_user_ids)
+                    ->orderBy('created_at', 'DESC')
+                    ->with(
+                        'owner',
+                        'artist',
+                        'tags'
+                        )
+                    ->take(200)
+                    ->get()
+                    ->toArray();
         $feed_posts = $this->getPaginated($feed_posts, 20);
 
         return $this->respondWithPagination($feed_posts, $this->postTransformer);
@@ -567,7 +575,6 @@ class PostsController extends ApiController
         if (!$this->userIsGuest()) {
             $this->trackAction(Auth::user(), "Advance Search");
         }
-
         return $this->respondWithPagination($posts, $this->postTransformer);
     }
 
