@@ -17,7 +17,7 @@ class PostTransformer extends Transformer
     {
         $is_liked = $this->isPostLiked($post['id']);
         $is_pinned = $this->isPostPinned($post['id']);
-        $comments = $this->fetchLatestThreeComments($post['id']);
+        $comments = $this->fetchComments($post['id']);
 
         $tags = [];
         if($post['tags'] != null){
@@ -117,16 +117,21 @@ class PostTransformer extends Transformer
      * @param  [type] $post_id [description]
      * @return [type]          [description]
      */
-    public function fetchLatestThreeComments($post_id)
+    public function fetchComments($post_id)
     {
         $comment_count = Comment::where('post_id', $post_id)->count();
         $this->comment_count = $comment_count;
 
+        $comments = Comment::where('post_id', $post_id)
+                    ->with(['commentor' => function($query){
+                        return $query->select('id', 'username');
+                    }]);
+
         if ($comment_count <= 3) {
-            return Comment::where('post_id', $post_id)->get()->toArray();
+            return $comments->get()->toArray();
         }
         
-        return Comment::where('post_id', $post_id)->take(3)->get()->sortByDesc('id')->values()->all();
+        return $comments->take(3)->get()->sortByDesc('id')->values()->all();
     }
 	
 }
