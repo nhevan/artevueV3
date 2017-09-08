@@ -111,6 +111,87 @@ class UsersController extends ApiController
     }
 
     /**
+     * signs up a user via social media (facebook and Instagram)
+     * @param  [type]  $provider [description]
+     * @param  Request $request  [description]
+     * @return [type]            [description]
+     */
+    public function socialSignup($provider, Request $request)
+    {
+        if (!$this->isAllowed($provider)) {
+            return $this->setStatusCode(422)->respondWithError("{$provider} is not a known social media integrated with Artevue yet.");
+        }
+
+        if ($provider == "instagram") {
+            return $this->signupViaInstagram($request);
+        }
+
+        if ($provider == "facebook") {
+            return $this->signupViaFacebook($request);
+        }
+    }
+
+    public function processSocialSignup(Request $request, $media)
+    {
+        $rules = [
+            'name' => 'required|max:50',
+            'social_media_uid' => 'bail|required',
+            'social_media_access_token' => 'bail|required',
+            'username' => 'required|min:4|max:20|unique:users,username',
+            'email' => 'required|email',
+            'user_type_id' => 'bail|required|numeric|min:3|max:10|',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $email_address = $request->email;
+        $user = $this->user->where('email', $email_address)->first();
+        if ($user) {
+            $this->updateUsersSocialMediaInfo($user, $media, $request);
+            return $this->respondWithAccessToken($user);
+        }
+
+        $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
+
+        $user = $this->user->create($request->all());
+        
+        $metadata = New UserMetadata;
+        $user->metadata()->save($metadata);
+
+        $this->startAutoFollowingUsers($user->id);
+
+        $this->trackAction($user, "New Signup", ['media' => $media]);
+        $this->sendWelcomeEmail($user);
+
+        $this->updateUsersSocialMediaInfo($user, $media, $request);
+        return $this->respondWithAccessToken($user);
+    }
+
+    /**
+     * signup via facebook
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function signupViaFacebook(Request $request)
+    {
+        return $this->processSocialSignup('facebook', $request);
+    }
+
+    /**
+     * signup via facebook
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function signupViaInstagram(Request $request)
+    {
+        $request->merge(array( 'social_media' => "instagram" ));
+        return $this->signupViaFacebook($request);
+
+        return ['instagram signup'];
+    }
+
+    /**
      * signup a new user
      * @param  Request $request [description]
      * @return [type]           [description]
@@ -119,10 +200,10 @@ class UsersController extends ApiController
     {
         $rules = [
             'name' => 'required|max:50',
-            'username' => 'required|max:20|unique:users,username',
+            'username' => 'required|min:4|max:20|unique:users,username',
             'password' => 'required|min:6',
             'email' => 'required|email|unique:users,email',
-            'user_type_id' => 'required'
+            'user_type_id' => 'bail|required|numeric|min:3|max:10|'
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
@@ -317,7 +398,7 @@ class UsersController extends ApiController
 
         $this->startAutoFollowingUsers($user->id);
 
-        $this->trackAction($user, "New Signup", ['media' => 'Facebook']);
+        $this->trackAction($user, "New Signup", ['media' => 'facebook']);
         $this->sendWelcomeEmail($user);
         return $this->respondWithAccessToken($user);
     }

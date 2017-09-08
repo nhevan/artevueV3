@@ -22,7 +22,8 @@ Route::middleware('auth:api')->get('/feed-top-bar', function(){
 });
 
 Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
-Route::middleware('auth:api')->post('/user', 'UsersController@store');
+Route::middleware('api')->post('/user', 'UsersController@store');
+Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@socialSignup');
 Route::middleware('auth:api')->put('/user', 'UsersController@edit');
 Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser');
 Route::middleware('api')->get('/user-by-username', 'UsersController@fetchUserByUsername');
