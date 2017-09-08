@@ -28,7 +28,8 @@ Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser
 Route::middleware('api')->get('/user-by-username', 'UsersController@fetchUserByUsername');
 Route::middleware('api')->get('/check-username', 'UsersController@checkUsername');
 Route::middleware('api')->get('/search-user', 'UsersController@searchUser');
-Route::middleware('auth:api')->get('/facebook-login', 'UsersController@facebookLogin');
+Route::middleware('api')->get('/facebook-login', 'UsersController@facebookLogin');
+Route::middleware('api')->get('/auth/{provider}/login', 'UsersController@socialLogin');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');

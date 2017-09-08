@@ -172,7 +172,104 @@ class UsersController extends ApiController
     }
 
     /**
-     * allows a user to login via facebook email address {THIS IS NOT THE RIGHT APPROACH}
+     * allows a user to login via social media (Facebook and Instagram)
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function socialLogin($provider, Request $request)
+    {
+        if (!$this->isAllowed($provider)) {
+            return $this->setStatusCode(422)->respondWithError("{$provider} is not a known social media integrated with Artevue yet.");
+        }
+
+        if ($provider == "instagram") {
+            return $this->loginViaInstagram($request);
+        }
+
+        if ($provider == "facebook") {
+            return $this->loginViaFacebook($request);
+        }
+    }
+
+    /**
+     * attempt login via facebook
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function loginViaFacebook(Request $request)
+    {
+        $rules = [
+            'email' => 'required|email',
+            'social_media_uid' => 'required',
+            'social_media_access_token' => 'required'
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $email_address = $request->email;
+        $user = $this->user->where('email', $email_address)->first();
+        if ($user) {
+            $this->updateUsersSocialMediaInfo($user, 'facebook', $request);
+            return $this->respondWithAccessToken($user);
+        }
+
+        return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This email address is not associated with any user. Try signing up first.');
+    }
+
+    /**
+     * attempt login via instagram
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function loginViaInstagram(Request $request)
+    {
+        $rules = [
+            'social_media_uid' => 'required',
+            'social_media_access_token' => 'required'
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $instagram_uid = $request->social_media_uid;
+        $user = $this->user->where('social_media_uid', $instagram_uid)->where('social_media', 'instagram')->first();
+        if ($user) {
+            $this->updateUsersSocialMediaInfo($user, 'instagram', $request);
+            return $this->respondWithAccessToken($user);
+        }
+
+        return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This user needs to sign up with instagram first.');
+    }
+
+    /**
+     * updates social media info for a given user
+     * @param  User    $user     [description]
+     * @param  [type]  $provider [description]
+     * @param  Request $request  [description]
+     * @return [type]            [description]
+     */
+    public function updateUsersSocialMediaInfo(User $user, $provider, Request $request)
+    {
+        $user->social_media = $provider;
+        $user->social_media_uid = $request->social_media_uid;
+        $user->social_media_access_token = $request->social_media_access_token;
+
+        $user->save();
+    }
+
+    /**
+     * checks if the provider is a valid provider
+     * @param  [type]  $provider [description]
+     * @return boolean           [description]
+     */
+    public function isAllowed($provider)
+    {
+        return in_array($provider, ['facebook', 'instagram']);
+    }
+
+    /**
+     * allows a user to login via facebook email address {THIS IS NOT THE RIGHT APPROACH - Apparently this is the right method as per Ben}
      * @param  Request $request [description]
      * @return [type]           [description]
      */
@@ -188,7 +285,7 @@ class UsersController extends ApiController
     }
 
     /**
-     * allows a user to signup via facebook {THIS IS NOT THE RIGHT APPROACH}
+     * allows a user to signup via facebook {THIS IS NOT THE RIGHT APPROACH - Apparently this is the right method as per Ben}
      * @param  Request $request [description]
      * @return [type]           [description]
      */
