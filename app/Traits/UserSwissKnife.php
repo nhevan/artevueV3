@@ -42,4 +42,40 @@ trait UserSwissKnife{
     	$follower->is_still_following = 0;
     	$follower->save();
     }
+
+    /**
+     * fetch a users email address using facebook access token
+     * @param  [type] $access_token [description]
+     * @return [type]               [description]
+     */
+    public function fetchUserEmailFromFBAccessToken($access_token)
+    {
+        $client = new \GuzzleHttp\client();
+        
+        try {
+            $response = $client->get("https://graph.facebook.com/v2.10/me?fields=name,email&access_token={$access_token}");
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+        }
+
+        return $response;
+    }
+
+    /**
+     * fetch a users instagram id using instagram access token
+     * @param  [type] $access_token [description]
+     * @return [type]               [description]
+     */
+    public function fetchUserInstagramId($access_token)
+    {
+        $client = new \GuzzleHttp\client();
+        
+        try {
+            $response = $client->get("https://api.instagram.com/v1/users/self/?access_token={$access_token}");
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+        }
+
+        return $response;
+    }
 }

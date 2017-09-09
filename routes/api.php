@@ -23,14 +23,14 @@ Route::middleware('auth:api')->get('/feed-top-bar', function(){
 
 Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
 Route::middleware('api')->post('/user', 'UsersController@store');
-Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@socialSignup');
 Route::middleware('auth:api')->put('/user', 'UsersController@edit');
 Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser');
 Route::middleware('api')->get('/user-by-username', 'UsersController@fetchUserByUsername');
 Route::middleware('api')->get('/check-username', 'UsersController@checkUsername');
 Route::middleware('api')->get('/search-user', 'UsersController@searchUser');
 Route::middleware('api')->get('/facebook-login', 'UsersController@facebookLogin');
-Route::middleware('api')->get('/auth/{provider}/login', 'UsersController@socialLogin');
+Route::middleware('api')->post('/auth/{provider}/login', 'UsersController@socialLogin');
+Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@socialSignup');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');

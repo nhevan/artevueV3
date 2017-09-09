@@ -22,6 +22,7 @@ use App\UserArtInteraction;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
 use App\Mail\NotifyIssueEmail;
+use App\Traits\UserSwissKnife;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,7 +40,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
 {
-    use CounterSwissKnife, NotificationSwissKnife;
+    use CounterSwissKnife, NotificationSwissKnife, UserSwissKnife;
     protected $user;
     
     /**
@@ -280,18 +281,24 @@ class UsersController extends ApiController
     public function loginViaFacebook(Request $request)
     {
         $rules = [
-            'email' => 'required|email',
-            'social_media_uid' => 'required',
-            'social_media_access_token' => 'required'
+            'access_token' => 'required'
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
         }
 
-        $email_address = $request->email;
+        $fb_response = $this->fetchUserEmailFromFBAccessToken($request->access_token);
+
+        if ($fb_response->getStatusCode() == 400) { //invalid access token
+            return $this->setStatusCode(IlluminateResponse::HTTP_BAD_REQUEST)->respondWithError('Invalid access token.');
+        }
+
+        $fb_response_object = json_decode($fb_response->getBody());
+
+        $email_address = $fb_response_object->email;
         $user = $this->user->where('email', $email_address)->first();
         if ($user) {
-            $this->updateUsersSocialMediaInfo($user, 'facebook', $request);
+            $this->updateUsersSocialMediaInfo($user, 'facebook', $fb_response_object->id, $request->access_token);
             return $this->respondWithAccessToken($user);
         }
 
@@ -306,17 +313,23 @@ class UsersController extends ApiController
     public function loginViaInstagram(Request $request)
     {
         $rules = [
-            'social_media_uid' => 'required',
-            'social_media_access_token' => 'required'
+            'access_token' => 'required'
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
         }
 
-        $instagram_uid = $request->social_media_uid;
+        $instagram_response = $this->fetchUserInstagramId($request->access_token);
+        if ($instagram_response->getStatusCode() == 400) { //invalid access token
+            return $this->setStatusCode(IlluminateResponse::HTTP_BAD_REQUEST)->respondWithError('Invalid access token.');
+        }
+
+        $instagram_response_object = json_decode($instagram_response->getBody(), true);
+
+        $instagram_uid = $instagram_response_object['data']['id'];
         $user = $this->user->where('social_media_uid', $instagram_uid)->where('social_media', 'instagram')->first();
         if ($user) {
-            $this->updateUsersSocialMediaInfo($user, 'instagram', $request);
+            $this->updateUsersSocialMediaInfo($user, 'instagram', $instagram_response_object['data']['id'], $request->access_token);
             return $this->respondWithAccessToken($user);
         }
 
@@ -330,11 +343,11 @@ class UsersController extends ApiController
      * @param  Request $request  [description]
      * @return [type]            [description]
      */
-    public function updateUsersSocialMediaInfo(User $user, $provider, Request $request)
+    public function updateUsersSocialMediaInfo(User $user, $provider, $social_media_uid, $social_media_access_token)
     {
         $user->social_media = $provider;
-        $user->social_media_uid = $request->social_media_uid;
-        $user->social_media_access_token = $request->social_media_access_token;
+        $user->social_media_uid = $social_media_uid;
+        $user->social_media_access_token = $social_media_access_token;
 
         $user->save();
     }
