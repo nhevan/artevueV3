@@ -153,18 +153,11 @@ class UsersController extends ApiController
             'social_media_uid' => 'bail|required',
             'social_media_access_token' => 'bail|required',
             'username' => 'required|min:4|max:20|unique:users,username',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'user_type_id' => 'bail|required|numeric|min:3|max:10|',
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
-        }
-
-        $email_address = $request->email;
-        $user = $this->user->where('email', $email_address)->first();
-        if ($user) {
-            $this->updateUsersSocialMediaInfo($user, $media, $request);
-            return $this->respondWithAccessToken($user);
         }
 
         $request->merge(array( 'profile_picture' => 'img/profile-holder.png' ));
@@ -179,7 +172,7 @@ class UsersController extends ApiController
         $this->trackAction($user, "New Signup", ['media' => $media]);
         $this->sendWelcomeEmail($user);
 
-        $this->updateUsersSocialMediaInfo($user, $media, $request);
+        $this->updateUsersSocialMediaInfo($user, $media, $request->social_media_uid, $request->social_media_access_token);
         return $this->respondWithAccessToken($user);
     }
 

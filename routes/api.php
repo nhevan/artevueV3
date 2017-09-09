@@ -21,16 +21,19 @@ Route::middleware('auth:api')->get('/feed-top-bar', function(){
 	return response()->json(['data' => $data], 200);
 });
 
-Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
 Route::middleware('api')->post('/user', 'UsersController@store');
+Route::middleware('api')->get('/facebook-login', 'UsersController@facebookLogin');
+Route::middleware('auth:api')->patch('/password', 'UsersController@changePassword');
+Route::middleware('api')->get('/forgot-password', 'UsersController@sendNewPasswordEmail');
+Route::middleware('api')->post('/auth/{provider}/login', 'UsersController@login');
+Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@signup');
+
+Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
 Route::middleware('auth:api')->put('/user', 'UsersController@edit');
 Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser');
 Route::middleware('api')->get('/user-by-username', 'UsersController@fetchUserByUsername');
 Route::middleware('api')->get('/check-username', 'UsersController@checkUsername');
 Route::middleware('api')->get('/search-user', 'UsersController@searchUser');
-Route::middleware('api')->get('/facebook-login', 'UsersController@facebookLogin');
-Route::middleware('api')->post('/auth/{provider}/login', 'UsersController@login');
-Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@signup');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
@@ -39,8 +42,6 @@ Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@
 Route::middleware('auth.optional:api')->get('/discover-users', 'DiscoverController@discoverUsers');
 Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActivities');
 Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
-Route::middleware('auth:api')->patch('/password', 'UsersController@changePassword');
-Route::middleware('api')->get('/forgot-password', 'UsersController@sendNewPasswordEmail');
 Route::middleware('auth:api')->delete('/user/{user}', 'UsersController@destroy');
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
