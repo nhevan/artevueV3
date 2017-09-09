@@ -258,10 +258,14 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function socialLogin($provider, Request $request)
+    public function login($provider, Request $request)
     {
         if (!$this->isAllowed($provider)) {
             return $this->setStatusCode(422)->respondWithError("{$provider} is not a known social media integrated with Artevue yet.");
+        }
+
+        if ($provider == "artevue") {
+            return $this->loginViaArtevue($request);
         }
 
         if ($provider == "instagram") {
@@ -271,6 +275,29 @@ class UsersController extends ApiController
         if ($provider == "facebook") {
             return $this->loginViaFacebook($request);
         }
+    }
+
+    /**
+     * attempt login via artevue
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function loginViaArtevue(Request $request)
+    {
+        $rules = [
+            'username' => 'required|min:4|max:20',
+            'password' => 'required|min:6',
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+            $user = Auth::user();
+            return $this->respondWithAccessToken($user);
+        }
+        
+        return $this->setStatusCode(IlluminateResponse::HTTP_UNAUTHORIZED)->respondWithError('The user credentials were incorrect.');
     }
 
     /**
@@ -359,7 +386,7 @@ class UsersController extends ApiController
      */
     public function isAllowed($provider)
     {
-        return in_array($provider, ['facebook', 'instagram']);
+        return in_array($provider, ['artevue', 'facebook', 'instagram']);
     }
 
     /**
