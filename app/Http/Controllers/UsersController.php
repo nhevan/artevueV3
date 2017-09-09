@@ -117,10 +117,14 @@ class UsersController extends ApiController
      * @param  Request $request  [description]
      * @return [type]            [description]
      */
-    public function socialSignup($provider, Request $request)
+    public function signup($provider, Request $request)
     {
         if (!$this->isAllowed($provider)) {
             return $this->setStatusCode(422)->respondWithError("{$provider} is not a known social media integrated with Artevue yet.");
+        }
+
+        if ($provider == "artevue") {
+            return $this->signupViaArtevue($request);
         }
 
         if ($provider == "instagram") {
@@ -132,7 +136,17 @@ class UsersController extends ApiController
         }
     }
 
-    public function processSocialSignup(Request $request, $media)
+    /**
+     * allow users to signup via artevue
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function signupViaArtevue(Request $request)
+    {
+        return $this->store($request);
+    }
+
+    public function processSocialSignup($media, Request $request)
     {
         $rules = [
             'name' => 'required|max:50',
@@ -186,10 +200,7 @@ class UsersController extends ApiController
      */
     public function signupViaInstagram(Request $request)
     {
-        $request->merge(array( 'social_media' => "instagram" ));
-        return $this->signupViaFacebook($request);
-
-        return ['instagram signup'];
+        return $this->processSocialSignup('instagram', $request);
     }
 
     /**

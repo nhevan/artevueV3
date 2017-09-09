@@ -30,7 +30,7 @@ Route::middleware('api')->get('/check-username', 'UsersController@checkUsername'
 Route::middleware('api')->get('/search-user', 'UsersController@searchUser');
 Route::middleware('api')->get('/facebook-login', 'UsersController@facebookLogin');
 Route::middleware('api')->post('/auth/{provider}/login', 'UsersController@login');
-Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@socialSignup');
+Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@signup');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
