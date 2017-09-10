@@ -5,6 +5,8 @@ return [
 
     'mixpanel_project_token' => env('MIXPANEL_PROJECT_TOKEN'),
 
+    'google_api_key' => env('GOOGLE_API_KEY'),
+
     'storage' => env('STORAGE', 'local'),
     /*
     |--------------------------------------------------------------------------

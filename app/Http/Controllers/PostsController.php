@@ -10,11 +10,15 @@ use Exception;
 use App\Artist;
 use App\Hashtag;
 use App\Follower;
+use Vision\Image;
+use Vision\Vision;
+use Vision\Feature;
 use App\PostHashtag;
 use Illuminate\Http\File;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use App\Jobs\SendDetectedHashtags;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Acme\Transformers\LikeTransformer;
@@ -460,7 +464,7 @@ class PostsController extends ApiController
      */
     public function makeFileFromBase64($image_as_base64_string)
     {
-        $encoded_image = $this->request->post_image;
+        $encoded_image = $image_as_base64_string;
         $extension = explode('/', substr($encoded_image, 0, strpos($encoded_image, ';')))[1];
 
         $base64 = explode(',', $encoded_image)[1];
@@ -798,5 +802,25 @@ class PostsController extends ApiController
             $count++;
         }
         return $this->respond(['message' => 'Gallery successfully arranged.']);
+    }
+
+    /**
+     * fetches suggested hashtags for a given post
+     * @return [type] [description]
+     */
+    public function fetchSuggestedHashtags()
+    {
+        $rules = [
+            'image' => 'required'
+        ];
+        if (!$this->setRequest($this->request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $filepath = $this->makeFileFromBase64($this->request->image);
+
+        SendDetectedHashtags::dispatch(Auth::user(), $filepath);
+
+        return response()->json(["message" => "Image successfully uploaded for automatic hashtag detection."]);
     }
 }
