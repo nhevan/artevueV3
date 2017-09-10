@@ -469,7 +469,7 @@ class PostsController extends ApiController
 
         $base64 = explode(',', $encoded_image)[1];
 
-        $filepath = public_path()."/images/".uniqid().'.'.$extension;
+        $filepath = storage_path('app/public')."/images/".uniqid().'.'.$extension;
         $decoded_image = base64_decode($base64);
         file_put_contents($filepath, $decoded_image);
 

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Follower;
+use GuzzleHttp\Client;
 
 trait UserSwissKnife{
 	
@@ -50,7 +51,7 @@ trait UserSwissKnife{
      */
     public function fetchUserEmailFromFBAccessToken($access_token)
     {
-        $client = new \GuzzleHttp\client();
+        $client = new Client();
         
         try {
             $response = $client->get("https://graph.facebook.com/v2.10/me?fields=name,email&access_token={$access_token}");
@@ -68,7 +69,7 @@ trait UserSwissKnife{
      */
     public function fetchUserInstagramId($access_token)
     {
-        $client = new \GuzzleHttp\client();
+        $client = new Client();
         
         try {
             $response = $client->get("https://api.instagram.com/v1/users/self/?access_token={$access_token}");
