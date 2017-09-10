@@ -11,6 +11,7 @@ use App\Artist;
 use App\Hashtag;
 use App\Follower;
 use App\PostHashtag;
+use Illuminate\Http\File;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
@@ -384,18 +385,37 @@ class PostsController extends ApiController
      */
     public function hasValidationError()
     {
-    	$rules = [
-            'post_image' => 'required|file',
-            'description' => 'nullable|max:250',
-            'hashtags' => 'nullable|max:250',
-            'aspect_ratio' => 'nullable|numeric',
-            'price' => 'nullable|numeric',
-            'has_buy_btn' => 'nullable|in:0,1',
-            'address' => 'nullable|max:120',
-            'address_title' => 'nullable|max:120',
-            'is_public' => 'nullable|in:0,1',
-            'is_gallery' => 'nullable|in:0,1',
-        ];
+        $platform = strtolower(request()->header("X-ARTEVUE-App-Platform"));
+        $app_version = (float) strtolower(request()->header("X-ARTEVUE-App-Version"));
+
+        if($app_version >= 2){
+            $rules = [
+                'post_image' => 'required',
+                'description' => 'nullable|max:250',
+                'hashtags' => 'nullable|max:250',
+                'aspect_ratio' => 'nullable|numeric',
+                'price' => 'nullable|numeric',
+                'has_buy_btn' => 'nullable|in:0,1',
+                'address' => 'nullable|max:120',
+                'address_title' => 'nullable|max:120',
+                'is_public' => 'nullable|in:0,1',
+                'is_gallery' => 'nullable|in:0,1',
+            ];
+        }else{
+            $rules = [
+                'post_image' => 'required|file',
+                'description' => 'nullable|max:250',
+                'hashtags' => 'nullable|max:250',
+                'aspect_ratio' => 'nullable|numeric',
+                'price' => 'nullable|numeric',
+                'has_buy_btn' => 'nullable|in:0,1',
+                'address' => 'nullable|max:120',
+                'address_title' => 'nullable|max:120',
+                'is_public' => 'nullable|in:0,1',
+                'is_gallery' => 'nullable|in:0,1',
+            ];
+        }
+
         return !$this->setRequest($this->request)->isValidated($rules);
     }
 
@@ -417,12 +437,39 @@ class PostsController extends ApiController
      */
     public function uploadPostImageTos3()
     {
-        $storage = config('app.storage');
-    	$path = $this->request->file('post_image')->store(
-            'img/posts', 's3'
-        );
+        $app_version = (float) strtolower(request()->header("X-ARTEVUE-App-Version"));
+
+        if($app_version >= 2){
+            $filepath = $this->makeFileFromBase64($this->request->post_image);
+
+            $path = Storage::disk('s3')->putFile('img/posts', new File($filepath));
+            unlink($filepath);
+        }else{
+        	$path = $this->request->file('post_image')->store(
+                'img/posts', 's3'
+            );
+        }
         
         return $path;
+    }
+
+    /**
+     * creates a file from a given base 64 encoded string
+     * @param  [type] $image_as_base64_string [description]
+     * @return [type]                         [description]
+     */
+    public function makeFileFromBase64($image_as_base64_string)
+    {
+        $encoded_image = $this->request->post_image;
+        $extension = explode('/', substr($encoded_image, 0, strpos($encoded_image, ';')))[1];
+
+        $base64 = explode(',', $encoded_image)[1];
+
+        $filepath = public_path()."/images/".uniqid().'.'.$extension;
+        $decoded_image = base64_decode($base64);
+        file_put_contents($filepath, $decoded_image);
+
+        return $filepath;
     }
 
     public function sendNewPostEvent()
