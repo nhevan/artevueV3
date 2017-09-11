@@ -476,8 +476,8 @@ class PostsController extends ApiController
 
             return $filepath;
         }
-        throw new \Exception("only jpeg and jpg is allowed.");
 
+        throw new \Exception("only jpeg and jpg is allowed.");
     }
 
     public function sendNewPostEvent()
@@ -815,7 +815,8 @@ class PostsController extends ApiController
     public function fetchSuggestedHashtags()
     {
         $rules = [
-            'image' => 'required'
+            'image' => 'required',
+            'key' => 'required'
         ];
         if (!$this->setRequest($this->request)->isValidated($rules)) {
             return $this->responseValidationError();
@@ -827,7 +828,8 @@ class PostsController extends ApiController
             return $this->setStatusCode(IlluminateResponse::HTTP_BAD_REQUEST)->respondWithError($e->getMessage());
         }
 
-        SendDetectedHashtags::dispatch(Auth::user(), $filepath);
+        $unique_key = $this->request->key;
+        SendDetectedHashtags::dispatch(Auth::user(), $filepath, $unique_key);
 
         return response()->json(["message" => "Image successfully uploaded for automatic hashtag detection."]);
     }

@@ -19,16 +19,18 @@ class SendDetectedHashtags implements ShouldQueue
     
     protected $user;
     protected $filepath;
+    protected $unique_key;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(User $user, $filepath)
+    public function __construct(User $user, $filepath, $unique_key)
     {
         $this->user = $user;
         $this->filepath = $filepath;
+        $this->unique_key = $unique_key;
     }
 
     /**
@@ -59,7 +61,12 @@ class SendDetectedHashtags implements ShouldQueue
         }
         array_unique($hashtags);
         unlink($this->filepath);
+
+        $data = [
+            'key' => $this->unique_key,
+            'hashtags' => $hashtags
+        ];
         
-        $this->sendPusherNotification($this->user->id.'-personal-channel','hashtags-detected', $hashtags);
+        $this->sendPusherNotification($this->user->id.'-personal-channel','hashtags-detected', $data);
     }
 }
