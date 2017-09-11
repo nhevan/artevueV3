@@ -467,13 +467,17 @@ class PostsController extends ApiController
         $encoded_image = $image_as_base64_string;
         $extension = explode('/', substr($encoded_image, 0, strpos($encoded_image, ';')))[1];
 
-        $base64 = explode(',', $encoded_image)[1];
+        if ($this->isAllowedExtension($extension)) {
+            $base64 = explode(',', $encoded_image)[1];
 
-        $filepath = storage_path('app/public')."/images/".uniqid().'.'.$extension;
-        $decoded_image = base64_decode($base64);
-        file_put_contents($filepath, $decoded_image);
+            $filepath = storage_path('app/public')."/images/".uniqid().'.'.$extension;
+            $decoded_image = base64_decode($base64);
+            file_put_contents($filepath, $decoded_image);
 
-        return $filepath;
+            return $filepath;
+        }
+        throw new \Exception("only jpeg and jpg is allowed.");
+
     }
 
     public function sendNewPostEvent()
@@ -817,10 +821,24 @@ class PostsController extends ApiController
             return $this->responseValidationError();
         }
 
-        $filepath = $this->makeFileFromBase64($this->request->image);
+        try {
+            $filepath = $this->makeFileFromBase64($this->request->image);
+        } catch (Exception $e) {
+            return $this->setStatusCode(IlluminateResponse::HTTP_BAD_REQUEST)->respondWithError($e->getMessage());
+        }
 
         SendDetectedHashtags::dispatch(Auth::user(), $filepath);
 
         return response()->json(["message" => "Image successfully uploaded for automatic hashtag detection."]);
+    }
+
+    /**
+     * checks if the extension is a allowed extension
+     * @param  [type]  $extension [description]
+     * @return boolean            [description]
+     */
+    public function isAllowedExtension($extension)
+    {
+        return in_array($extension, ['jpg', 'jpeg', 'png']);
     }
 }
