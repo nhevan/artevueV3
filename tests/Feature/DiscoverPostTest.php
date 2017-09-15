@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Post;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -10,11 +11,12 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class DiscoverPostTest extends TestCase
 {
-	use DatabaseTransactions;
+	use DatabaseTransactions, WithoutMiddleware;
 
+    protected $constant_x = 72;  //a post with 1 like and 72 hours old is equivalent in score to a post that has been recently created
 	protected $weights = [
-		'chronological' => .25,
-		'like_count' => .40,
+		'chronological' => 1.75,
+		'like_count' => .30,
 		'pin_count' => .10
 	];
 
@@ -62,9 +64,10 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_from_followers_of_authenticated_users_followers()
     {
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
-    	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
-
+// dd(Post::all());neelamoni
+// 
+        $usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
+        $followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
     	$post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
@@ -104,17 +107,20 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_chronologically()
     {
-    	$usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
-    	$followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
+        $old_post_x_hours_old = 2;
+        $recent_post_x_hours_old = 1;
 
-    	$old_post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'created_at' => Carbon::now()->subHours(2)]);
-    	$recent_post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'created_at' => Carbon::now()->subHours(1)]);
+        $usersFollower = factory('App\Follower')->create(['follower_id' => $this->user->id]);
+        $followersFollower = factory('App\Follower')->create(['follower_id' => $usersFollower->user_id]);
+
+    	$old_post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'created_at' => Carbon::now()->subHours($old_post_x_hours_old)]);
+    	$recent_post = factory('App\Post')->create(['owner_id' => $followersFollower->user_id, 'created_at' => Carbon::now()->subHours($recent_post_x_hours_old)]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$recent_post->id, $old_post->id], array_column($response['data'], 'id'));
     	$this->assertEquals(
-    		[ (1/1)*$this->weights['chronological'], (1/2)*$this->weights['chronological'] ],
+    		[ (1/($recent_post_x_hours_old / $this->constant_x))*$this->weights['chronological'], (1/($old_post_x_hours_old/$this->constant_x))*$this->weights['chronological'] ],
     		array_column($response['data'], 'score')
 		);
     }
@@ -134,6 +140,7 @@ class DiscoverPostTest extends TestCase
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$postWithFiveLike->id, $postWithTwoLike->id], array_column($response['data'], 'id'));
+        // echo $this->weights['like_count'];
     	$this->assertScoreEquals(5*$this->weights['like_count'], 2*$this->weights['like_count'], $response);
     }
 
@@ -171,7 +178,7 @@ class DiscoverPostTest extends TestCase
 
     protected function assertScoreEquals($post_one_score, $post_two_score, $response){
     	$this->assertEquals(
-    		[(1/1)*$this->weights['chronological'] + $post_one_score,(1/1)*$this->weights['chronological'] + $post_two_score ],
+    		[(1/(1/$this->constant_x))*$this->weights['chronological'] + $post_one_score,(1/(1/$this->constant_x))*$this->weights['chronological'] + $post_two_score ],
     		array_column($response['data'], 'score')
 		);
     }
