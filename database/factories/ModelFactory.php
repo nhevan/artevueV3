@@ -199,7 +199,9 @@ $factory->define(App\Pin::class, function ($faker) {
     $posts = Post::pluck('id');
     $users = User::pluck('id');
     return [
-        'post_id' => $faker->randomElement($posts->toArray()),
+        'post_id' => function(){
+            return factory('App\Post')->create()->id;
+        },
         'user_id' => $faker->randomElement($users->toArray())
     ];
 });
