@@ -39,10 +39,10 @@ class PinsController extends ApiController
     	if (!$is_existing) {
     		$this->pin->create([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ]);
 
-            if ($this->isPostOwner($post)) {
-                $post->is_gallery_item = 1;
-                $post->save();
-            }
+            // if ($this->isPostOwner($post)) {
+            //     $post->is_gallery_item = 1;
+            //     $post->save();
+            // }
 
     		$this->incrementPostPinCount($post_id);
 	    	$this->incrementUserPinCount($this->request->user()->id);
@@ -69,15 +69,15 @@ class PinsController extends ApiController
         
     	$is_existing = $this->pin->where([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ])->first();
     	if (!$is_existing) {
-    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user have not pinned this post yet.');
+    		return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This user have not pinned this post yet.');
     	}
     	$is_existing->delete();
         
-        if ($this->isPostOwner($post)) {
-            $post->is_gallery_item = 0;
-            $post->sequence = 0;
-            $post->save();
-        }
+        // if ($this->isPostOwner($post)) {
+        //     $post->is_gallery_item = 0;
+        //     $post->sequence = 0;
+        //     $post->save();
+        // }
 
     	$this->decrementPostPinCount($post_id);
     	$this->decrementUserPinCount($this->request->user()->id);

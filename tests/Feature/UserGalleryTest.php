@@ -54,7 +54,7 @@ class UserGalleryV2ApiTest extends TestCase
     
         //assert
         $this->assertDatabaseHas('pins', ['user_id' => $this->user->id, 'post_id' => $own_post_id]);
-        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1]);
+        // $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1]);
     }
 
     /**
@@ -83,14 +83,14 @@ class UserGalleryV2ApiTest extends TestCase
         //arrange
         $own_post_id = factory('App\Post')->create(['owner_id'=>$this->user->id])->id;
         $response = $this->post("/api/pin/{$own_post_id}")->json();
-        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1]);
+        // $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1]);
 
         //act
         $response = $this->delete("/api/pin/{$own_post_id}")->json();
     
         //assert
         $this->assertDatabaseMissing('pins', ['user_id' => $this->user->id, 'post_id' => $own_post_id]);
-        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 0]);
+        // $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 0]);
     }
 
     /**
@@ -130,26 +130,26 @@ class UserGalleryV2ApiTest extends TestCase
         //assert
         $response->assertJsonFragment([
             'id' => $own_post_id,
-            'is_gallery_item' => 1
+            // 'is_gallery_item' => 1
         ]);
     }
 
     /**
      * @test
-     * lock status of a gallery post can be updated if the user is the ower of the post
+     * lock status of a gallery post can be updated if the user is the owner of the post
      */
-    public function lock_status_of_a_gallery_post_can_be_updated_if_the_user_is_the_ower_of_the_post()
+    public function lock_status_of_a_gallery_post_can_be_updated_if_the_user_is_the_owner_of_the_post()
     {
         //arrange
         $own_post_id = factory('App\Post')->create(['owner_id'=>$this->user->id])->id;
         $this->post("/api/pin/{$own_post_id}")->json();
-        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1, 'is_locked' => 0]);
+        $this->assertDatabaseHas('pins', ['user_id' => $this->user->id, 'post_id' => $own_post_id, 'is_locked' => 0]);
     
         //act
         $response = $this->patch("/api/post/{$own_post_id}", ['is_locked' => 1])->json();
     
         //assert
-        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id, 'is_gallery_item' => 1, 'is_locked' => 1]);    
+        $this->assertDatabaseHas('pins', ['user_id' => $this->user->id, 'post_id' => $own_post_id, 'is_locked' => 1]);
     }
 
     /**
@@ -161,15 +161,13 @@ class UserGalleryV2ApiTest extends TestCase
         //arrange
         $sequence0_pin = factory('App\Pin')->create(['user_id'=>$this->user->id]);
         $sequence1_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'sequence' => 1]);
-        $sequence2_own_post = factory('App\Post')->create(['owner_id'=>$this->user->id, 'sequence' => 2]);
-        $this->post("/api/pin/{$sequence2_own_post->id}")->json();
+        $sequence2_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'sequence' => 2]);
 
         //act
         $response = $this->getJson("/api/gallery/{$this->user->id}")->json();
 
         //assert
-        $this->assertEquals([ $sequence0_pin->post_id, $sequence1_pin->post_id, $sequence2_own_post->id ], array_column($response['data'], 'id'));
-        $this->assertNotEquals([ $sequence2_own_post->id, $sequence1_pin->post_id, $sequence0_pin->post_id ], array_column($response['data'], 'id'));
+        $this->assertEquals([ $sequence0_pin->post_id, $sequence1_pin->post_id, $sequence2_pin->post_id ], array_column($response['data'], 'id'));
     }
 
     /**
@@ -181,8 +179,7 @@ class UserGalleryV2ApiTest extends TestCase
         //arrange
         $sequence1_pin = factory('App\Pin')->create(['user_id'=>$this->user->id]);
         $sequence2_pin = factory('App\Pin')->create(['user_id'=>$this->user->id]);
-        $sequence3_own_post = factory('App\Post')->create(['owner_id'=>$this->user->id]);
-        $this->post("/api/pin/{$sequence3_own_post->id}")->json();
+        $sequence3_pin = factory('App\Pin')->create(['user_id'=>$this->user->id]);
 
         //act
         $request_body = [
@@ -200,7 +197,7 @@ class UserGalleryV2ApiTest extends TestCase
                     ]
                 ],
                 [
-                    'id' => $sequence3_own_post->id,
+                    'id' => $sequence3_pin->post_id,
                     'owner' => [
                         'id' => $this->user->id
                     ]
@@ -213,7 +210,7 @@ class UserGalleryV2ApiTest extends TestCase
         //assert
         $this->assertDatabaseHas('pins', ['id' => $sequence1_pin->id, 'sequence' => 1]);
         $this->assertDatabaseHas('pins', ['id' => $sequence2_pin->id, 'sequence' => 2]);
-        $this->assertDatabaseHas('posts', ['id' => $sequence3_own_post->id, 'sequence' => 3]);
+        $this->assertDatabaseHas('pins', ['id' => $sequence3_pin->id, 'sequence' => 3]);
     }
 
 }

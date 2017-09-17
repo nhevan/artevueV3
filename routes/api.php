@@ -67,7 +67,7 @@ Route::middleware('auth.optional:api')->get('/post/detail/{post}', 'PostsControl
 Route::middleware('auth:api')->post('/post', 'PostsController@store'); //v2-3
 Route::middleware('auth:api')->post('/fetch-suggested-hashtags', 'PostsController@fetchSuggestedHashtags'); //v3
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
-Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapGalleryAndLockStatus');
+Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapLockStatus');
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');

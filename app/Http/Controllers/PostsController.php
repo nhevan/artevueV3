@@ -282,7 +282,7 @@ class PostsController extends ApiController
      * @param  [type] $post_id [description]
      * @return [type]          [description]
      */
-    public function swapGalleryAndLockStatus($post_id)
+    public function swapLockStatus($post_id)
     {
         $post = Post::find($post_id);
         if (!$post) {
@@ -294,15 +294,14 @@ class PostsController extends ApiController
             return $this->responseUnauthorized('Only a post owner can swap its gallery presence status.');
         }
 
-        if ($this->request->is_gallery_item != null) {
-            $post->is_gallery_item = $this->request->is_gallery_item;
-            $post->save();
-            return $this->respond(['message' => 'Gallery status successfully swapped.']);
-        }
-        if ($this->request->is_locked != null) {
-            $post->is_locked = $this->request->is_locked;
-            $post->save();
-            return $this->respond(['message' => 'Lock status successfully swapped.']);
+        $pin = Pin::where(['user_id'=> Auth::user()->id, 'post_id' => $this->post->id])->first();
+        
+        if ($pin) {
+            if ($this->request->is_locked != null) {
+                $pin->is_locked = $this->request->is_locked;
+                $pin->save();
+                return $this->respond(['message' => 'Lock status successfully swapped.']);
+            }
         }
 
         return $this->respond(['message' => 'Nothing to update.']);
@@ -732,13 +731,12 @@ class PostsController extends ApiController
         if (!$user) {
             return $this->responseNotFound('User does not exist.');
         }
-        $gallery_posts = $this->getGalleryPosts($user_id);
+        
         $pinned_posts = $this->getPinnedPosts($user_id);
 
-        $all_posts = $gallery_posts->merge($pinned_posts);
-        $all_posts = $all_posts->sortBy('sequence')->values()->all();
+        $sorted_posts = $pinned_posts->sortBy('sequence')->values()->all();
 
-        $paginated_result = $this->getPaginated($all_posts, $limit);
+        $paginated_result = $this->getPaginated($sorted_posts, $limit);
 
         if (!$this->userIsGuest()) {
             $this->trackAction(Auth::user(), "View Gallery", ['Gallery Owner Id' => $user->id]);
@@ -771,9 +769,9 @@ class PostsController extends ApiController
     {
         $my_posts_ids = Post::where('owner_id', $user_id)->pluck('id')->toArray();
 
-        $pinned_posts_ids = Pin::where('user_id', $user_id)->whereNotIn('post_id', $my_posts_ids)->orderBy('post_id')->pluck('post_id');
+        $pinned_posts_ids = Pin::where('user_id', $user_id)->orderBy('post_id')->pluck('post_id');
 
-        $pinned_sequence = Pin::where('user_id', $user_id)->whereNotIn('post_id', $my_posts_ids)->orderBy('post_id')->pluck('sequence');
+        $pinned_sequence = Pin::where('user_id', $user_id)->orderBy('post_id')->pluck('sequence');
         $reversed_pin_sequence = $pinned_sequence->reverse();
         
         $pinned_posts = Post::whereIn('id', $pinned_posts_ids)->with('owner', 'artist', 'tags')->get();
@@ -794,15 +792,10 @@ class PostsController extends ApiController
     {
         $count = 1;
         foreach ($this->request->posts as $post) {
-            if($post['owner']['id'] == Auth::user()->id){ //post owner
-                $post = $this->post->find($post['id']);
-                $post->sequence = $count;
-                $post->save();
-            }else{ //pinned post
-                $pin = Pin::where('post_id', $post['id'])->where('user_id', Auth::user()->id)->first();
-                $pin->sequence = $count;
-                $pin->save();
-            }
+            $pin = Pin::where('post_id', $post['id'])->where('user_id', Auth::user()->id)->first();
+            $pin->sequence = $count;
+            $pin->save();
+
             $count++;
         }
         return $this->respond(['message' => 'Gallery successfully arranged.']);
