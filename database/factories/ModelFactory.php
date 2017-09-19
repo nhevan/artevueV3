@@ -264,3 +264,15 @@ $factory->define(App\Comment::class, function ($faker) {
         'comment' => $faker->sentence(5)
     ];
 });
+
+$factory->define(App\Gallery::class, function ($faker) {
+    return [
+        'user_id' => function(){
+            return factory('App\User')->create()->id;
+        },
+        'name' => $faker->name,
+        'description' => $faker->sentence(1),
+        'email' => $faker->email,
+        'website' => $faker->url
+    ];
+});

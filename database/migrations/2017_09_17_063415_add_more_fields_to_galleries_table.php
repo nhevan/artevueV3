@@ -15,9 +15,9 @@ class AddMoreFieldsToGalleriesTable extends Migration
     {
         Schema::table('galleries', function (Blueprint $table) {
             $table->string('name', 255);
-            $table->string('description', 350);
-            $table->string('email', 120);
-            $table->string('website', 120);
+            $table->string('description', 350)->nullable();
+            $table->string('email', 120)->nullable();
+            $table->string('website', 120)->nullable();
         });
     }
 

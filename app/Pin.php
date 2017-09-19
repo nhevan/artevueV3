@@ -9,6 +9,7 @@ class Pin extends Model
     protected $fillable = [
     	'post_id', 'user_id', 'sequence'
     ];
+    protected $with = ['post'];
 
     public function post()
     {

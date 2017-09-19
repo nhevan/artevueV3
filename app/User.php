@@ -70,6 +70,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Post', 'owner_id');
     }
 
+    public function galleries()
+    {
+        return $this->hasMany('App\Gallery')->orderBy('sequence');
+    }
+
     public function pins()
     {
         return $this->hasMany('App\Pin');
