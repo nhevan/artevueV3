@@ -118,7 +118,7 @@ class PinsController extends ApiController
         
     	$is_existing = $this->pin->where([ 'post_id' => $post_id, 'gallery_id' => $gallery_id , 'user_id' => $this->request->user()->id ])->first();
     	if (!$is_existing) {
-    		return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This user have not pinned this post yet.');
+    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user have not pinned this post yet.');
     	}
     	$is_existing->delete();
 
