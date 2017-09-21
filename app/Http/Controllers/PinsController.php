@@ -95,28 +95,32 @@ class PinsController extends ApiController
     }
 
     /**
-     * removes a pin
-     * @param  Post   $post [description]
+     * removes a pinned post from a given gallery
+     * @param  Gallery   $gallery_id [description]
+     * @param  Post   $post_id [description]
      * @return [type]       [description]
      */
-    public function delete($post_id)
+    public function delete($gallery_id, $post_id)
     {
-    	$post = Post::find($post_id);
+    	$gallery = Gallery::find($gallery_id);
+        if(!$gallery){
+            return $this->responseNotFound('Gallery Not found.');
+        }
+
+        $post = Post::find($post_id);
         if (!$post) {
             return $this->responseNotFound('Post does not exist.');
         }
+
+        if($gallery->user_id != Auth::user()->id){
+            return $this->responseUnauthorized('The given gallery id does not belong to the current user.');
+        }
         
-    	$is_existing = $this->pin->where([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ])->first();
+    	$is_existing = $this->pin->where([ 'post_id' => $post_id, 'gallery_id' => $gallery_id , 'user_id' => $this->request->user()->id ])->first();
     	if (!$is_existing) {
     		return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This user have not pinned this post yet.');
     	}
     	$is_existing->delete();
-        
-        // if ($this->isPostOwner($post)) {
-        //     $post->is_gallery_item = 0;
-        //     $post->sequence = 0;
-        //     $post->save();
-        // }
 
     	$this->decrementPostPinCount($post_id);
     	$this->decrementUserPinCount($this->request->user()->id);
@@ -124,6 +128,32 @@ class PinsController extends ApiController
         $this->trackAction(Auth::user(), "Remove Pin", ['Post ID' => $post_id]);
 
 		return $this->respond([ 'message' => 'Post successfully unpinned.' ]);
+    }
+
+    /**
+     * removes a pin
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function deleteOld($post_id)
+    {
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->responseNotFound('Post does not exist.');
+        }
+        
+        $is_existing = $this->pin->where([ 'post_id' => $post_id, 'user_id' => $this->request->user()->id ])->first();
+        if (!$is_existing) {
+            return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('This user have not pinned this post yet.');
+        }
+        $is_existing->delete();
+
+        $this->decrementPostPinCount($post_id);
+        $this->decrementUserPinCount($this->request->user()->id);
+
+        $this->trackAction(Auth::user(), "Remove Pin", ['Post ID' => $post_id]);
+
+        return $this->respond([ 'message' => 'Post successfully unpinned.' ]);
     }
 
     /**

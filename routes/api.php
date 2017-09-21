@@ -84,8 +84,9 @@ Route::middleware('api')->get('/user/{user_id}/gallery/{gallery_id}', 'Galleries
 Route::middleware('auth:api')->patch('/gallery/{gallery}', 'GalleriesController@update');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@storeOld'); //v2
+Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@deleteOld'); //v2
 Route::middleware('auth:api')->post('/gallery/{gallery_id}/pin/{post_id}', 'PinsController@store'); //v3
-Route::middleware('auth:api')->delete('/pin/{post_id}', 'PinsController@delete');
+Route::middleware('auth:api')->delete('/gallery/{gallery_id}/pin/{post_id}', 'PinsController@delete'); //v3
 Route::middleware('auth.optional:api')->get('/pin/posts/{user_id}', 'PinsController@pinnedPosts');
 
 Route::middleware('auth:api')->post('/like/{post_id}', 'LikesController@store');
