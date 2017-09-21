@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Pin;
 use App\Post;
 use App\User;
+use App\Gallery;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +25,50 @@ class PinsController extends ApiController
 		$this->pin = $pin;
 	}
 
+    /**
+     * pins a post to a given gallery (version 3)
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function store($gallery_id, $post_id)
+    {
+        $gallery = Gallery::find($gallery_id);
+        if(!$gallery){
+            return $this->responseNotFound('Gallery Not found.');
+        }
+
+        $post = Post::find($post_id);
+        if (!$post) {
+            return $this->responseNotFound('Post does not exist.');
+        }
+
+        if($gallery->user_id != Auth::user()->id){
+            return $this->responseUnauthorized('The given gallery id does not belong to the current user.');
+        }
+
+        $is_existing = $this->pin->where([ 'post_id' => $post_id, 'gallery_id'=> $gallery_id , 'user_id' => $this->request->user()->id ])->first();
+
+        if ($is_existing) {
+            return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user has already pinned the post on the given gallery.');
+        }
+
+        $this->pin->create([ 'post_id' => $post_id, 'gallery_id'=> $gallery_id , 'user_id' => $this->request->user()->id ]);
+
+        $this->incrementPostPinCount($post_id);
+        $this->incrementUserPinCount($this->request->user()->id);
+        $this->updatePinCountInFollowersTable($post->owner_id);
+
+        $this->trackAction(Auth::user(), "New Pin", ['Post ID' => $post_id]);
+
+        return $this->respond([ 'message' => 'Post successfully pinned.' ]);
+    }
+
 	/**
-	 * pins a post
+	 * pins a post (version 2)
 	 * @param  Post   $post [description]
 	 * @return [type]       [description]
 	 */
-    public function store($post_id)
+    public function storeOld($post_id)
     {
     	$post = Post::find($post_id);
         if (!$post) {
