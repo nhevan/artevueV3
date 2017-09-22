@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Gallery extends Model
 {
     protected $fillable = ['name', 'description', 'email', 'website'];
-    protected $with = ['firstFourPins'];
 
     public function owner()
     {
@@ -19,8 +18,4 @@ class Gallery extends Model
         return $this->hasMany('App\Pin');
     }
 
-    public function firstFourPins()
-    {
-        return $this->hasMany('App\Pin')->take(4)->orderBy('id', 'DESC');
-    }
 }

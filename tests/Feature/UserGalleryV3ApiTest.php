@@ -110,7 +110,7 @@ class UserGalleryV3ApiTest extends TestCase
     {
     	//arrange
         $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
-    	$pins = factory('App\Pin', 6)->create(['gallery_id'=>$gallery->id]);
+    	$pins = factory('App\Pin', 6)->create(['gallery_id'=>$gallery->id])->sortByDesc('id');
 
         //act
     	$response = $this->getJson("/api/user/{$this->user->id}/gallery/{$gallery->id}")->json();
@@ -169,5 +169,56 @@ class UserGalleryV3ApiTest extends TestCase
         $this->assertDatabaseHas('galleries', ['id' => $gallery2->id, 'sequence' => 1]);
         $this->assertDatabaseHas('galleries', ['id' => $gallery3->id, 'sequence' => 2]);
         $this->assertDatabaseHas('galleries', ['id' => $gallery1->id, 'sequence' => 3]);
+    }
+
+    /**
+     * @test
+     * while fetching gallery lists it returns first 4 pins along with each gallery
+     */
+    public function while_fetching_gallery_lists_it_returns_first_4_pins_along_with_each_gallery()
+    {
+    	//arrange
+        $gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    	$pins = factory('App\Pin', 3)->create(['gallery_id'=>$gallery1->id, 'user_id' => $this->user->id])->sortBy('sequence');
+    	$post = factory('App\Post')->create();
+    	$custom_pin = factory('App\Pin')->create([ 'gallery_id' => $gallery1->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
+    	$pins_gallery2 = factory('App\Pin', 3)->create(['gallery_id'=>$gallery2->id, 'user_id' => $this->user->id])->sortByDesc('id');
+    	$custom_pin_2 = factory('App\Pin')->create([ 'gallery_id' => $gallery2->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
+
+        //act
+    	$response = $this->json('GET', "/api/user/{$this->user->id}/galleries")->json();
+
+    	// dd($response);
+    
+        //assert
+        $this->assertDatabaseHas('pins', ['gallery_id' => $gallery1->id, 'user_id' => $this->user->id, 'post_id' => $post->id]);
+        $this->assertDatabaseHas('pins', ['gallery_id' => $gallery2->id, 'user_id' => $this->user->id, 'post_id' => $post->id]);
+
+        $this->assertEquals([ $gallery1->id, $gallery2->id ] , array_column($response['data'] ,'id'));
+        $this->assertEquals(4, sizeof(array_column( array_column($response['data'] ,'first_four_pins')[0], 'id')));
+        $this->assertEquals(4, sizeof(array_column( array_column($response['data'] ,'first_four_pins')[1], 'id')));
+        $this->assertEquals( array_merge($pins->pluck('id')->all(), [$custom_pin->id]) , array_column( array_column($response['data'] ,'first_four_pins')[0], 'id'));
+    }
+
+    /**
+     * @test
+     * while fetching a single gallery it fetches all pins within that gallery
+     */
+    public function while_fetching_a_single_gallery_it_fetches_all_pins_within_that_gallery()
+    {
+    	//arrange
+    	$gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    	$gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    	$pins = factory('App\Pin', 3)->create(['gallery_id'=>$gallery1->id, 'user_id' => $this->user->id])->sortByDesc('id');
+    	$post = factory('App\Post')->create();
+    	$custom_pin = factory('App\Pin')->create([ 'gallery_id' => $gallery1->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
+    	$custom_pin_2 = factory('App\Pin')->create([ 'gallery_id' => $gallery2->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
+        
+        //act
+		$response = $this->json('GET', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();    	
+
+        //assert
+        $this->assertEquals( array_merge([$custom_pin->id], $pins->pluck('id')->all()), array_column($response['data'] ,'id'));
     }
 }

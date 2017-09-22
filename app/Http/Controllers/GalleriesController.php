@@ -7,17 +7,20 @@ use App\User;
 use App\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Acme\Transformers\GalleryTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class GalleriesController extends ApiController
 {
     protected $request;
     protected $galleries;
+    protected $galleryTransformer;
 
-    public function __construct(Gallery $gallery, Request $request)
+    public function __construct(Gallery $gallery, Request $request, GalleryTransformer $galleryTransformer)
     {
         $this->request = $request;
         $this->galleries = $gallery;
+        $this->galleryTransformer = $galleryTransformer;
     }
 
     /**
@@ -29,9 +32,10 @@ class GalleriesController extends ApiController
     {
         $user = User::find($user_id);
         if ($user) {
-            return $this->respond([
-                'data' => $user->galleries
-            ]);
+            // $galleries = Gallery::where('user_id', $user->id)->get();
+
+            $galleries = $user->galleries()->orderBy('sequence')->paginate(30);
+            return $this->respondWithPagination($galleries, $this->galleryTransformer );
         }
 
         return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError("User not found.");
