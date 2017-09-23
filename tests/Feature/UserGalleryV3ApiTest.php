@@ -216,9 +216,45 @@ class UserGalleryV3ApiTest extends TestCase
     	$custom_pin_2 = factory('App\Pin')->create([ 'gallery_id' => $gallery2->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
         
         //act
-		$response = $this->json('GET', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();    	
+		$response = $this->json('GET', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
 
         //assert
         $this->assertEquals( array_merge([$custom_pin->id], $pins->pluck('id')->all()), array_column($response['data'] ,'id'));
+    }
+
+    /**
+     * @test
+     * a gallery owner can delete a gallery
+     */
+    public function a_gallery_owner_can_delete_a_gallery()
+    {
+    	//arrange
+        $gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    	$gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    
+        //act
+    	$response = $this->json('DELETE', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
+    
+        //assert
+        $this->assertDatabaseHas('galleries', ['id' => $gallery2->id, 'user_id' => $this->user->id]);
+        $this->assertDatabaseMissing('galleries', ['id' => $gallery1->id, 'user_id' => $this->user->id]);
+    }
+
+    /**
+     * @test
+     * when a gallery is deleted all its pins are also deleted
+     */
+    public function when_a_gallery_is_deleted_all_its_pins_are_also_deleted()
+    {
+    	//arrange
+        $gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $pin1 = factory('App\Pin')->create(['gallery_id' => $gallery1->id]);
+        $pin2 = factory('App\Pin')->create(['gallery_id' => $gallery1->id]);
+    
+        //act
+    	$response = $this->json('DELETE', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
+    
+        //assert
+        $this->assertDatabaseMissing('pins', ['gallery_id' => $gallery1->id]);
     }
 }

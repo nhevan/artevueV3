@@ -81,6 +81,7 @@ Route::middleware('auth:api')->post('/gallery', 'GalleriesController@store');
 Route::middleware('api')->get('/user/{user_id}/galleries', 'GalleriesController@index');
 Route::middleware('auth:api')->patch('/user/{user_id}/galleries', 'GalleriesController@arrangeGallery');
 Route::middleware('api')->get('/user/{user_id}/gallery/{gallery_id}', 'GalleriesController@show');
+Route::middleware('api')->delete('/user/{user_id}/gallery/{gallery_id}', 'GalleriesController@destroy');
 Route::middleware('auth:api')->patch('/gallery/{gallery}', 'GalleriesController@update');
 
 Route::middleware('auth:api')->post('/pin/{post_id}', 'PinsController@storeOld'); //v2

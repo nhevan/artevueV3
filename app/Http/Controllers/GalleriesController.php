@@ -171,9 +171,16 @@ class GalleriesController extends ApiController
      * @param  \App\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gallery $gallery)
+    public function destroy($user_id, $gallery_id)
     {
-        //
+        $gallery = Gallery::where('id', $gallery_id)->where('user_id', $user_id)->first();
+        if (!$gallery) {
+            return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError("No gallery found with the given id for the specified user.");
+        }
+
+        $gallery->delete();
+
+        return $this->setStatusCode(IlluminateResponse::HTTP_OK)->respond([ "message" => "Gallery successfully deleted."]);
     }
 
     /**
