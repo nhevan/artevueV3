@@ -80,6 +80,7 @@ Route::middleware('auth:api')->post('/arrange-gallery', 'PostsController@arrange
 Route::middleware('auth:api')->post('/gallery', 'GalleriesController@store');
 Route::middleware('api')->get('/user/{user_id}/galleries', 'GalleriesController@index');
 Route::middleware('auth:api')->patch('/user/{user_id}/galleries', 'GalleriesController@arrangeGallery');
+Route::middleware('auth:api')->patch('/gallery/{gallery_id}/arrange-pins', 'GalleriesController@arrangePins');
 Route::middleware('api')->get('/user/{user_id}/gallery/{gallery_id}', 'GalleriesController@show');
 Route::middleware('auth:api')->delete('/gallery/{gallery_id}', 'GalleriesController@destroy');
 Route::middleware('auth:api')->patch('/gallery/{gallery}', 'GalleriesController@update');

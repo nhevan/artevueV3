@@ -210,4 +210,37 @@ class GalleriesController extends ApiController
         
         return $this->setStatusCode(IlluminateResponse::HTTP_OK)->respond(["message" =>"Gallery successfully rearranged."]);
     }
+
+    /**
+     * arranges the pins within a gallery according to a given sequence
+     * @return [type] [description]
+     */
+    public function arrangePins($gallery_id)
+    {
+        $gallery = Gallery::where('id', $gallery_id)->where('user_id', Auth::user()->id)->first();
+        if(!$gallery){
+            return $this->responseNotFound('No Gallery found with matching id for the authenticated user.');
+        }
+
+        $rules = [
+            'sequence' => 'required'
+        ];
+        if (!$this->setRequest($this->request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $count = 1;
+        foreach ($this->request->sequence as $pin_id) {
+            $pin = Pin::where('id', $pin_id)->where('gallery_id', $gallery_id)->where('user_id', Auth::user()->id)->first();
+
+            if (!$pin) {
+                return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError("Pin {$pin_id} does not belong to the given gallery or the authenticated user.");
+            }
+            $pin->sequence = $count;
+            $pin->save();
+            $count++;
+        }
+        
+        return $this->setStatusCode(IlluminateResponse::HTTP_OK)->respond(["message" =>"Pins successfully rearranged."]);
+    }
 }

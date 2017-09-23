@@ -257,4 +257,25 @@ class UserGalleryV3ApiTest extends TestCase
         //assert
         $this->assertDatabaseMissing('pins', ['gallery_id' => $gallery1->id]);
     }
+
+    /**
+     * @test
+     * a user can arrange pins within a gallery
+     */
+    public function a_user_can_arrange_pins_within_a_gallery()
+    {
+    	//arrange
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $pin1 = factory('App\Pin')->create(['gallery_id' => $gallery->id, 'user_id' => $this->user->id]);
+        $pin2 = factory('App\Pin')->create(['gallery_id' => $gallery->id, 'user_id' => $this->user->id]);
+        $pin3 = factory('App\Pin')->create(['gallery_id' => $gallery->id, 'user_id' => $this->user->id]);
+    
+        //act
+    	$response = $this->json('PATCH', "/api/gallery/{$gallery->id}/arrange-pins", ['sequence' => [$pin1->id, $pin2->id, $pin3->id ] ])->json();
+    
+        //assert
+        $this->assertDatabaseHas('pins', ['id' => $pin1->id, 'sequence' => 1]);
+        $this->assertDatabaseHas('pins', ['id' => $pin2->id, 'sequence' => 2]);
+        $this->assertDatabaseHas('pins', ['id' => $pin3->id, 'sequence' => 3]);
+    }
 }
