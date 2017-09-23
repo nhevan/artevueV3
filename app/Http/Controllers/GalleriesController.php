@@ -171,9 +171,9 @@ class GalleriesController extends ApiController
      * @param  \App\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function destroy($user_id, $gallery_id)
+    public function destroy($gallery_id)
     {
-        $gallery = Gallery::where('id', $gallery_id)->where('user_id', $user_id)->first();
+        $gallery = Gallery::where('id', $gallery_id)->where('user_id', Auth::user()->id)->first();
         if (!$gallery) {
             return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError("No gallery found with the given id for the specified user.");
         }

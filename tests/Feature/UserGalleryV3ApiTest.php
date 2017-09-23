@@ -233,7 +233,7 @@ class UserGalleryV3ApiTest extends TestCase
     	$gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
     
         //act
-    	$response = $this->json('DELETE', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
+    	$response = $this->json('DELETE', "/api/gallery/{$gallery1->id}")->json();
     
         //assert
         $this->assertDatabaseHas('galleries', ['id' => $gallery2->id, 'user_id' => $this->user->id]);
@@ -252,7 +252,7 @@ class UserGalleryV3ApiTest extends TestCase
         $pin2 = factory('App\Pin')->create(['gallery_id' => $gallery1->id]);
     
         //act
-    	$response = $this->json('DELETE', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
+    	$response = $this->json('DELETE', "/api/gallery/{$gallery1->id}")->json();
     
         //assert
         $this->assertDatabaseMissing('pins', ['gallery_id' => $gallery1->id]);
