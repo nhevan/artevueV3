@@ -4,33 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use Illuminate\Http\Request;
+use App\Searchability\PostCrawler;
 
-class SearchPostsController extends ApiController
+class SearchPostsController extends BaseSearchController
 {
 	protected $request;
+	protected $postCrawler;
+	protected $rules = [
+		            'price' => 'digits_between:0,*'
+		        ];
 
-	public function __construct(Request $request)
+	public function __construct(Request $request,PostCrawler $postCrawler)
 	{
 		$this->request = $request;
+		$this->postCrawler = $postCrawler;
 	}
 
     public function search()
     {
-    	// $this->validateSearchRequest($this->request, 'Post');
+    	if (!$this->setRequest($this->request)->isValidated($this->rules)) {
+            return $this->responseValidationError();
+        }
 
-    	// $posts = $this->search($this->request);
-
-    	// return $this->respond($posts);
-    	$posts = new Post();
-    	if ($this->request->minimum_price) {
-    		$posts = $posts->where('price', '>=', $this->request->minimum_price);
-    	}
-
-    	if ($this->request->description) {
-    		$posts = $posts->where('description', 'like', '%'.$this->request->description.'%');
-    	}
-
-    	$posts = $posts->get();
+    	$posts = $this->postCrawler->search();
 
     	return $this->respond($posts);
     }
