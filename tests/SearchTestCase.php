@@ -32,8 +32,8 @@ abstract class SearchTestCase extends TestCase
 
     public function checkSingularity(TestResponse $response)
     {
-    	$this->assertEquals(1, sizeof($response));
- 	    $this->assertNotEquals(2, sizeof($response));
+    	$this->assertEquals(1, sizeof($response->json()));
+ 	    $this->assertNotEquals(2, sizeof($response->json()));
     }
 
 }

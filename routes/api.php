@@ -120,3 +120,4 @@ Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpan
 Route::middleware('api')->get('/status', 'SettingsController@index');
 
 Route::middleware('api')->get('/search-posts', 'SearchPostsController@search');
+Route::middleware('api')->get('/search-users', 'SearchUsersController@search');
