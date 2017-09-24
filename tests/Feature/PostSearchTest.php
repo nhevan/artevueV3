@@ -2,15 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\SearchTestCase;
 
-class PostSearchTest extends TestCase
+class PostSearchTest extends SearchTestCase
 {
- 	use DatabaseTransactions;
-
  	/**
  	 * @test
  	 * posts can be searched by matching description
@@ -18,18 +13,20 @@ class PostSearchTest extends TestCase
  	public function posts_can_be_searched_by_matching_description()
  	{
  		//arrange
- 	    $needle = factory('App\Post')->create(['description' => 'description clue']);
+ 	    $needle = factory('App\Post')->create(['description' => $this->matches_needle_string]);
  		$posts = factory('App\Post', 4)->create();
 
  	    //act
  		$response = $this->json( 'GET', "/api/search-posts", [
- 				'description' => 'clue'
+ 				'description' => $this->needle_string
 			]);
  	
  	    //assert
  	    $response->assertJsonFragment([
  	    		'id' => $needle->id
  	    	]);
+
+ 	    $this->checkSingularity($response);
  	}
 
  	/**
@@ -39,17 +36,19 @@ class PostSearchTest extends TestCase
  	public function posts_can_be_searched_my_minimum_price()
  	{
  		//arrange
- 	    $needle = factory('App\Post')->create(['price' => '100']);
-	 	$posts = factory('App\Post', 4)->create(['price' => '50']);
+ 	    $needle = factory('App\Post')->create(['price' => $this->needle_int]);
+	 	$posts = factory('App\Post', 4)->create(['price' => $this->less_than_needle_int]);
 
  	    //act
  		$response = $this->json( 'GET', "/api/search-posts", [
- 				'minimum_price' => '100'
+ 				'minimum_price' => $this->needle_int
 			]);
  	
  	    //assert
  	    $response->assertJsonFragment([
  	    		'id' => $needle->id
  	    	]);
+
+ 	    $this->checkSingularity($response);
  	}
 }
