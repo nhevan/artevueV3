@@ -9,6 +9,21 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserSearchTest extends SearchTestCase
 {
+	protected $className = 'User';
+	protected $plural = 'users';
+
+	public function setUpTestClassInfo()
+	{
+		return [
+			'className' => $this->className,
+			'plural' => $this->plural
+		];
+	}
+
+	public function setUp()
+    {
+        parent::setUp();
+    }
     /**
      * @test
      * users can be searched by matching username
@@ -20,16 +35,8 @@ class UserSearchTest extends SearchTestCase
         $users = factory('App\User', 4)->create();
     
         //act
-    	$response = $this->json( 'GET', "/api/search-users", [
- 				'username' => $this->needle_string
-			]);
- 	
- 	    //assert
- 	    $response->assertJsonFragment([
- 	    		'id' => $needle->id,
- 	    		'username' => $this->matches_needle_string
- 	    	]);
- 	    $this->checkSingularity($response);
+        $this->search($needle)->matchByField('username')->checkSingularity();
+    	
     }
 
     /**
@@ -43,15 +50,6 @@ class UserSearchTest extends SearchTestCase
         $users = factory('App\User', 4)->create();
     
         //act
-    	$response = $this->json( 'GET', "/api/search-users", [
- 				'name' => strtoupper($this->needle_string)
-			]);
-
- 	    //assert
- 	    $response->assertJsonFragment([
- 	    		'id' => $needle->id,
- 	    		'name' => $this->matches_needle_string
- 	    	]);
- 	   	$this->checkSingularity($response);
+        $this->search($needle)->matchByField('name')->checkSingularity();
     }
 }

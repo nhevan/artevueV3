@@ -6,6 +6,16 @@ use Tests\SearchTestCase;
 
 class PostSearchTest extends SearchTestCase
 {
+	protected $className = 'Post';
+	protected $plural = 'posts';
+
+	public function setUpTestClassInfo()
+	{
+		return [
+			'className' => $this->className,
+			'plural' => $this->plural
+		];
+	}
  	/**
  	 * @test
  	 * posts can be searched by matching description
@@ -17,16 +27,7 @@ class PostSearchTest extends SearchTestCase
  		$posts = factory('App\Post', 4)->create();
 
  	    //act
- 		$response = $this->json( 'GET', "/api/search-posts", [
- 				'description' => $this->needle_string
-			]);
- 	
- 	    //assert
- 	    $response->assertJsonFragment([
- 	    		'id' => $needle->id
- 	    	]);
-
- 	    $this->checkSingularity($response);
+ 	    $this->search($needle)->matchByField('description')->checkSingularity();
  	}
 
  	/**
@@ -40,15 +41,6 @@ class PostSearchTest extends SearchTestCase
 	 	$posts = factory('App\Post', 4)->create(['price' => $this->less_than_needle_int]);
 
  	    //act
- 		$response = $this->json( 'GET', "/api/search-posts", [
- 				'minimum_price' => $this->needle_int
-			]);
- 	
- 	    //assert
- 	    $response->assertJsonFragment([
- 	    		'id' => $needle->id
- 	    	]);
-
- 	    $this->checkSingularity($response);
+ 	    $this->search($needle)->equalityByField('price', 'minimum_price', 1)->checkSingularity();
  	}
 }

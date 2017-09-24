@@ -15,6 +15,10 @@ abstract class SearchTestCase extends TestCase
 	protected $matches_needle_string;
 	protected $less_than_needle_int;
 	protected $needle_int;
+	protected $response;
+	protected $needle;
+
+    abstract public function setUpTestClassInfo();
 
 	public function __construct()
 	{
@@ -23,6 +27,7 @@ abstract class SearchTestCase extends TestCase
 
 		$this->needle_string = '!@#clue*&^';
 		$this->matches_needle_string = "123 {$this->needle_string} abc";
+		$this->setUpTestClassInfo();
 	}
 
 	public function setUp()
@@ -30,10 +35,71 @@ abstract class SearchTestCase extends TestCase
         parent::setUp();
     }
 
-    public function checkSingularity(TestResponse $response)
+    public function search($needle)
     {
-    	$this->assertEquals(1, sizeof($response->json()));
- 	    $this->assertNotEquals(2, sizeof($response->json()));
+    	$this->needle = $needle;
+
+    	return $this;
+    }
+
+
+    public function checkSingularity()
+    {
+    	$this->assertEquals(1, sizeof($this->response->json()));
+ 	    $this->assertNotEquals(2, sizeof($this->response->json()));
+
+ 	    return $this;
+    }
+
+    public function matchByField($field_name, $request_field_name = 'undefined')
+    {
+    	$field_value = $this->matches_needle_string;
+    	if ($request_field_name === 'undefined') {
+    		$request_field_name = $field_value;
+    	}
+    	$this->response = $this->callSearchEndPoint($field_name, $this->needle_string);
+ 	
+ 	    //assert
+ 	    $this->response->assertJsonFragment([
+ 	    		'id' => $this->needle->id,
+ 	    		"{$field_name}" => $this->matches_needle_string
+ 	    	]);
+
+ 	    return $this;
+    }
+
+    public function equalityByField($field_name, $request_field_name = 'undefined', $is_int = 0)
+    {
+    	$field_value = $this->matches_needle_string;
+    	if ($request_field_name === 'undefined') {
+    		$request_field_name = $field_value;
+    	}
+
+ 	    if ($is_int) {
+ 	    	$field_value = (int) $this->needle_int;
+	    	
+	    	$this->response = $this->callSearchEndPoint($request_field_name, $this->needle_int);
+ 	    	
+ 	    	$this->response->assertJsonFragment([
+ 	    		'id' => $this->needle->id,
+ 	    		"{$field_name}" => $field_value
+ 	    	]);
+ 	    }
+ 	    $this->response = $this->callSearchEndPoint($request_field_name, $this->needle_string);
+ 	    	
+ 	    	$this->response->assertJsonFragment([
+ 	    		'id' => $this->needle->id,
+ 	    		"{$field_name}" => $field_value
+ 	    	]);
+
+ 	    return $this;
+    }
+
+    public function callSearchEndPoint($field_name, $field_value)
+    {
+    	return $this->json( 'GET', "/api/search-{$this->plural}", [
+ 				"{$field_name}" => $field_value
+			]);
     }
 
 }
