@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use Illuminate\Http\Request;
 use App\Searchability\PostCrawler;
+use Acme\Transformers\PostTransformer;
 
 class SearchPostsController extends BaseSearchController
 {
@@ -12,7 +13,7 @@ class SearchPostsController extends BaseSearchController
 	protected $postCrawler;
 	
 
-	public function __construct(Request $request,PostCrawler $postCrawler)
+	public function __construct(Request $request, PostCrawler $postCrawler)
 	{
 		$this->request = $request;
 		$this->postCrawler = $postCrawler;
@@ -25,7 +26,9 @@ class SearchPostsController extends BaseSearchController
         }
 
     	$posts = $this->postCrawler->search();
+    	$posts->load('owner', 'artist', 'tags');
 
-    	return $this->respond($posts);
+    	$postTransformer = new PostTransformer;
+    	return $this->respondWithPagination($posts, $postTransformer );
     }
 }

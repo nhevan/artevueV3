@@ -20,6 +20,7 @@ abstract class Crawler
 		        ];
     protected $request;
 	protected $models;
+	protected $model_fields;
 
 	public function __construct(Request $request)
 	{
@@ -33,7 +34,7 @@ abstract class Crawler
     {
     	$this->models = $this->searchByAllGivenParameters($this->models);
 
-    	return $this->models->get();
+    	return $this->models->paginate(30);
 
     }
     
@@ -46,10 +47,17 @@ abstract class Crawler
     		if($this->isAlias($column_name)){
     			$this->models = $this->models->where($this->getOriginalColumn($column_name), $this->getCondition($column_name), $value);
     		}else{
-	    		$this->models = $this->models->where($column_name, 'like', '%'.$value.'%');
+    			if ($this->isModelField($column_name)) {
+		    		$this->models = $this->models->where($column_name, 'like', '%'.$value.'%');
+    			}
     		}
     	}
     	return $this->models;
+    }
+
+    public function isModelField($column_name)
+    {
+    	return in_array($column_name, DB::getSchemaBuilder()->getColumnListing($this->models->getTable()));
     }
 
 	public function isAlias($column_name)

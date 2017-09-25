@@ -45,8 +45,10 @@ abstract class SearchTestCase extends TestCase
 
     public function checkSingularity()
     {
-    	$this->assertEquals(1, sizeof($this->response->json()));
- 	    $this->assertNotEquals(2, sizeof($this->response->json()));
+    	$total = $this->response->json()['pagination']['total'];
+
+    	$this->assertEquals(1, $total);
+ 	    $this->assertNotEquals(2, $total);
 
  	    return $this;
     }

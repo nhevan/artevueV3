@@ -41,6 +41,21 @@ class UserSearchTest extends SearchTestCase
 
     /**
      * @test
+     * users can be searched by matching email
+     */
+    public function users_can_be_searched_by_matching_email()
+    {
+    	//arrange
+        $needle = factory('App\User')->create(['email'=> $this->matches_needle_string]);
+        $users = factory('App\User', 4)->create();
+    
+        //act
+        $this->search($needle)->matchByField('email')->checkSingularity();
+    	
+    }
+
+    /**
+     * @test
      * a user can be searched by matching name case sensitively
      */
     public function a_user_can_be_searched_by_matching_name_case_sensitively()

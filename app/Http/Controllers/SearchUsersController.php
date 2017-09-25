@@ -4,35 +4,30 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use App\Searchability\UserCrawler;
+use Acme\Transformers\UserSearchTransformer;
 
 class SearchUsersController extends BaseSearchController
 {
     protected $request;
+	protected $userCrawler;
+	
 
-	public function __construct(Request $request)
+	public function __construct(Request $request,UserCrawler $userCrawler)
 	{
 		$this->request = $request;
+		$this->userCrawler = $userCrawler;
 	}
 
-	public function search()
+    public function search()
     {
-    	// $this->validateSearchRequest($this->request, 'User');
+    	if (!$this->setRequest($this->request)->isValidated($this->userCrawler->rules)) {
+            return $this->responseValidationError();
+        }
 
-    	// $posts = $this->search($this->request);
+    	$users = $this->userCrawler->search();
 
-    	// return $this->respond($posts);
-    	$users = new User();
-
-    	if ($this->request->username) {
-    		$users = $users->where('username', 'like', '%'.$this->request->username.'%');
-    	}
-
-    	if ($this->request->name) {
-    		$users = $users->where('name', 'like', '%'.$this->request->name.'%');
-    	}
-
-    	$users = $users->get();
-
-    	return $this->respond($users);
+    	$userSearchTransformer = new UserSearchTransformer;
+    	return $this->respondWithPagination($users, $userSearchTransformer );
     }
 }

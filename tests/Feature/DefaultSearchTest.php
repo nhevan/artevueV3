@@ -21,10 +21,10 @@ class DefaultSearchTest extends TestCase
         $posts = factory('App\Post', 4)->create();
     
         //act
-    	$response = $this->json( 'GET', "/api/search-posts");
+    	$response = $this->json( 'GET', "/api/search-posts")->json();
     
         //assert
-        $this->assertEquals(4, sizeof($response->json()));
+        $this->assertEquals(4, $response['pagination']['total']);
     }
 
     /**
@@ -37,10 +37,10 @@ class DefaultSearchTest extends TestCase
         $users = factory('App\User', 4)->create();
     
         //act
-    	$response = $this->json( 'GET', "/api/search-users");
-    
+    	$response = $this->json( 'GET', "/api/search-users")->json();
+
         //assert
-        $this->assertEquals(4, sizeof($response->json()));
+        $this->assertEquals(4, $response['pagination']['total']);
     }
 
     /**
@@ -60,5 +60,23 @@ class DefaultSearchTest extends TestCase
         //assert
         $this->assertEquals(422, $response->status());
     }
+
+    /**
+     * @test
+     * it ignores parameters that does not belong to model fields list
+     */
+    public function it_ignores_parameters_that_does_not_belong_to_model_fields_list()
+    {
+        //arrange
+        $posts = factory('App\Post', 4)->create();
     
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", [
+                'name' => 'test name'
+            ]);
+    
+        //assert
+        $this->assertEquals(200, $response->status());
+    }
+
 }
