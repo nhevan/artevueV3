@@ -9,12 +9,29 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Crawler
 {
-    public $rules = [];
+    public $rules = [
+        // 'price' => 'digits_between:0,99999999'
+    ];
     public $per_page_limit;
-    protected $field_mapping = [];
+    protected $field_mapping = [
+        // 'minimum_price' => [
+        //  'field' => 'price',
+        //  'condition' => '>='
+        // ],
+        // 'maximum_price' => [
+        //  'field' => 'price',
+        //  'condition' => '<=' 
+        // ],
+        // 'owner_username'
+    ];
     protected $request;
 	protected $model;
 	protected $model_fields;
+    protected $available_prefixes = [
+        'max',
+        'min', 
+        'not'
+    ];
 
 	public function __construct(Request $request)
 	{
@@ -60,6 +77,26 @@ abstract class Crawler
     }
 
     /**
+     * returns false if the column name is not prefixed otherwise returns the prefix
+     * @param  [type]  $column [description]
+     * @return boolean         [description]
+     */
+    public function isPrefixed($column)
+    {
+        foreach ($this->available_prefixes as $prefix) {
+            if (starts_with($column, $prefix.'_')) {
+                return $prefix;
+            }
+        }
+    }
+
+
+    public function stripPrefix($key)
+    {
+        return str_after($key, $this->isPrefixed($key).'_');
+    }
+
+    /**
      * searches a column with a given value
      * @param  [type] $column_name [description]
      * @param  [type] $value       [description]
@@ -72,7 +109,6 @@ abstract class Crawler
                 return $this->$dedicatedMethod($value);
             }
 
-
             return $this->where($column_name, $value);
         }
     
@@ -81,7 +117,12 @@ abstract class Crawler
                 return $this->$dedicatedMethod($value);
             }
             return $this->where($column_name, $value);
-        }    
+        }
+
+        if ($prefix = $this->isPrefixed($column_name)) {
+            $prefixMethod = camel_case("where_".$prefix);
+            return $this->$prefixMethod($column_name, $value);
+        }
     }
 
     /**
@@ -117,6 +158,27 @@ abstract class Crawler
         $this->model = $this->model->where($this->getTargetColumn($column), 'like', '%'.$value.'%');
 
         return $this;     
+    }
+
+    public function whereMinimum($column, $value)
+    {
+        return $this->where($this->stripPrefix($column), $value, '>=');
+    }
+    public function whereMin($column, $value) {
+        return $this->whereMinimum($column, $value);
+    }
+
+    public function whereMaximum($column, $value)
+    {
+        return $this->where($this->stripPrefix($column), $value, '<=');
+    }
+    public function whereMax($column, $value) {
+        return $this->whereMaximum($column, $value);
+    }
+
+    public function whereNot($column, $value)
+    {
+        return $this->where($this->stripPrefix($column), $value, '<>');
     }
 
 

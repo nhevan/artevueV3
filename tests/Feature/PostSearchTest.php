@@ -34,28 +34,28 @@ class PostSearchTest extends SearchTestCase
  	 * @test
  	 * posts can be searched my minimum price
  	 */
- 	public function posts_can_be_searched_my_minimum_price()
+ 	public function posts_can_be_searched_my_min_price()
  	{
  		//arrange
  	    $needle = factory('App\Post')->create(['price' => $this->needle_int]);
 	 	$posts = factory('App\Post', 4)->create(['price' => $this->less_than_needle_int]);
 
  	    //act
- 	    $this->search($needle)->equalityByField('price', $needle->price, 1, 'minimum_price')->checkSingularity();
+ 	    $this->search($needle)->equalityByField('price', $needle->price, 1, 'min_price')->checkSingularity();
  	}
 
  	/**
  	 * @test
  	 * posts can be searched my maximum price
  	 */
- 	public function posts_can_be_searched_my_maximum_price()
+ 	public function posts_can_be_searched_my_max_price()
  	{
  		//arrange
  	    $needle = factory('App\Post')->create(['price' => $this->less_than_needle_int]);
 	 	$posts = factory('App\Post', 4)->create(['price' => $this->needle_int]);
 
  	    //act
- 	    $this->search($needle)->equalityByField('price', $needle->price, 1, 'maximum_price')->checkSingularity();
+ 	    $this->search($needle)->equalityByField('price', $needle->price, 1, 'max_price')->checkSingularity();
  	}
 
  	/**

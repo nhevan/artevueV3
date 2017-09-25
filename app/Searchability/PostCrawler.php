@@ -11,17 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PostCrawler extends Crawler
 {
-	protected $field_mapping = [
-    	'minimum_price' => [
-    		'field' => 'price',
-    		'condition' => '>='
-    	],
-    	'maximum_price' => [
-    		'field' => 'price',
-    		'condition' => '<='	
-    	],
-    	'owner_username'
-    ];
     public $rules = [
 		            'price' => 'digits_between:0,99999999'
 		        ];
