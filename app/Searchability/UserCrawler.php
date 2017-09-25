@@ -10,13 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserCrawler extends Crawler
 {
-	protected $field_mapping = [
-    	
-    ];
-    public $rules = [
-
-		        ];
-
 	public function setUp()
 	{
 		$this->models = new User();

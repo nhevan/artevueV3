@@ -17,6 +17,7 @@ class UserSearchTransformer extends Transformer
                 'username' => $user['username'],
                 'email' => $user['email'],
                 'profile_picture' => $user['profile_picture'],
+                'user_type_id' => $user['user_type_id']
             ];
     }
 }

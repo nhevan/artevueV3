@@ -70,29 +70,36 @@ abstract class SearchTestCase extends TestCase
  	    return $this;
     }
 
-    public function equalityByField($field_name, $request_field_name = 'undefined', $is_int = 0)
+    public function equalityByField($field_name, $field_value = null, $is_int = 0, $request_field_name = null)
     {
-    	$field_value = $this->matches_needle_string;
-    	if ($request_field_name === 'undefined') {
-    		$request_field_name = $field_value;
-    	}
+        if (!$request_field_name) {
+            $request_field_name = $field_name;
+        }
+        if (!$field_value) {
+            $field_value = $this->matches_needle_string;
+        }
 
  	    if ($is_int) {
- 	    	$field_value = (int) $this->needle_int;
-	    	
-	    	$this->response = $this->callSearchEndPoint($request_field_name, $this->needle_int);
+            if (!$field_value) {
+     	    	$field_value = (int) $this->needle_int;
+            }
+            $field_value = (int) $field_value;
+
+	    	$this->response = $this->callSearchEndPoint($request_field_name, $field_value);
  	    	
  	    	$this->response->assertJsonFragment([
  	    		'id' => $this->needle->id,
  	    		"{$field_name}" => $field_value
  	    	]);
+
+            return $this;
  	    }
  	    $this->response = $this->callSearchEndPoint($request_field_name, $this->needle_string);
  	    	
- 	    	$this->response->assertJsonFragment([
- 	    		'id' => $this->needle->id,
- 	    		"{$field_name}" => $field_value
- 	    	]);
+    	$this->response->assertJsonFragment([
+    		'id' => $this->needle->id,
+    		"{$field_name}" => $field_value
+    	]);
 
  	    return $this;
     }

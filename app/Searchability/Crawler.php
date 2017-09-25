@@ -9,15 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Crawler
 {
-	protected $field_mapping = [
-    	'primary_key' => [
-    		'original_name' => 'id',
-    		'condition' => '<>'
-    	]
-    ];
-    public $rules = [
-		            'price' => 'digits_between:0,99999999'
-		        ];
+    public $rules = [];
+    protected $field_mapping = [];
     protected $request;
 	protected $models;
 	protected $model_fields;
@@ -44,18 +37,40 @@ abstract class Crawler
     	$search_paramaters = $this->request->all();
 
     	foreach ($search_paramaters as $column_name => $value) {
-    		if($this->isAlias($column_name)){
-    			$this->models = $this->models->where($this->getOriginalColumn($column_name), $this->getCondition($column_name), $value);
-    		}else{
-    			if ($this->isModelField($column_name)) {
-		    		$this->models = $this->models->where($column_name, 'like', '%'.$value.'%');
-    			}
-    		}
+            $this->searchByColumn($column_name, $value);
     	}
     	return $this->models;
     }
 
-    public function isModelField($column_name)
+    public function searchByColumn($column_name, $value)
+    {
+        if($this->isAlias($column_name)){
+            if ($this->getCondition($column_name)) {
+                return $this->where($column_name, $value, $this->getCondition($column_name));
+            }
+
+            return $this->where($column_name, $value);
+        }
+    
+        if ($this->isValidModelField($column_name)) {
+            return $this->where($column_name, $value);
+        }    
+    }
+
+    public function where($column, $value, $condition = null)
+    {
+        if ($condition) {
+            $this->models = $this->models->where($this->getTargetColumn($column), $condition, $value);
+
+            return;
+        }
+        
+        $this->models = $this->models->where($this->getTargetColumn($column), 'like', '%'.$value.'%');        
+    }
+
+
+
+    public function isValidModelField($column_name)
     {
     	return in_array($column_name, DB::getSchemaBuilder()->getColumnListing($this->models->getTable()));
     }
@@ -69,14 +84,22 @@ abstract class Crawler
     	return false;
     }
 
-    public function getOriginalColumn($column_name)
+    public function getTargetColumn($column_name)
     {
-    	return $this->field_mapping[$column_name]['original_name'];
+        if (isset($this->field_mapping[$column_name]['original_name'])) {
+        	return $this->field_mapping[$column_name]['original_name'];
+        }
+
+        return $column_name;
     }
 
     public function getCondition($column_name)
     {
-    	return $this->field_mapping[$column_name]['condition'];
+        if (isset($this->field_mapping[$column_name]['condition'])) {
+        	return $this->field_mapping[$column_name]['condition'];
+        }
+
+        return null;
     }
 
 }

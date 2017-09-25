@@ -67,4 +67,18 @@ class UserSearchTest extends SearchTestCase
         //act
         $this->search($needle)->matchByField('name')->checkSingularity();
     }
+
+    /**
+     * @test
+     * a user can be searched by user type
+     */
+    public function a_user_can_be_searched_by_user_type()
+    {
+        //arrange
+        $needle = factory('App\User')->create();
+        $users = factory('App\User', 4)->create();
+    
+        //act
+        $this->search($needle)->equalityByField('user_type_id', $needle->user_type_id, 1)->checkSingularity();
+    }
 }

@@ -14,6 +14,10 @@ class PostCrawler extends Crawler
     	'minimum_price' => [
     		'original_name' => 'price',
     		'condition' => '>='
+    	],
+    	'maximum_price' => [
+    		'original_name' => 'price',
+    		'condition' => '<='
     	]
     ];
     public $rules = [
