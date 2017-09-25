@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 
-class SearchUsersController extends ApiController
+class SearchUsersController extends BaseSearchController
 {
     protected $request;
 

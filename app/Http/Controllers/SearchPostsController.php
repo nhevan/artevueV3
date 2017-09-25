@@ -10,9 +10,7 @@ class SearchPostsController extends BaseSearchController
 {
 	protected $request;
 	protected $postCrawler;
-	protected $rules = [
-		            'price' => 'digits_between:0,99999999'
-		        ];
+	
 
 	public function __construct(Request $request,PostCrawler $postCrawler)
 	{
@@ -22,7 +20,7 @@ class SearchPostsController extends BaseSearchController
 
     public function search()
     {
-    	if (!$this->setRequest($this->request)->isValidated($this->rules)) {
+    	if (!$this->setRequest($this->request)->isValidated($this->postCrawler->rules)) {
             return $this->responseValidationError();
         }
 
