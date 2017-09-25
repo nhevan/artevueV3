@@ -79,4 +79,19 @@ class DefaultSearchTest extends TestCase
         $this->assertEquals(200, $response->status());
     }
 
+    /**
+     * @test
+     * it can handle a prefixed wrong column
+     */
+    public function it_can_handle_a_prefixed_wrong_column()
+    {
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", [
+                'min_random_column' => 1
+            ]);    
+    
+        //assert
+        $this->assertEquals(200, $response->status());
+    }
+
 }

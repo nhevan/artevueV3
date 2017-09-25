@@ -120,8 +120,10 @@ abstract class Crawler
         }
 
         if ($prefix = $this->isPrefixed($column_name)) {
-            $prefixMethod = camel_case("where_".$prefix);
-            return $this->$prefixMethod($column_name, $value);
+            if ($this->isValidModelField($this->stripPrefix($column_name))) {
+                $prefixMethod = camel_case("where_".$prefix);
+                return $this->$prefixMethod($column_name, $value);
+            }
         }
     }
 
