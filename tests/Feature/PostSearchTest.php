@@ -71,4 +71,36 @@ class PostSearchTest extends SearchTestCase
  	    //act
  	    $this->search($needle)->matchByField('hashtags')->checkSingularity();
     }
+
+    /**
+     * @test
+     * posts can be searched by owner username
+     */
+    public function posts_can_be_searched_by_owner_username()
+    {
+    	//arrange
+    	$needle = factory('App\Post')->create();
+        $posts = factory('App\Post', 4)->create();
+    
+        //act
+        $this->search($needle)->matchByField('username', $needle->owner->username, 'owner_username');
+    }
+
+    /**
+     * @test
+     * private posts are never returned
+     */
+    public function private_posts_are_never_returned()
+    {
+    	//arrange
+        $needle = factory('App\Post')->create(['is_public' => 0]);
+        $posts = factory('App\Post', 5)->create(['is_public' => 1]);
+    
+    	//act
+    	$response = $this->json( 'GET', "/api/search-posts")->json();
+    
+        //assert
+        $this->assertEquals(5, $response['pagination']['total']);
+        
+    }
 }

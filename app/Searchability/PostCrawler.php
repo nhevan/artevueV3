@@ -3,6 +3,7 @@
 namespace App\Searchability;
 
 use App\Post;
+use App\User;
 use Illuminate\Http\Request;
 use App\Searchability\Crawler;
 use Illuminate\Support\Facades\DB;
@@ -12,12 +13,14 @@ class PostCrawler extends Crawler
 {
 	protected $field_mapping = [
     	'minimum_price' => [
-    		'original_name' => 'price',
+    		'field' => 'price',
     		'condition' => '>='
     	],
     	'maximum_price' => [
-    		'original_name' => 'price'
-    	]
+    		'field' => 'price',
+    		'condition' => '<='	
+    	],
+    	'owner_username'
     ];
     public $rules = [
 		            'price' => 'digits_between:0,99999999'
@@ -25,11 +28,20 @@ class PostCrawler extends Crawler
 
 	public function setUp()
 	{
-		$this->models = new Post();
+		$this->model = new Post();
 	}
 
-	public function whereMaximumPrice($value)
+	public function defaultConditions()
 	{
-		return $this->models = $this->models->where('price', '<=', $value);
+		$this->model = $this->model->where('is_public', 1);
+
+		return $this;
+	}
+
+	public function whereOwnerUsername($value)
+	{
+		$owner = User::where('username', 'LIKE', $value)->get()->pluck('id')->toArray();
+
+		return $this->model = $this->model->whereIn('owner_id', $owner);
 	}
 }

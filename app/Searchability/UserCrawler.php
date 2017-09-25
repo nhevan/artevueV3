@@ -12,6 +12,6 @@ class UserCrawler extends Crawler
 {
 	public function setUp()
 	{
-		$this->models = new User();
-	}	
+		$this->model = new User();
+	}
 }

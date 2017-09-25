@@ -53,19 +53,18 @@ abstract class SearchTestCase extends TestCase
  	    return $this;
     }
 
-    public function matchByField($field_name, $request_field_name = 'undefined')
+    public function matchByField($field_name, $field_value = null, $request_field_name = null)
     {
-    	$field_value = $this->matches_needle_string;
-    	if ($request_field_name === 'undefined') {
+        if (!$field_value) {
+        	$field_value = $this->matches_needle_string;
+        }
+    	if (!$request_field_name) {
     		$request_field_name = $field_value;
     	}
-    	$this->response = $this->callSearchEndPoint($field_name, $this->needle_string);
+    	$this->response = $this->callSearchEndPoint($field_name, $field_value);
  	
  	    //assert
- 	    $this->response->assertJsonFragment([
- 	    		'id' => $this->needle->id,
- 	    		"{$field_name}" => $this->matches_needle_string
- 	    	]);
+        $this->defaultAssertion($field_name, $field_value);
 
  	    return $this;
     }
@@ -86,22 +85,25 @@ abstract class SearchTestCase extends TestCase
             $field_value = (int) $field_value;
 
 	    	$this->response = $this->callSearchEndPoint($request_field_name, $field_value);
- 	    	
- 	    	$this->response->assertJsonFragment([
- 	    		'id' => $this->needle->id,
- 	    		"{$field_name}" => $field_value
- 	    	]);
+ 	    	$this->defaultAssertion($field_name, $field_value);
 
             return $this;
  	    }
  	    $this->response = $this->callSearchEndPoint($request_field_name, $this->needle_string);
  	    	
-    	$this->response->assertJsonFragment([
-    		'id' => $this->needle->id,
-    		"{$field_name}" => $field_value
-    	]);
+        $this->defaultAssertion($field_name, $field_value);
 
  	    return $this;
+    }
+
+    public function defaultAssertion($field_name, $field_value)
+    {
+        $this->response->assertJsonFragment([
+            'id' => $this->needle->id,
+            "{$field_name}" => $field_value
+        ]);
+
+        return $this;
     }
 
     public function callSearchEndPoint($field_name, $field_value)
