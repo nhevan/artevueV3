@@ -43,4 +43,18 @@ class PostSearchTest extends SearchTestCase
  	    //act
  	    $this->search($needle)->equalityByField('price', 'minimum_price', 1)->checkSingularity();
  	}
+
+ 	/**
+     * @test
+     * it can search posts by any one the listed fields
+     */
+    public function it_can_search_posts_by_any_one_the_listed_fields()
+    {
+    	//arrange
+ 	    $needle = factory('App\Post')->create(['hashtags' => $this->matches_needle_string]);
+	 	$posts = factory('App\Post', 4)->create();
+
+ 	    //act
+ 	    $this->search($needle)->matchByField('hashtags')->checkSingularity();
+    }
 }

@@ -11,7 +11,7 @@ class SearchPostsController extends BaseSearchController
 	protected $request;
 	protected $postCrawler;
 	protected $rules = [
-		            'price' => 'digits_between:0,*'
+		            'price' => 'digits_between:0,99999999'
 		        ];
 
 	public function __construct(Request $request,PostCrawler $postCrawler)

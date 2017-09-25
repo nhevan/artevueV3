@@ -60,5 +60,5 @@ class DefaultSearchTest extends TestCase
         //assert
         $this->assertEquals(422, $response->status());
     }
-
+    
 }
