@@ -16,8 +16,7 @@ class PostCrawler extends Crawler
     		'condition' => '>='
     	],
     	'maximum_price' => [
-    		'original_name' => 'price',
-    		'condition' => '<='
+    		'original_name' => 'price'
     	]
     ];
     public $rules = [
@@ -27,5 +26,10 @@ class PostCrawler extends Crawler
 	public function setUp()
 	{
 		$this->models = new Post();
-	}	
+	}
+
+	public function whereMaximumPrice($value)
+	{
+		return $this->models = $this->models->where('price', '<=', $value);
+	}
 }
