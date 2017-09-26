@@ -126,6 +126,10 @@ abstract class Crawler
                 return $this->$prefixMethod($column_name, $value);
             }
         }
+
+        if ($dedicatedMethod = $this->hasDedicatedWhereMethod($column_name)) {
+            return $this->$dedicatedMethod($value);
+        }
     }
 
     /**

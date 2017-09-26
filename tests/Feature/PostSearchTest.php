@@ -118,4 +118,19 @@ class PostSearchTest extends SearchTestCase
         
     }
 
+    /**
+     * @test
+     * posts can be searched by artist name
+     */
+    public function posts_can_be_searched_by_artist_name()
+    {
+        //arrange
+        $needle = factory('App\Post')->create();
+        $posts = factory('App\Post', 5)->create();
+
+        $response = $this->json( 'GET', "/api/search-posts", ['artist' => $needle->artist->title])->json();
+        $this->assertEquals(1, $response['pagination']['total']);
+        // $this->search($needle)->matchByField('artist', $needle->artist->title)->checkSingularity();
+    }
+
 }

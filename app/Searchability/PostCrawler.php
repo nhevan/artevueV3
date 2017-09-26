@@ -4,6 +4,7 @@ namespace App\Searchability;
 
 use App\Post;
 use App\User;
+use App\Artist;
 use Illuminate\Http\Request;
 use App\Searchability\Crawler;
 use Illuminate\Support\Facades\DB;
@@ -27,17 +28,24 @@ class PostCrawler extends Crawler
 		return $this;
 	}
 
-	public function whereOwnerUsername($value)
+	public function whereOwnerUsername($query_string)
 	{
-		$owner = User::where('username', 'LIKE', '%'.$value.'%')->get()->pluck('id')->toArray();
+		$owner = User::where('username', 'LIKE', '%'.$query_string.'%')->get()->pluck('id')->toArray();
 
 		return $this->model = $this->model->whereIn('owner_id', $owner);
 	}
 
-	public function whereOwnerName($value)
+	public function whereOwnerName($query_string)
 	{
-		$owner = User::where('name', 'LIKE', '%'.$value.'%')->get()->pluck('id')->toArray();
+		$owner = User::where('name', 'LIKE', '%'.$query_string.'%')->get()->pluck('id')->toArray();
 
 		return $this->model = $this->model->whereIn('owner_id', $owner);
+	}
+
+	public function whereArtist($query_string)
+	{
+		$artists = Artist::where('title', 'LIKE', '%'.$query_string.'%')->get()->pluck('id')->toArray();
+
+		return $this->model = $this->model->whereIn('artist_id', $artists);
 	}
 }
