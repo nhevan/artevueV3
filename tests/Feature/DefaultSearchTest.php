@@ -133,4 +133,24 @@ class DefaultSearchTest extends TestCase
         $this->assertEquals(1, $response->json()['pagination']['total']);
     }
 
+    /**
+     * @test
+     * it can chain dedicated field methods along with other fields
+     */
+    public function it_can_chain_dedicated_field_methods_along_with_other_fields()
+    {
+        //arrange
+        $needle = factory('App\Post')->create();
+        $posts = factory('App\Post', 4)->create();
+    
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", [
+                'description' => $needle->description,
+                'image' => $needle->image
+            ]);
+    
+        //assert
+        $this->assertEquals(1, $response->json()['pagination']['total']);   
+    }
+
 }

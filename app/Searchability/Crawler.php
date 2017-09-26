@@ -26,6 +26,7 @@ abstract class Crawler
     ];
     protected $request;
 	protected $model;
+    protected $table_name;
 	protected $model_fields;
     protected $available_prefixes = [
         'max',
@@ -39,6 +40,7 @@ abstract class Crawler
 		$this->request = $request;
         $this->per_page_limit = 30;
 		$this->setUp();
+        $this->table_name = $this->model->getTable();
 	}
 
     /**
@@ -71,7 +73,7 @@ abstract class Crawler
     {
     	$search_paramaters = $this->request->all();
 
-    	foreach ($search_paramaters as $column_name => $value) {
+        foreach ($search_paramaters as $column_name => $value) {
             $this->searchByColumn($column_name, $value);
     	}
     	return $this;
@@ -112,7 +114,7 @@ abstract class Crawler
 
             return $this->where($column_name, $value);
         }
-    
+
         if ($this->isValidModelField($column_name)) {
             if ($dedicatedMethod = $this->hasDedicatedWhereMethod($column_name)) {
                 return $this->$dedicatedMethod($value);
@@ -184,6 +186,7 @@ abstract class Crawler
 
                 return $this;
             }
+
             $this->model = $this->model->where($this->getTargetColumn($column), 'like', '%'.$value.'%');
 
             return $this;
@@ -224,7 +227,7 @@ abstract class Crawler
      */
     public function isValidModelField($column_name)
     {
-    	return in_array($column_name, DB::getSchemaBuilder()->getColumnListing($this->model->getTable()));
+    	return in_array($column_name, DB::getSchemaBuilder()->getColumnListing($this->table_name));
     }
 
     /**
