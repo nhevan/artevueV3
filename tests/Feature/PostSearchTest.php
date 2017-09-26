@@ -88,6 +88,20 @@ class PostSearchTest extends SearchTestCase
 
     /**
      * @test
+     * posts can be searched by owner name
+     */
+    public function posts_can_be_searched_by_owner_name()
+    {
+        //arrange
+        $needle = factory('App\Post')->create();
+        $posts = factory('App\Post', 4)->create();
+    
+        //act
+        $this->search($needle)->matchByField('name', $needle->owner->name, 'owner_name');
+    }
+
+    /**
+     * @test
      * private posts are never returned
      */
     public function private_posts_are_never_returned()
@@ -103,4 +117,5 @@ class PostSearchTest extends SearchTestCase
         $this->assertEquals(5, $response['pagination']['total']);
         
     }
+
 }

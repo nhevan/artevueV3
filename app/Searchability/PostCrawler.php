@@ -29,7 +29,14 @@ class PostCrawler extends Crawler
 
 	public function whereOwnerUsername($value)
 	{
-		$owner = User::where('username', 'LIKE', $value)->get()->pluck('id')->toArray();
+		$owner = User::where('username', 'LIKE', '%'.$value.'%')->get()->pluck('id')->toArray();
+
+		return $this->model = $this->model->whereIn('owner_id', $owner);
+	}
+
+	public function whereOwnerName($value)
+	{
+		$owner = User::where('name', 'LIKE', '%'.$value.'%')->get()->pluck('id')->toArray();
 
 		return $this->model = $this->model->whereIn('owner_id', $owner);
 	}

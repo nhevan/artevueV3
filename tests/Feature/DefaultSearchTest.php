@@ -88,10 +88,49 @@ class DefaultSearchTest extends TestCase
         //act
         $response = $this->json( 'GET', "/api/search-posts", [
                 'min_random_column' => 1
-            ]);    
+            ]);  
     
         //assert
         $this->assertEquals(200, $response->status());
+    }
+
+    /**
+     * @test
+     * it matches integer fields
+     */
+    public function it_matches_integer_fields()
+    {
+        //arrange
+        $needle = factory('App\Post')->create(['price' => 10]);
+        $posts = factory('App\Post', 4)->create(['price' => 500]);
+        factory('App\Post')->create(['price' => 1010]);
+
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", [
+                'price' => 10
+            ]);
+
+        $this->assertEquals(1, $response->json()['pagination']['total']);
+        
+    }
+
+    /**
+     * @test
+     * it can search for exact matches for string type fields
+     */
+    public function it_can_search_for_exact_matches_for_string_type_fields()
+    {
+        //arrange
+        $needle = factory('App\Post')->create(['description' => 'des']);
+        $posts = factory('App\Post', 4)->create(['description' => 'desdesdes']);
+    
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", [
+                'exact_description' => 'des'
+            ]);
+    
+        //assert
+        $this->assertEquals(1, $response->json()['pagination']['total']);
     }
 
 }

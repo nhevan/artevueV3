@@ -30,7 +30,8 @@ abstract class Crawler
     protected $available_prefixes = [
         'max',
         'min', 
-        'not'
+        'not',
+        'exact'
     ];
 
 	public function __construct(Request $request)
@@ -152,14 +153,42 @@ abstract class Crawler
     public function where($column, $value, $condition = null)
     {
         if ($condition || $condition = $this->getCondition($column)) {
-            $this->model = $this->model->where($this->getTargetColumn($column), $condition, $value);
+            $this->callByType($column, $value, $condition);
 
             return $this;
         }
-        
-        $this->model = $this->model->where($this->getTargetColumn($column), 'like', '%'.$value.'%');
+        $this->callByType($column, $value);
 
         return $this;     
+    }
+
+    public function callByType($column, $value, $condition = null)
+    {
+        if (gettype($value) === 'integer') {
+            if ($condition) {
+                $this->model = $this->model->where($this->getTargetColumn($column), $condition, $value);
+
+                return $this;
+            }
+            $this->model = $this->model->where($this->getTargetColumn($column), $value);
+
+            return $this;
+        }
+        if (gettype($value) === 'string') {
+            if ($condition) {
+                $this->model = $this->model->where($this->getTargetColumn($column), $condition, $value);
+
+                return $this;
+            }
+            $this->model = $this->model->where($this->getTargetColumn($column), 'like', '%'.$value.'%');
+
+            return $this;
+        }
+    }
+
+    public function whereExact($column, $value)
+    {
+        return $this->where($this->stripPrefix($column), $value, '=');
     }
 
     public function whereMinimum($column, $value)
