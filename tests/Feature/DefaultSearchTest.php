@@ -153,4 +153,40 @@ class DefaultSearchTest extends TestCase
         $this->assertEquals(1, $response->json()['pagination']['total']);   
     }
 
+    /**
+     * @test
+     * it can sort resultset by given sortBy fields
+     */
+    public function it_can_sort_resultset_by_given_sortBy_fields()
+    {
+        //arrange
+        $med_price = factory('App\Post')->create(['price' => 5]);
+        $high_prices = factory('App\Post', 4)->create(['price' => 500]);
+        $lowest_price = factory('App\Post')->create(['price' => 3]);
+    
+        $user_y = factory('App\User')->create(['name' => 'y']);
+        $user_x = factory('App\User')->create(['name' => 'x']);
+        $user_z = factory('App\User')->create(['name' => 'z']);
+
+        // act
+        $search_post_response = $this->json( 'GET', "/api/search-posts", [
+                'sort_by_price' => 'asc',
+                'some_other_field' => 'random'
+            ]);
+
+        $search_user_response = $this->json( 'GET', "/api/search-users", [
+                'sort_by_name' => 'desc',
+            ]);
+
+        // assert
+        $this->assertEquals(3, $search_post_response->json()['data'][0]['price']);
+        $this->assertEquals(5, $search_post_response->json()['data'][1]['price']);
+
+        $this->assertEquals('z', $search_user_response->json()['data'][0]['name']);
+        $this->assertEquals('y', $search_user_response->json()['data'][1]['name']);
+        $this->assertEquals('x', $search_user_response->json()['data'][2]['name']);
+
+        // dd($search_user_response->json());
+    }
+
 }

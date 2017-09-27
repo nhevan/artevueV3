@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($request->expectsJson() && env('APP_ENV') === 'production') {
             return response()->json([
                 'error'=>[
                     'message' => 'Sorry, Something went wrong. Please let me you know how you ended up here and I will look into the issue, Thanks. - nhevan@gmail.com',

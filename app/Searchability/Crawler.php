@@ -32,7 +32,8 @@ abstract class Crawler
         'max',
         'min', 
         'not',
-        'exact'
+        'exact',
+        'sort_by'
     ];
 
 	public function __construct(Request $request)
@@ -190,6 +191,20 @@ abstract class Crawler
             $this->model = $this->model->where($this->getTargetColumn($column), 'like', '%'.$value.'%');
 
             return $this;
+        }
+    }
+
+    public function whereSortBy($column, $order = null)
+    {
+        if (!$order) {
+            $order = 'asc';
+        }
+        if (!in_array($order, ['asc', 'desc'])) {
+            return;
+        }
+        $true_column_name = $this->stripPrefix($this->getTargetColumn($column));
+        if ($this->isValidModelField($true_column_name)) {
+            $this->model = $this->model->orderBy($true_column_name, $order);
         }
     }
 
