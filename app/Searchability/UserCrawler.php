@@ -14,4 +14,10 @@ class UserCrawler extends Crawler
 	{
 		$this->model = new User();
 	}
+	public function defaultConditions()
+	{
+		$this->model = $this->model->whereNotIn('user_type_id', [1, 2]);
+
+		return $this;
+	}
 }
