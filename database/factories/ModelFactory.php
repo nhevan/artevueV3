@@ -160,7 +160,9 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
         'owner_id' => function(){
             return factory('App\User')->create()->id;
         },
-        'artist_id' => $faker->randomElement($artists->toArray()),
+        'artist_id' => function(){
+            return factory('App\Artist')->create()->id;
+        },
     ];
 });
 

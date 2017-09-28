@@ -60,6 +60,7 @@ class PostTransformer extends Transformer
 
                 'owner' => [
                 	'id' => $post['owner_id'],
+                    'name' => $post['owner']['name'],
                 	'username' => $post['owner']['username'],
                 	'profile_picture' => $post['owner']['profile_picture'],
                 ],
