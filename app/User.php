@@ -10,6 +10,24 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'password', 'username', 'profile_picture', 'name', 'gcm_registration_key', 'sex', 'website', 'biography', 'email', 'user_type_id', 'phone'
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
     public function metadata()
     {
         return $this->hasOne('App\UserMetadata');
@@ -94,24 +112,6 @@ class User extends Authenticatable
     {
         return $this->where('username', $username)->first();
     }
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'username', 'email', 'password', 'user_type_id', 'profile_picture', 'gcm_registration_key'
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
 
     public function routeNotificationForSlack()
     {

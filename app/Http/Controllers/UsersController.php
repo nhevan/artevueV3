@@ -667,10 +667,11 @@ class UsersController extends ApiController
     public function edit(Request $request)
     {
         $rules = [
-            'name' => 'required|max:50',
-            'email' => 'required|email',
-            'user_type_id' => 'required|not_in:1,2',
-            'sex' => 'required',
+            'name' => 'max:50',
+            'username' => 'min:4|max:20',
+            'email' => 'email',
+            'user_type_id' => 'numeric|min:3|max:10',
+            'sex' => 'numeric|in:1,2',
             'website' =>'nullable|url',
             'biography' => 'nullable|max:250',
             'phone' => 'nullable',
@@ -678,34 +679,21 @@ class UsersController extends ApiController
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
         }
+        if ($request->username) {
+            $duplicate_username = $this->user->where('id', '<>', $request->user()->id)->where('username', $request->username)->first();
+
+            if ($duplicate_username) {
+                return $this->setValidationErrors(['username' => 'This username is already taken.'])->responseValidationError();
+            }
+        }
         if(!$this->emailIsUnique($request)){
             return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError([ 'message' => [ 'email' => 'The email has already been taken.' ] ] );
         }
-        // return $request->all();
+
         $user = $request->user();
 
-        $user->email = $request->email;
-        $user->name = $request->name;
-        $user->user_type_id = $request->user_type_id;
-        $user->sex = $request->sex;
+        $user->fill($request->all());
 
-        if ($request->website) {
-            $user->website = $request->website;
-        }
-        if ($request->biography) {
-            $user->biography = $request->biography;
-        }
-        if ($request->phone) {
-            $user->phone = $request->phone;
-        }
-        if ($request->gcm_registration_key) {
-            $user->gcm_registration_key = $request->gcm_registration_key;
-        }
-         
-        $this->request = $request;
-        $this->updateArtPreferences($user);
-        $this->updateArtTypes($user);
-        
         $user->save();
 
         return $this->respond( [ 'message' => 'The user has been updated.' ] );
@@ -749,13 +737,14 @@ class UsersController extends ApiController
      */
     public function emailIsUnique(Request $request)
     {
-        $auth_user = $request->user()->toArray();
+        $auth_user = $request->user();
         $email_owner = $this->user->where('email', $request->email)->first();
         
         if (!$email_owner) {
             return true;
         }
-        if ($auth_user == $email_owner->toArray()) {
+        
+        if ($auth_user->id == $email_owner->id) {
             return true;
         }
     }
