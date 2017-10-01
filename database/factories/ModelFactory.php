@@ -106,10 +106,8 @@ $factory->define(App\Follower::class, function (Faker\Generator $faker) {
     $users = User::pluck('id');
 
     return [
-        // 'user_id' => $faker->randomElement($users->toArray()),
-        // 'follower_id' => $faker->randomElement($users->toArray())
         'user_id' => function(){
-            return factory('App\User')->create()->id;
+            return factory('App\UserMetadata')->create()->user_id;
         },
         'follower_id' => function(){
             return factory('App\User')->create()->id;

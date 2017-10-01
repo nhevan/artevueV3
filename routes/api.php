@@ -39,7 +39,7 @@ Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@up
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');
-Route::middleware('auth.optional:api')->get('/discover-users', 'DiscoverController@discoverUsers');
+Route::middleware('auth.optional:api')->get('/discover-users', 'DiscoverUsersController@discoverUsers');
 Route::middleware('auth:api')->get('/user-activities', 'UsersController@userActivities');
 Route::middleware('auth:api')->get('/follower-activities', 'UsersController@followerActivities');
 Route::middleware('auth:api')->delete('/user/{user}', 'UsersController@destroy');
