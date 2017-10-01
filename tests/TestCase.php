@@ -16,9 +16,6 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->serverVariables = [
-            'Accept' => 'application/json'
-        ];
     }
 
     public function signIn($user = [])

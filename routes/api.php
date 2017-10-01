@@ -72,7 +72,7 @@ Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
-Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverController@discoverPosts');
+Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverPostsController@discoverPosts');
 Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
 Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
