@@ -31,23 +31,17 @@ class DiscoverUsersController extends DiscoverController
     {
     	$limit = 20;
         if ($this->userIsGuest()) {
-            $all_users = User::all()->pluck('id');
-            $undiscovered_users = $this->getPaginatedUsers($all_users, $limit);
+            $undiscovered_users = $this->getPaginatedUsers($this->getUndiscoveredUsers(), $limit);
 
             return $this->respondWithPagination($undiscovered_users, $this->discoverUserTransformer);
         }
 
         $this->user = Auth::user();
-
-		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
-        $followers_not_connected_to_me = $this->getNotConectedFollowers();
-        $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
-
-		$undiscovered_users = $this->getPaginatedUsers($merged_users, $limit);
+		$paginated_users = $this->getPaginatedUsers($this->getUndiscoveredUsers(), $limit);
 
         $this->trackAction(Auth::user(), "Explore Users");
 
-		return $this->respondWithPagination($undiscovered_users, $this->discoverUserTransformer);
+		return $this->respondWithPagination($paginated_users, $this->discoverUserTransformer);
     }
 
     /**
@@ -64,5 +58,17 @@ class DiscoverUsersController extends DiscoverController
     		->orderBy('total_count', 'DESC')
     		->with('user')
     		->paginate($limit);
+    }
+
+    /**
+     * returns an array of ids of undiscovered users
+     * @return array array containing ids
+     */
+    public function getUndiscoveredUsers()
+    {
+        $my_followers = $this->includeMyself( $this->getMyFollowersIds() );
+        $users = User::whereNotIn('id', $my_followers)->pluck('id')->toArray();
+        
+        return $users;
     }
 }
