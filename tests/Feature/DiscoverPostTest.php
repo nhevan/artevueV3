@@ -21,7 +21,7 @@ class DiscoverPostTest extends TestCase
         parent::setUp();
 
         $this->seed('SettingsTableSeeder');
-        $this->weights = DiscoverPostsController::getWeightDistributionSettings();
+        $this->weights = DiscoverPostsController::getPostWeightDistributionSettings();
     }
     
     /**
@@ -97,6 +97,67 @@ class DiscoverPostTest extends TestCase
 
     /**
      * @test
+     * it can correctly calculate a post's like score
+     */
+    public function it_can_correctly_calculate_a_posts_like_score()
+    {
+        //arrange
+        $total_likes = 10;
+        $post = factory('App\Post')->create(['like_count' => $total_likes]);
+    
+        //act
+        $response = $this->getJson('/api/discover-posts');
+
+        //assert
+        $this->assertEquals($this->calculateLikeScore($total_likes) , $response->json()['data'][0]['score']);
+    }
+
+    /**
+     * @test
+     * it can correctly calculate a post's chronological score
+     */
+    public function it_can_correctly_calculate_a_posts_chronological_score()
+    {
+        //arrange
+        $hours_old = 10;
+        $post = factory('App\Post')->create(['created_at' => Carbon::now()->subHours($hours_old)]);
+    
+        //act
+        $response = $this->getJson('/api/discover-posts');
+    
+        //assert
+        $this->assertEquals( $this->calculateChronologicalScore($hours_old) , $response->json()['data'][0]['score']);
+    }
+
+    /**
+     * @test
+     * when chronological weight distribution is raised calculated score also rises
+     */
+    public function when_chronological_weight_distribution_is_raised_calculated_score_also_rises()
+    {
+        //arrange
+        $hours_old = 10;
+        $post = factory('App\Post')->create(['created_at' => Carbon::now()->subHours($hours_old)]);
+    
+        //act
+        $response = $this->getJson('/api/discover-posts');
+
+        $this->weights['chronological_weight_distribution'] = .1;
+        $score_at_10_percent = $this->calculateChronologicalScore($hours_old);        
+
+        $this->weights['chronological_weight_distribution'] = .25; // this is the default value for now
+        $score_at_25_percent = $this->calculateChronologicalScore($hours_old);
+
+        $this->weights['chronological_weight_distribution'] = .5;
+        $score_at_50_percent = $this->calculateChronologicalScore($hours_old);
+        
+        //assert
+        $this->assertLessThan($score_at_50_percent, $score_at_25_percent);
+        $this->assertLessThan($score_at_25_percent, $score_at_10_percent);
+    }
+
+    /**
+     * @test
      * it returns posts sorted chronologically
      */
     public function it_returns_posts_sorted_chronologically()
@@ -104,11 +165,8 @@ class DiscoverPostTest extends TestCase
         $old_post_x_hours_old = 2;
         $recent_post_x_hours_old = 1;
 
-        $sho = factory('App\User')->create(['id'=> 33]); // Sho (user id = 33) is one of the user in auto follower list
-        $shosFollower = factory('App\Follower')->create(['follower_id' => $sho->id]);
-
-    	$old_post = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'created_at' => Carbon::now()->subHours($old_post_x_hours_old)]);
-    	$recent_post = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'created_at' => Carbon::now()->subHours($recent_post_x_hours_old)]);
+    	$old_post = factory('App\Post')->create(['created_at' => Carbon::now()->subHours($old_post_x_hours_old)]);
+    	$recent_post = factory('App\Post')->create(['created_at' => Carbon::now()->subHours($recent_post_x_hours_old)]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
 
@@ -125,16 +183,13 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_by_like_count()
     {
-    	$sho = factory('App\User')->create(['id'=> 33]); // Sho (user id = 33) is one of the user in auto follower list
-        $shosFollower = factory('App\Follower')->create(['follower_id' => $sho->id]);
-
-    	$postWithTwoLike = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'like_count' => 2]);
-    	$postWithFiveLike = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'like_count' => 5]);
+    	$postWithTwoLike = factory('App\Post')->create(['like_count' => 2]);
+    	$postWithFiveLike = factory('App\Post')->create(['like_count' => 5]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$postWithFiveLike->id, $postWithTwoLike->id], array_column($response['data'], 'id'));
-    	$this->assertScoreEquals($this->calculateLikeScore(5),$this->calculateLikeScore(2), $response);
+        $this->assertEquals( [$this->calculateLikeScore(5), $this->calculateLikeScore(2)] ,array_column($response['data'], 'score') );
     }
 
     /**
@@ -143,16 +198,13 @@ class DiscoverPostTest extends TestCase
      */
     public function it_returns_posts_sorted_by_pin_count()
     {
-    	$sho = factory('App\User')->create(['id'=> 33]); // Sho (user id = 33) is one of the user in auto follower list
-        $shosFollower = factory('App\Follower')->create(['follower_id' => $sho->id]);
-
-    	$postWithTwoPins = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'pin_count' => 2]);
-    	$postWithFivePins = factory('App\Post')->create(['owner_id' => $shosFollower->user_id, 'pin_count' => 5]);
+    	$postWithTwoPins = factory('App\Post')->create(['pin_count' => 2]);
+    	$postWithFivePins = factory('App\Post')->create(['pin_count' => 5]);
 
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$postWithFivePins->id, $postWithTwoPins->id], array_column($response['data'], 'id'));
-    	$this->assertScoreEquals($this->calculatePinScore(5), $this->calculatePinScore(2), $response);
+        $this->assertEquals( [$this->calculatePinScore(5), $this->calculatePinScore(2)] ,array_column($response['data'], 'score') );
     }
 
     /**
@@ -169,33 +221,31 @@ class DiscoverPostTest extends TestCase
         $this->assertNotEquals([$post->id], array_column($response['data'], 'id'));
     }
 
-    protected function assertScoreEquals($post_one_score, $post_two_score, $response){
-    	$this->assertEquals(
-    		[$this->calculateChronologicalScore(1) + $post_one_score,$this->calculateChronologicalScore(1) + $post_two_score ],
-    		array_column($response['data'], 'score')
-		);
-    }
-
     /**
      * returns the chronological score of a post
      * @param  number $hours no of hours ago the poat was posted
-     * @return [type]        [description]
+     * @return float       [description]
      */
     public function calculateChronologicalScore($hours)
     {
-        return - ($hours) *$this->weights['chronological_weight_distribution'];
+        return - ($hours) * (1 - $this->weights['chronological_weight_distribution']);
     }
 
     /**
      * returns the like score 
-     * @param  [type] $likes [description]
-     * @return [type]        [description]
+     * @param  int $likes no of likes
+     * @return float        [description]
      */
     public function calculateLikeScore($likes)
     {
         return $likes * $this->weights['like_weight_distribution'];
     }
 
+    /**
+     * returns the pin score 
+     * @param  int $pins no of pins
+     * @return float        [description]
+     */
     public function calculatePinScore($pins)
     {
         return $pins * $this->weights['pin_weight_distribution'];

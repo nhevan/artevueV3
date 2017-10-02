@@ -14,20 +14,33 @@ use Acme\Transformers\PostTransformer;
 
 class DiscoverPostsController extends DiscoverController
 {
+	/**
+	 * contains the weight distribution values for likes, pin, chronology etc
+	 * @var array
+	 */
 	protected $weights;
 
+	/**
+	 * contains all ids of the authenticated users followers (also includes the authenticated user id)
+	 * @var array
+	 */
+	protected $me_and_my_follower_ids = [];
+
+	/**
+	 * does some bootstrap work for the controller
+	 */
 	public function __construct()
 	{
 		parent::__construct(new Request);
 		
-		$this->weights = $this->getWeightDistributionSettings();
+		$this->weights = $this->getPostWeightDistributionSettings();
 	}
 
 	/**
 	 * fetches all keys that has a matching string of 'weight_distribution'
 	 * @return array a array of key value pairs for related settings
 	 */
-	public static function getWeightDistributionSettings()
+	public static function getPostWeightDistributionSettings()
 	{
 		return Settings::where('key', 'like', '%weight_distribution%')->get()->pluck('value', 'key')->toArray();
 	}
@@ -41,19 +54,15 @@ class DiscoverPostsController extends DiscoverController
     {
     	$limit = 20;
         if ($this->userIsGuest()) {
-        	$users = User::all()->pluck('id');
-            $undiscovered_posts = $this->getPaginatedPosts($users, $limit);
+        	$this->me_and_my_follower_ids = [];
+            $undiscovered_posts = $this->getPaginatedPosts($limit);
 
             return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
         }
         $this->user = Auth::user();
+        $this->me_and_my_follower_ids = $this->includeMyself($this->getMyFollowersIds());
 
-		$users_my_followers_are_following = $this->getFollowersFollowingUsers();
-        $followers_not_connected_to_me = $this->getNotConectedFollowers();
-
-        $merged_users = array_merge($users_my_followers_are_following, $followers_not_connected_to_me);
-        
-		$undiscovered_posts = $this->getPaginatedPosts($merged_users, $limit);
+		$undiscovered_posts = $this->getPaginatedPosts($limit);
 
         $this->trackAction(Auth::user(), "Explore Posts");
 
@@ -66,26 +75,25 @@ class DiscoverPostsController extends DiscoverController
      * @param  [type] $limit                            [description]
      * @return [type]                                   [description]
      */
-    public function getPaginatedPosts($user_ids, $limit)
+    public function getPaginatedPosts($limit)
     {
-        $posts_of_given_users = $this->usersPosts($user_ids);
+        $undiscovered_posts = $this->undiscoveredPosts();
 
-        $sorted_posts = $this->sortPostsByRelevancy($posts_of_given_users);
-        
+        $sorted_posts = $this->sortPostsByRelevancy($undiscovered_posts);
         $paginated_posts = $this->getPaginated($sorted_posts, $limit);
         
         return $paginated_posts;
     }
 
     /**
-     * fetches posts of a given set of users
+     * fetches a collection of posts that does not belong to any of the followers of the authenticated users
      * @param  [type] $user_ids [description]
      * @return [type]           [description]
      */
-    private function usersPosts($user_ids)
+    private function undiscoveredPosts()
     {
         $posts = Post::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`) as total_count"))
-            ->whereIn('owner_id', $user_ids)
+            ->whereNotIn('owner_id', $this->me_and_my_follower_ids)
             ->where('is_undiscoverable', false)
             ->with('owner', 'tags', 'artist')
             ->get();
@@ -114,7 +122,6 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignPostRelevancy($post)
     {
-    	// dd()
         $this->assignChronologyRelevancy($post, $this->weights);
         $this->assignLikeRelevancy($post, $this->weights);
         $this->assignPinRelevancy($post, $this->weights);
@@ -132,7 +139,7 @@ class DiscoverPostsController extends DiscoverController
     {
         $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
         
-        $post['score'] += - ($hours_till_posted) * $weight['chronological_weight_distribution'];
+        $post['score'] += - ($hours_till_posted) * ( 1 - $weight['chronological_weight_distribution'] );
     }
 
     /**
@@ -168,10 +175,6 @@ class DiscoverPostsController extends DiscoverController
 
         $difference = $posted_at->diffInHours($now);
 
-        // return $difference;
-        if ($difference) {
-            return $difference;
-        }
-        return 1;
+        return $difference;
     }
 }

@@ -154,13 +154,13 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
     return [
         'image' => $faker->sentence(1),
         'description' => $faker->sentence(1),
-        // 'owner_id' => $faker->randomElement($users->toArray()),
         'owner_id' => function(){
             return factory('App\User')->create()->id;
         },
         'artist_id' => function(){
             return factory('App\Artist')->create()->id;
         },
+        'is_undiscoverable' => 0
     ];
 });
 

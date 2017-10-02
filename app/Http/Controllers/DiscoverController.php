@@ -48,6 +48,7 @@ class DiscoverController extends ApiController
     public function getIdsOfUsersMyFollowersAreFollowing()
     {
     	$my_followers_ids = $this->getMyFollowersIds();
+
     	$users_my_followers_are_following = Follower::whereIn('follower_id', $my_followers_ids)->whereNotIn('user_id', $my_followers_ids)->get()->pluck('user_id');
 
 		$users_my_followers_are_following = $this->excludeMyself($users_my_followers_are_following);    	
@@ -57,24 +58,36 @@ class DiscoverController extends ApiController
 
     /**
      * get a collection of ids of all my followers
-     * @return [type] [description]
+     * @return object eloquent collection object
      */
     public function getMyFollowersIds()
     {
-    	return $this->user->following->pluck('user_id');
+    	return  $this->user->following->pluck('user_id');
     }
 
     /**
      * exclude myself from a colleciton of users ids
-     * @param  [type] $users [description]
+     * @param  [type] $users_collection [description]
      * @return [type]        [description]
      */
-    public function excludeMyself($users)
+    public function excludeMyself($users_collection)
     {
-    	$users = $users->reject(function ($id) {
+    	$users_collection = $users_collection->reject(function ($id) {
 		    return $id == $this->user->id;
 		});
 
-		return $users->all();
+		return $users_collection->all();
+    }
+
+    /**
+     * include myself from a colleciton of users ids
+     * @param  [type] $users_collection [description]
+     * @return [type]        [description]
+     */
+    public function includeMyself($users_collection)
+    {
+        $users_collection = $users_collection->push($this->user->id);
+
+        return $users_collection->all();
     }
 }
