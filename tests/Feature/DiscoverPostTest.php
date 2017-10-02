@@ -13,18 +13,17 @@ class DiscoverPostTest extends TestCase
 {
 	use DatabaseTransactions;
 
-    protected $constant_x = 72;  //a post with 1 like and 72 hours old is equivalent in score to a post that has been recently created
 	protected $weights = [
-		'chronological' => 1.75,
-		'like_count' => .30,
-		'pin_count' => .10
+		'chronological' => .25,
+		'like_count' => .75,
+        'pin_count' => 1
 	];
     
     /**
      * @test
-     * it returns paginated json data
+     * it returns paginated json data for logges in or guest users
      */
-    public function it_returns_paginated_json_data()
+    public function it_returns_paginated_json_data_for_logged_in_or_guest_users()
     {
     	$response = $this->getJson('/api/discover-posts')->json();
 
@@ -110,7 +109,7 @@ class DiscoverPostTest extends TestCase
 
     	$this->assertEquals([$recent_post->id, $old_post->id], array_column($response['data'], 'id'));
     	$this->assertEquals(
-    		[ $this->calcutateChronologicalScore($recent_post_x_hours_old), $this->calcutateChronologicalScore($old_post_x_hours_old) ],
+    		[ $this->calculateChronologicalScore($recent_post_x_hours_old), $this->calculateChronologicalScore($old_post_x_hours_old) ],
     		array_column($response['data'], 'score')
 		);
     }
@@ -130,7 +129,7 @@ class DiscoverPostTest extends TestCase
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$postWithFiveLike->id, $postWithTwoLike->id], array_column($response['data'], 'id'));
-    	$this->assertScoreEquals(5*$this->weights['like_count'], 2*$this->weights['like_count'], $response);
+    	$this->assertScoreEquals($this->calculateLikeScore(5),$this->calculateLikeScore(2), $response);
     }
 
     /**
@@ -148,7 +147,7 @@ class DiscoverPostTest extends TestCase
     	$response = $this->getJson('/api/discover-posts')->json();
 
     	$this->assertEquals([$postWithFivePins->id, $postWithTwoPins->id], array_column($response['data'], 'id'));
-    	$this->assertScoreEquals(5*$this->weights['pin_count'], 2*$this->weights['pin_count'], $response);
+    	$this->assertScoreEquals($this->calculatePinScore(5), $this->calculatePinScore(2), $response);
     }
 
     /**
@@ -167,18 +166,33 @@ class DiscoverPostTest extends TestCase
 
     protected function assertScoreEquals($post_one_score, $post_two_score, $response){
     	$this->assertEquals(
-    		[$this->calcutateChronologicalScore(1) + $post_one_score,$this->calcutateChronologicalScore(1) + $post_two_score ],
+    		[$this->calculateChronologicalScore(1) + $post_one_score,$this->calculateChronologicalScore(1) + $post_two_score ],
     		array_column($response['data'], 'score')
 		);
     }
 
     /**
-     * returns the chronological weight of a post
+     * returns the chronological score of a post
      * @param  number $hours no of hours ago the poat was posted
      * @return [type]        [description]
      */
-    public function calcutateChronologicalScore($hours)
+    public function calculateChronologicalScore($hours)
     {
-        return (1/($hours / $this->constant_x))*$this->weights['chronological'];
+        return - ($hours) *$this->weights['chronological'];
+    }
+
+    /**
+     * returns the like score 
+     * @param  [type] $likes [description]
+     * @return [type]        [description]
+     */
+    public function calculateLikeScore($likes)
+    {
+        return $likes * $this->weights['like_count'];
+    }
+
+    public function calculatePinScore($pins)
+    {
+        return $pins * $this->weights['pin_count'];
     }
 }

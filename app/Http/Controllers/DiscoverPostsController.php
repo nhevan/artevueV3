@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\User;
 use App\Follower;
+use App\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +14,20 @@ use Acme\Transformers\PostTransformer;
 
 class DiscoverPostsController extends DiscoverController
 {
+	protected $weights;
+
+	public function __construct()
+	{
+		parent::__construct(new Request);
+		
+		$this->weights = [
+	            'chronological' => .25,
+	            'like_count' => .75,
+		        'pin_count' => 1
+	        ];
+	}
+
+
     /**
      * returns a undiscovered collection of posts
      * @return [type] [description]
@@ -20,10 +36,8 @@ class DiscoverPostsController extends DiscoverController
     {
     	$limit = 20;
         if ($this->userIsGuest()) {
-            $my_followers_ids = $this->getAutoFollowersArray();
-            $users_my_followers_are_following = Follower::whereIn('follower_id', $my_followers_ids)->whereNotIn('user_id', $my_followers_ids)->get()->pluck('user_id');
-
-            $undiscovered_posts = $this->getPaginatedPosts($users_my_followers_are_following, $limit);
+        	$users = User::all()->pluck('id');
+            $undiscovered_posts = $this->getPaginatedPosts($users, $limit);
 
             return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
         }
@@ -95,16 +109,10 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignPostRelevancy($post)
     {
-        $weight = [
-            'follower_like_count' => .25,
-            'chronological' => 1.75,
-            'like_count' => .30,
-            'pin_count' => .10,
-        ];
-
-        $this->assignChronologyRelevancy($post, $weight);
-        $this->assignLikeRelevancy($post, $weight);
-        $this->assignPinRelevancy($post, $weight);
+    	// dd()
+        $this->assignChronologyRelevancy($post, $this->weights);
+        $this->assignLikeRelevancy($post, $this->weights);
+        $this->assignPinRelevancy($post, $this->weights);
 
         return $post;
     }
@@ -117,10 +125,9 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignChronologyRelevancy(&$post, $weight)
     {
-        $constant = 72; //a post with 1 like and 72 hours old is equivalent in score to a post that has been recently created
-
         $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
-        $post['score'] = ( 1/ ( $hours_till_posted / $constant ) ) * $weight['chronological'];
+        
+        $post['score'] += - ($hours_till_posted) * $weight['chronological'];
     }
 
     /**
@@ -155,6 +162,8 @@ class DiscoverPostsController extends DiscoverController
         $posted_at = Carbon::createFromFormat('Y-m-d H:i:s', $created_at);
 
         $difference = $posted_at->diffInHours($now);
+
+        // return $difference;
         if ($difference) {
             return $difference;
         }
