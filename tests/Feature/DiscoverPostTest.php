@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Post;
 use Carbon\Carbon;
 use Tests\TestCase;
+use App\Http\Controllers\DiscoverPostsController;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -13,11 +14,15 @@ class DiscoverPostTest extends TestCase
 {
 	use DatabaseTransactions;
 
-	protected $weights = [
-		'chronological' => .25,
-		'like_count' => .75,
-        'pin_count' => 1
-	];
+	protected $weights;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->seed('SettingsTableSeeder');
+        $this->weights = DiscoverPostsController::getWeightDistributionSettings();
+    }
     
     /**
      * @test
@@ -178,7 +183,7 @@ class DiscoverPostTest extends TestCase
      */
     public function calculateChronologicalScore($hours)
     {
-        return - ($hours) *$this->weights['chronological'];
+        return - ($hours) *$this->weights['chronological_weight_distribution'];
     }
 
     /**
@@ -188,11 +193,11 @@ class DiscoverPostTest extends TestCase
      */
     public function calculateLikeScore($likes)
     {
-        return $likes * $this->weights['like_count'];
+        return $likes * $this->weights['like_weight_distribution'];
     }
 
     public function calculatePinScore($pins)
     {
-        return $pins * $this->weights['pin_count'];
+        return $pins * $this->weights['pin_weight_distribution'];
     }
 }

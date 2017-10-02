@@ -20,11 +20,16 @@ class DiscoverPostsController extends DiscoverController
 	{
 		parent::__construct(new Request);
 		
-		$this->weights = [
-	            'chronological' => .25,
-	            'like_count' => .75,
-		        'pin_count' => 1
-	        ];
+		$this->weights = $this->getWeightDistributionSettings();
+	}
+
+	/**
+	 * fetches all keys that has a matching string of 'weight_distribution'
+	 * @return array a array of key value pairs for related settings
+	 */
+	public static function getWeightDistributionSettings()
+	{
+		return Settings::where('key', 'like', '%weight_distribution%')->get()->pluck('value', 'key')->toArray();
 	}
 
 
@@ -127,7 +132,7 @@ class DiscoverPostsController extends DiscoverController
     {
         $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
         
-        $post['score'] += - ($hours_till_posted) * $weight['chronological'];
+        $post['score'] += - ($hours_till_posted) * $weight['chronological_weight_distribution'];
     }
 
     /**
@@ -138,7 +143,7 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignLikeRelevancy(&$post, $weight)
     {
-        $post['score'] += $post['like_count'] * $weight['like_count'];
+        $post['score'] += $post['like_count'] * $weight['like_weight_distribution'];
     }
 
     /**
@@ -148,7 +153,7 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignPinRelevancy(&$post, $weight)
     {
-        $post['score'] += $post['pin_count'] * $weight['pin_count'];
+        $post['score'] += $post['pin_count'] * $weight['pin_weight_distribution'];
     }
 
     /**
