@@ -73,6 +73,40 @@ class PostsController extends ApiController
     }
 
     /**
+     * fetches all posts that has the #arteprize2017 hashtag
+     * @return paginated data
+     */
+    public function artePrizePosts()
+    {
+        $artePrizeHashtag = '#arteprize2017';
+        $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
+    }
+
+    /**
+     * returns all posts that are selected by artevue
+     * @return [type] [description]
+     */
+    public function artevueSelectedPosts()
+    {
+        $selected_posts = $this->post->where('is_selected_by_artevue', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($selected_posts, $this->postTransformer );
+    }
+
+    /**
+     * returns all posts that are selected for sale
+     * @return [type] [description]
+     */
+    public function onSalePosts()
+    {
+        $on_sale_posts = $this->post->where('is_selected_for_sale', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
+    }
+
+    /**
      * swaps the is_undiscoverable property of a given post
      * @param  Post   $post [description]
      * @return [type]       [description]

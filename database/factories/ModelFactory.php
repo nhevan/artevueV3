@@ -106,10 +106,8 @@ $factory->define(App\Follower::class, function (Faker\Generator $faker) {
     $users = User::pluck('id');
 
     return [
-        // 'user_id' => $faker->randomElement($users->toArray()),
-        // 'follower_id' => $faker->randomElement($users->toArray())
         'user_id' => function(){
-            return factory('App\User')->create()->id;
+            return factory('App\UserMetadata')->create()->user_id;
         },
         'follower_id' => function(){
             return factory('App\User')->create()->id;
@@ -156,13 +154,13 @@ $factory->define(App\Post::class, function (Faker\Generator $faker) {
     return [
         'image' => $faker->sentence(1),
         'description' => $faker->sentence(1),
-        // 'owner_id' => $faker->randomElement($users->toArray()),
         'owner_id' => function(){
             return factory('App\User')->create()->id;
         },
         'artist_id' => function(){
             return factory('App\Artist')->create()->id;
         },
+        'is_undiscoverable' => 0
     ];
 });
 
