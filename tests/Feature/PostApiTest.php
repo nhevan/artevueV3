@@ -43,4 +43,79 @@ class PostApiTest extends TestCase
         //assert
         $this->assertEquals([ $post_recent->id, $post_old->id ], array_column($response['data'], 'id'));
     }
+
+    /**
+     * @test
+     * a user can fetch all artevue selected posts
+     */
+    public function a_user_can_fetch_artevue_selected_posts()
+    {
+    	$post = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
+
+    	$response = $this->getJson('/api/selected-arts')->json();
+
+    	$this->assertArrayHasKey('data', $response);
+    	$this->assertArrayHasKey('pagination', $response);
+    	$this->assertEquals([$post->id], array_column($response['data'], 'id'));
+    }
+
+    /**
+     * @test
+     * selected posts appear in chronological order
+     */
+    public function selected_posts_appear_in_chronological_order()
+    {
+    	//arrange
+        $post_old = factory('App\Post')->create(['is_selected_by_artevue' => 1, 'created_at' => Carbon::now()->subHours(2)]);
+        $post_recent = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
+    
+        //act
+        $response = $this->getJson('/api/selected-arts')->json();
+    
+        //assert
+        $this->assertEquals([ $post_recent->id, $post_old->id ], array_column($response['data'], 'id'));
+    }
+
+    /**
+     * @test
+     * when a post is liked, its like_count increases by 1
+     */
+    public function when_a_post_is_liked_its_like_count_increases_by_1()
+    {
+    	//arrange
+    	$this->signIn();
+    	$postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id]);
+    
+        //act
+    	$response = $this->post("/api/like/{$post->id}")->json();
+    
+        //assert
+        $this->assertDatabaseHas('posts', [
+        		'id' => $post->id,
+        		'like_count' => 1
+        	]);
+    }
+
+    /**
+     * @test
+     * when a post is unliked, its like_count deccreases by 1
+     */
+    public function when_a_post_is_unliked_its_like_count_deccreases_by_1()
+    {
+    	//arrange
+    	$this->signIn();
+    	$postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id]);
+    
+        //act
+        $response = $this->post("/api/like/{$post->id}")->json();    // first like the most
+    	$response = $this->delete("/api/like/{$post->id}")->json();  // then unlike the post
+
+        //assert
+        $this->assertDatabaseHas('posts', [
+        		'id' => $post->id,
+        		'like_count' => 0
+        	]);
+    }
 }

@@ -72,12 +72,27 @@ class PostsController extends ApiController
     	return $this->respondWithPagination($posts, $this->postTransformer );
     }
 
+    /**
+     * fetches all posts that has the #arteprize2017 hashtag
+     * @return paginated data
+     */
     public function artePrizePosts()
     {
         $artePrizeHashtag = '#arteprize2017';
         $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
         return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
+    }
+
+    /**
+     * returns all posts that are selected by artevue
+     * @return [type] [description]
+     */
+    public function artevueSelectedPosts()
+    {
+        $selected_posts = $this->post->where('is_selected_by_artevue', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($selected_posts, $this->postTransformer );
     }
 
     /**
