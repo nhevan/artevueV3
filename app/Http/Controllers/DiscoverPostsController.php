@@ -21,6 +21,18 @@ class DiscoverPostsController extends DiscoverController
 	protected $weights;
 
 	/**
+	 * more likes means adding more score to a post
+	 * @var integer
+	 */
+	protected $like_unit = 1;
+
+	/**
+	 * more hours old means deducting more scores from a post
+	 * @var integer
+	 */
+	protected $chronological_unit = -1;
+
+	/**
 	 * contains all ids of the authenticated users followers (also includes the authenticated user id)
 	 * @var array
 	 */
@@ -55,18 +67,18 @@ class DiscoverPostsController extends DiscoverController
     	$limit = 20;
         if ($this->userIsGuest()) {
         	$this->me_and_my_follower_ids = [];
-            $undiscovered_posts = $this->getPaginatedPosts($limit);
+            $trending_posts = $this->getPaginatedPosts($limit);
 
-            return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
+            return $this->respondWithPagination($trending_posts, new PostTransformer);
         }
         $this->user = Auth::user();
         $this->me_and_my_follower_ids = $this->includeMyself($this->getMyFollowersIds());
 
-		$undiscovered_posts = $this->getPaginatedPosts($limit);
+		$trending_posts = $this->getPaginatedPosts($limit);
 
         $this->trackAction(Auth::user(), "Explore Posts");
 
-		return $this->respondWithPagination($undiscovered_posts, new PostTransformer);
+		return $this->respondWithPagination($trending_posts, new PostTransformer);
     }
 
     /**
@@ -122,9 +134,11 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignPostRelevancy($post)
     {
-        $this->assignChronologyRelevancy($post, $this->weights);
-        $this->assignLikeRelevancy($post, $this->weights);
-        $this->assignPinRelevancy($post, $this->weights);
+        $this->assignChronologyRelevancy($post);
+        $this->assignLikeRelevancy($post);
+
+        //Sho wants to cosider like and chronological order only, so ignoring pin relevancy for now
+        // $this->assignPinRelevancy($post);
 
         return $post;
     }
@@ -135,11 +149,61 @@ class DiscoverPostsController extends DiscoverController
      * @param  [type] $weight [description]
      * @return [type]         [description]
      */
-    private function assignChronologyRelevancy(&$post, $weight)
+    private function assignChronologyRelevancy(&$post)
     {
         $hours_till_posted = $this->getHoursTillPosted($post['created_at']);
-        
-        $post['score'] += - ($hours_till_posted) * ( 1 - $weight['chronological_weight_distribution'] );
+
+        $chronological_score = $this->calculateChronologicalScore($hours_till_posted);
+
+        $post['score'] += $chronological_score;
+    }
+
+    /**
+     * returns the chronological score depending on the no of hours
+     * @param  number $hours no of hours ago the poat was posted
+     * @return float       [description]
+     */
+    public function calculateChronologicalScore($hours_till_posted)
+    {
+    	$chronological_unit_weight = $this->calculateUnitWeight($this->weights['chronological_weight_distribution'], $this->chronological_unit);
+
+        $chronological_score = $hours_till_posted * $chronological_unit_weight;
+
+        return $chronological_score;
+    }
+
+    /**
+     * returns the unit weight
+     * @param  [type] $weight the weight distribution of a characteristic
+     * @param  [type] $unit   unit value of thay characteristic
+     * @return [type]         [description]
+     */
+    public function calculateUnitWeight($weight, $unit)
+    {
+    	// return $this->algorithmV1($weight, $unit);
+    	return $this->algorithmV2($weight, $unit);
+    }
+
+    /**
+     * simpler algorithm which plainly uses the weight distribution
+     * @param  [type] $weight [description]
+     * @param  [type] $unit   [description]
+     * @return [type]         [description]
+     */
+    public function algorithmV1($weight, $unit)
+    {
+    	return $weight * $unit;
+    }
+
+    /**
+     * slightly advanced algoritm using better weight management
+     * @param  [type] $weight [description]
+     * @param  [type] $unit   [description]
+     * @return [type]         [description]
+     */
+    public function algorithmV2($weight, $unit)
+    {
+    	return ( $weight / (1 - $weight)) * $unit;
     }
 
     /**
@@ -148,9 +212,19 @@ class DiscoverPostsController extends DiscoverController
      * @param  [type] $weight [description]
      * @return [type]         [description]
      */
-    private function assignLikeRelevancy(&$post, $weight)
+    private function assignLikeRelevancy(&$post)
     {
-        $post['score'] += $post['like_count'] * $weight['like_weight_distribution'];
+    	$like_score = $this->calculateLikeScore($post['like_count']);
+        $post['score'] += $like_score;
+    }
+
+    public function calculateLikeScore($like_count)
+    {
+    	$like_unit_weight = $this->calculateUnitWeight($this->weights['like_weight_distribution'], $this->like_unit);
+
+        $like_score = $like_count * $like_unit_weight;
+
+    	return $like_score;
     }
 
     /**
@@ -158,9 +232,9 @@ class DiscoverPostsController extends DiscoverController
      * @param  [type] &$post [description]
      * @return [type]        [description]
      */
-    private function assignPinRelevancy(&$post, $weight)
+    private function assignPinRelevancy(&$post)
     {
-        $post['score'] += $post['pin_count'] * $weight['pin_weight_distribution'];
+        $post['score'] += $post['pin_count'] * $this->weights['pin_weight_distribution'];
     }
 
     /**
