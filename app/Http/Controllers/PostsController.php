@@ -72,6 +72,14 @@ class PostsController extends ApiController
     	return $this->respondWithPagination($posts, $this->postTransformer );
     }
 
+    public function artePrizePosts()
+    {
+        $artePrizeHashtag = '#arteprize2017';
+        $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
+    }
+
     /**
      * swaps the is_undiscoverable property of a given post
      * @param  Post   $post [description]
