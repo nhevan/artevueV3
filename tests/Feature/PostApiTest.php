@@ -20,7 +20,7 @@ class PostApiTest extends TestCase
     {
     	$post = factory('App\Post')->create(['description' => '#artePrize2017']);
 
-    	$response = $this->getJson('/api/arteprize-posts')->json();
+    	$response = $this->getJson('/api/posts/arteprize')->json();
 
     	$this->assertArrayHasKey('data', $response);
     	$this->assertArrayHasKey('pagination', $response);
@@ -38,7 +38,7 @@ class PostApiTest extends TestCase
         $post_recent = factory('App\Post')->create(['description' => '#artePrize2017']);
     
         //act
-    	$response = $this->getJson('/api/arteprize-posts')->json();
+    	$response = $this->getJson('/api/posts/arteprize')->json();
     
         //assert
         $this->assertEquals([ $post_recent->id, $post_old->id ], array_column($response['data'], 'id'));
@@ -52,7 +52,7 @@ class PostApiTest extends TestCase
     {
     	$post = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
 
-    	$response = $this->getJson('/api/selected-arts')->json();
+    	$response = $this->getJson('/api/posts/selected')->json();
 
     	$this->assertArrayHasKey('data', $response);
     	$this->assertArrayHasKey('pagination', $response);
@@ -70,7 +70,39 @@ class PostApiTest extends TestCase
         $post_recent = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
     
         //act
-        $response = $this->getJson('/api/selected-arts')->json();
+        $response = $this->getJson('/api/posts/selected')->json();
+    
+        //assert
+        $this->assertEquals([ $post_recent->id, $post_old->id ], array_column($response['data'], 'id'));
+    }
+
+    /**
+     * @test
+     * a user can fetch all posts selected for sale
+     */
+    public function a_user_can_fetch_all_posts_selected_for_sale()
+    {
+    	$post = factory('App\Post')->create(['is_selected_for_sale' => 1]);
+
+    	$response = $this->getJson('/api/posts/sale')->json();
+
+    	$this->assertArrayHasKey('data', $response);
+    	$this->assertArrayHasKey('pagination', $response);
+    	$this->assertEquals([$post->id], array_column($response['data'], 'id'));
+    }
+
+    /**
+     * @test
+     * on sale posts appear in chronological order
+     */
+    public function on_sale_posts_appear_in_chronological_order()
+    {
+    	//arrange
+        $post_old = factory('App\Post')->create([ 'is_selected_for_sale' => 1, 'created_at' => Carbon::now()->subHours(2)]);
+        $post_recent = factory('App\Post')->create([ 'is_selected_for_sale' => 1 ]);
+    
+        //act
+        $response = $this->getJson('/api/posts/sale')->json();
     
         //assert
         $this->assertEquals([ $post_recent->id, $post_old->id ], array_column($response['data'], 'id'));

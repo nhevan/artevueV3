@@ -72,9 +72,13 @@ Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete
 Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
-Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverPostsController@discoverPosts');
-Route::middleware('api')->get('/arteprize-posts', 'PostsController@artePrizePosts'); // v3
-Route::middleware('api')->get('/selected-arts', 'PostsController@artevueSelectedPosts'); // v3
+
+Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverPostsController@discoverPosts'); //v2
+Route::middleware('auth.optional:api')->get('/posts/trending', 'DiscoverPostsController@discoverPosts'); //v3
+Route::middleware('api')->get('/posts/arteprize', 'PostsController@artePrizePosts'); // v3
+Route::middleware('api')->get('/posts/selected', 'PostsController@artevueSelectedPosts'); // v3
+Route::middleware('api')->get('/posts/sale', 'PostsController@onSalePosts'); // v3
+
 Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
 Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery');

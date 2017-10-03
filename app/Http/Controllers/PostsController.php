@@ -96,6 +96,17 @@ class PostsController extends ApiController
     }
 
     /**
+     * returns all posts that are selected for sale
+     * @return [type] [description]
+     */
+    public function onSalePosts()
+    {
+        $on_sale_posts = $this->post->where('is_selected_for_sale', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
+    }
+
+    /**
      * swaps the is_undiscoverable property of a given post
      * @param  Post   $post [description]
      * @return [type]       [description]
