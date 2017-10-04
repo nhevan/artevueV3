@@ -298,7 +298,7 @@ class PostsController extends ApiController
             return $this->respond(['message' => 'Post successfully deleted']);
         }
 
-        return redirect()->route('posts.index');
+        return back();
 
     }
 

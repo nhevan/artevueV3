@@ -10,13 +10,13 @@
 					@component('posts.metainfo', ['post' => $post])
 					@endcomponent
 				</div>
-				<div class="row">
+				{{-- <div class="row">
 					<div class="col-md-10">
 						<strong>Hashtags Used</strong>
 						<hr>
 						<p>{{ $post->hashtags }}</p>
 					</div>
-				</div>
+				</div> --}}
 				<div class="row text-right">
 					@component('posts.actions', ['post' => $post])
 					@endcomponent

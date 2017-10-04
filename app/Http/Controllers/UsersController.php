@@ -91,6 +91,18 @@ class UsersController extends ApiController
         return view('users.show', compact('user'));
     }
 
+    public function viewUserPosts($user_id)
+    {
+        $user = $this->user->find($user_id);
+        if (!$user) {
+            return $this->responseNotFound('User does not exist.');
+        }
+
+        $user_posts =  Post::where('owner_id', $user_id)->latest()->with(['owner'])->paginate(20);
+
+        return view('posts.index', ['posts' => $user_posts]);
+    }
+
     /**
      * returns a single user detail for api
      * @param  User   $user [description]
