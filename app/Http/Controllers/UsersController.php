@@ -68,7 +68,6 @@ class UsersController extends ApiController
         $users = $this->user->latest()->with(['metadata', 'userType'])->paginate($limit);
 
         if(!request()->wantsJson()){
-            // return $users;
             return view('users.index', compact('users'));
         }
 
@@ -654,6 +653,10 @@ class UsersController extends ApiController
         $search_string = $request->search_string;
 
         $users = $this->user->where('username', 'like', '%'.$search_string.'%')->orWhere('name', 'like', '%'.$search_string.'%')->orWhere('email', 'like', '%'.$search_string.'%')->with('usertype', 'metadata', 'artPreferences', 'arttypes')->paginate($limit);
+
+        if(!request()->wantsJson()){
+            return view('users.index', compact('users'));
+        }
 
         $userSearchTransformer = new UserSearchTransformer;
         return $this->respondWithPagination($users, $userSearchTransformer );

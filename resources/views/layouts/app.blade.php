@@ -96,6 +96,14 @@
                         <li><a href="{{ url('/posts') }}">Posts</a></li>
                     </ul>
 
+                    <form method="POST" action="/search-users" class="navbar-form navbar-left">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <input name='search_string' type="text" class="form-control" placeholder="Enter username">
+                        </div>
+                        <button type="submit" class="btn btn-default">Search User</button>
+                    </form>
+
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->

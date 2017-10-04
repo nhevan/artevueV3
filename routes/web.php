@@ -49,6 +49,7 @@ Info@artevue.co.uk';
 Route::get('/users', 'UsersController@index')->middleware('auth')->name('users.index');
 Route::get('/users/{user}', 'UsersController@show')->middleware('auth')->name('users.show');
 Route::delete('/users/{user}', 'UsersController@destroy')->middleware('auth')->name('users.destroy');
+Route::post('/search-users', 'UsersController@searchUser')->middleware('auth')->name('users.search');
 
 Route::get('/posts', 'PostsController@indexWeb')->middleware('auth')->name('posts.index');
 Route::get('/posts/{post}', 'PostsController@showWeb')->middleware('auth')->name('posts.show');
