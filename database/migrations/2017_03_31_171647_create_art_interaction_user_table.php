@@ -20,7 +20,7 @@ class CreateArtInteractionUserTable extends Migration
             $table->foreign('art_interaction_id')->references('id')->on('art_interactions');
 
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            // $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
         });
