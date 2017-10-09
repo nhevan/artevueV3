@@ -190,7 +190,7 @@ class UserGalleryV3ApiTest extends TestCase
         $response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", [
                 'name' => 'gallery two',
                 'description' => '',
-                'email' => '',
+                'email' => null,
                 'website' => 'http://www.somethingelse.com'
             ]);
     
@@ -200,7 +200,7 @@ class UserGalleryV3ApiTest extends TestCase
             'id' => $gallery->id,
             'name' => 'gallery two',
             'description' => '',
-            'email' => '',
+            'email' => null,
             'website' => 'http://www.somethingelse.com'
         ]);
     }

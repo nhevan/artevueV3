@@ -128,9 +128,9 @@ class GalleriesController extends ApiController
     {
         $rules = [
             'name' => 'max:40',
-            'description' => 'max:350',
-            'email' => 'email',
-            'website' => 'url',
+            'description' => 'nullable|max:350',
+            'email' => 'nullable|email',
+            'website' => 'nullable|url',
         ];
         if (!$this->setRequest($this->request)->isValidated($rules)) {
             return $this->responseValidationError();
