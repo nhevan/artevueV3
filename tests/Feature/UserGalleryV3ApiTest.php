@@ -131,7 +131,7 @@ class UserGalleryV3ApiTest extends TestCase
     	$response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", ['name'=>'edited gallery name']);
     
         //assert
-		$this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'name' => 'edited gallery name']);        
+		$this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'name' => 'edited gallery name']);     
     }
 
     /**
@@ -145,10 +145,64 @@ class UserGalleryV3ApiTest extends TestCase
         $gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id, 'name' => 'gallery two']);
     
         //act
-    	$response = $this->json( 'PATCH', "/api/gallery/{$gallery2->id}", ['name'=>'gallery two']);
+    	$response = $this->json( 'PATCH', "/api/gallery/{$gallery1->id}", ['name'=>'gallery two']);
 
         //assert
         $response->assertStatus(422);
+    }
+
+    /**
+     * @test
+     * it updates other fields even if user does not change the title of the gallery
+     */
+    public function it_updates_other_fields_even_if_user_does_not_change_the_title_of_the_gallery()
+    {
+        //arrange
+        $gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id, 'name' => 'gallery one']);
+    
+        //act
+        $response = $this->json( 'PATCH', "/api/gallery/{$gallery1->id}", [
+                'name' => 'gallery one',
+                'description' => 'new description'
+            ]);
+    
+        //assert
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('galleries', ['id' => $gallery1->id, 'name' => 'gallery one', 'description' => 'new description']);
+    }
+
+    /**
+     * @test
+     * user can send empty string for description email and website while updating gallery info
+     */
+    public function user_can_send_empty_string_for_description_email_and_website_while_updating_gallery_info()
+    {
+        //arrange
+        $gallery = factory('App\Gallery')->create([
+            'user_id' => $this->user->id,
+            'name' => 'gallery one',
+            'description' => 'description',
+            'email' => 'test@gmail.com',
+            'website' => 'http://www.google.com'
+        ]);
+    
+        //act
+        $response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", [
+                'name' => 'gallery two',
+                'description' => '',
+                'email' => '',
+                'website' => 'http://www.somethingelse.com'
+            ]);
+    
+        //assert
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('galleries', [
+            'id' => $gallery->id,
+            'name' => 'gallery two',
+            'description' => '',
+            'email' => '',
+            'website' => 'http://www.somethingelse.com'
+        ]);
     }
 
     /**

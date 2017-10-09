@@ -139,23 +139,16 @@ class GalleriesController extends ApiController
         $gallery = Gallery::where('id', $gallery_id)->where('user_id', Auth::user()->id)->first();
 
         if ($gallery) {
-            if ($this->request->name) {
-                $is_name_taken = $this->galleries->where('name', $this->request->name)->where('user_id', Auth::user()->id)->first();
-                if (!$is_name_taken) {
-                    $gallery->name = $this->request->name;
-                }else{
-                    return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError("This user already has a gallery of the same name.");
-                }
+            $is_name_taken = $this->galleries->where('name', $this->request->name)->where('user_id', Auth::user()->id)->where('id', '<>', $gallery->id)->first();
+            if (!$is_name_taken) {
+                $gallery->name = $this->request->name;
+            }else{
+                return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError("This user already has a gallery of the same name.");
             }
-            if ($this->request->description) {
-                $gallery->description = $this->request->description;
-            }
-            if ($this->request->email) {
-                $gallery->email = $this->request->email;
-            }
-            if ($this->request->website) {
-                $gallery->website = $this->request->website;
-            }
+
+            $gallery->description = $this->request->description;
+            $gallery->email = $this->request->email;
+            $gallery->website = $this->request->website;
 
             $gallery->save();
 
