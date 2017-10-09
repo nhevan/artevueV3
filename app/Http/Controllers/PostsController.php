@@ -298,8 +298,22 @@ class PostsController extends ApiController
             return $this->respond(['message' => 'Post successfully deleted']);
         }
 
-        return back();
+        if (strpos(url()->previous(), 'user-posts') !== false) {
+            $user_id = $this->getPreviouslyVisitedUserId();
 
+            return redirect()->route('users.posts', ['user_id' => $user_id]);
+        }
+
+        return redirect()->route('posts.index');
+    }
+
+    /**
+     * returns the user id of the user that the admin was visiting
+     * @return [type] [description]
+     */
+    public function getPreviouslyVisitedUserId()
+    {
+        return (int) explode("/", url()->previous())[count(explode("/", url()->previous())) - 1];
     }
 
     /**
