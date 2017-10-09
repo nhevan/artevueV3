@@ -1064,7 +1064,7 @@ class UsersController extends ApiController
     }
 
     /**
-     * sends a new generated password to users email address
+     * sends a new generated password to a given user email address
      * @return [type] [description]
      */
     public function sendNewPasswordEmail()
@@ -1081,9 +1081,24 @@ class UsersController extends ApiController
             return $this->responseNotFound('User does not exist.');
         }
 
+        return $this->resetPassword($user);
+    }
+
+    /**
+     * sends reset password email to a given user
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function resetPassword(User $user)
+    {
         Mail::to($user->email)->queue(new NewPasswordEmail($user));
 
-        return $this->respond(['message' => 'An email has been sent to your email with the new password']);
+        if(request()->wantsJson()){
+            return $this->respond(['message' => 'An email has been sent to your email with the new password']);
+        }
+
+        request()->session()->flash('status', 'Password reset email successfully sent !');
+        return back();
     }
 
     /**

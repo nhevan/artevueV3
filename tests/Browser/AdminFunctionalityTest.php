@@ -4,6 +4,8 @@ namespace Tests\Browser;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
+use App\Mail\NewPasswordEmail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class AdminFunctionalityTest extends DuskTestCase
@@ -82,6 +84,27 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->acceptDialog()
                     ->assertRouteIs('users.posts', ['user_id' => $usermeta->user_id])
                     ->assertDontSee($post->owner->name);
-        });        
+        });      
+    }
+
+    /**
+     * @test
+     * admins can send password reset email to any user
+     */
+    public function admins_can_send_password_reset_email_to_any_user()
+    {
+        //arrange
+        $usermeta = factory('App\UserMetadata')->create();
+        $user = $usermeta->user;
+    
+        //act
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($this->admin)
+                    ->visit('/users')
+                    ->click('#user-detail-'.$user->id)
+                    ->clickLink('Email new password')
+                    ->assertSee('Password reset email successfully sent !');
+        });
+    
     }
 }

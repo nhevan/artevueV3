@@ -51,6 +51,7 @@ Route::get('/users/{user}', 'UsersController@show')->middleware('auth')->name('u
 Route::delete('/users/{user}', 'UsersController@destroy')->middleware('auth')->name('users.destroy');
 Route::post('/search-users', 'UsersController@searchUser')->middleware('auth')->name('users.search');
 Route::get('/user-posts/{user_id}', 'UsersController@viewUserPosts')->middleware('auth')->name('users.posts');
+Route::middleware('auth')->get('/send-reset-password-email/{user}', 'UsersController@resetPassword')->name('user.reset-password');
 
 Route::get('/posts', 'PostsController@indexWeb')->middleware('auth')->name('posts.index');
 Route::get('/posts/{post}', 'PostsController@showWeb')->middleware('auth')->name('posts.show');
