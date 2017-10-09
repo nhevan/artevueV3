@@ -10,6 +10,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    protected $casts = ['user_type_id' => 'integer'];
+    
     /**
      * The attributes that are mass assignable.
      *
