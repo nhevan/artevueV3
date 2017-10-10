@@ -1,6 +1,6 @@
 <div class="col-md-4 text-center user-holder-block">
-	<a href="/posts/{{$post->id}}" style="color: black;">
-		<div class="user-holder-wrapper">
+	<a href="/posts/{{$post->id}}" id="post-detail-{{$post->id}}" style="color: black;">
+		<div class="mini-holder-wrapper">
 			<h3>
 			{{-- {{ str_limit($user->name, 22)}} --}}
 			</h3>
@@ -17,7 +17,14 @@
 	{{ Form::open(['method' => 'DELETE', 'route' => ['posts.destroy', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to delete this post ?")', 'style' => 'float:right; padding-left:10px;']) }}
 	    {{ Form::submit('Delete', ['id' => 'delete-post-'.$post->id, 'class' => 'btn btn-xs btn-danger', 'style' => 'position: absolute; bottom: 35px; right: 20px; z-index: 999;']) }}
 	{{ Form::close() }}
-	{{-- <a style='' href="#" class="btn btn-xs btn-danger">
-		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-	</a> --}}
+
+	@if ($post->is_undiscoverable)
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapDiscoverability', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to show this post in app explore screen?")']) }}
+		    {{ Form::submit('Show in explore', ['class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
+		{{ Form::close() }}
+	@else
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapDiscoverability', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to hide this post from app explore screen?")']) }}
+		    {{ Form::submit('Hide from explore', ['class' => 'btn btn-xs btn-warning', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
+		{{ Form::close() }}
+	@endif
 </div>

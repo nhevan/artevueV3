@@ -26,18 +26,18 @@
         .mark{
             border: 2px solid black;
         }
-        .user-holder-wrapper{
+        .mini-holder-wrapper{
             border: 2px solid black;
             margin-bottom: 30px;
             height: 409px;
         }
-        .user-holder-wrapper:hover{
+        .mini-holder-wrapper:hover{
             box-shadow: 0 2px 12px;
         }
-        .user-holder-block > a:hover{
+        .mini-holder-block > a:hover{
             text-decoration: none;
         }
-        .user-holder-wrapper .profile-picture-holder img{
+        .mini-holder-wrapper .profile-picture-holder img{
             border-top: 2px solid black;
             width: 100%;
             max-height: 280px;

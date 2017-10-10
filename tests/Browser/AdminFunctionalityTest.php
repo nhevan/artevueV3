@@ -133,4 +133,49 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertRouteIs('users.show', ['user' => $user->id]);
         });
     }
+
+    /**
+     * @test
+     * admins can edit a posts description price address_title and address
+     */
+    public function admins_can_edit_a_posts_description_price_address_title_and_address()
+    {
+        //arrange
+        $usermeta = factory('App\UserMetadata')->create();
+        $user = $usermeta->user;
+        $post = factory('App\Post')->create([
+            'owner_id' => $user->id,
+            'description' => 'old description',
+            'price' => '10.99',
+            'address_title' => 'old address title',
+            'address' => 'old address'
+        ]);
+    
+        //act
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts')
+                    ->click('#post-detail-'.$post->id)
+                    ->click("#edit-post")
+                    ->assertInputValue('description', $post->description)
+                    ->type('description', 'new description')
+                    ->assertInputValue('price', $post->price)
+                    ->type('price', '99.99')
+                    ->assertInputValue('address_title', $post->address_title)
+                    ->type('address_title', 'new address_title')
+                    ->assertInputValue('address', $post->address)
+                    ->type('address', 'new address')
+                    ->press('Submit Changes')
+                    ->assertRouteIs('posts.show', ['post' => $post->id])
+                    ->assertSee('new description')
+                    ->assertSee('99.99')
+                    ->assertSee('new address_title')
+                    ->assertSee('new address');
+        });
+
+        $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'price' => '99.99'
+            ]);
+    }
 }

@@ -57,6 +57,8 @@ Route::middleware('auth')->post('/change-password/{user}', 'UsersController@setP
 
 Route::get('/posts', 'PostsController@indexWeb')->middleware('auth')->name('posts.index');
 Route::get('/posts/{post}', 'PostsController@showWeb')->middleware('auth')->name('posts.show');
+Route::get('/post/edit/{post}', 'PostsController@showEditForm')->middleware('auth')->name('posts.edit-form');
+Route::post('/post/{post}', 'PostsController@editWeb')->middleware('auth')->name('posts.edit');
 Route::delete('/posts/{post}', 'PostsController@delete')->middleware('auth')->name('posts.destroy');
 Route::patch('/posts/{post}/swap-discoverability', 'PostsController@swapDiscoverability')->middleware('auth')->name('posts.swapDiscoverability');
 

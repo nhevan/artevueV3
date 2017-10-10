@@ -211,6 +211,32 @@ class PostsController extends ApiController
     }
 
     /**
+     * displays the post edit form to the admin
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function showEditForm(Post $post)
+    {
+        return view('posts.edit', compact('post'));
+    }
+
+    /**
+     * processes the post edit request sent by admin
+     * @param  string $value [description]
+     * @return [type]        [description]
+     */
+    public function editWeb(Post $post)
+    {
+        $this->post = $post;
+        $this->updateHashtags();
+        $this->updateTaggedUsers();
+        $this->post->fill($this->request->all());
+        $this->post->save();
+
+        return redirect()->route('posts.show', ['post' => $post->id]);
+    }
+
+    /**
      * edits a post model
      * @param  Post   $post [description]
      * @return [type]       [description]
