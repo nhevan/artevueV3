@@ -178,4 +178,28 @@ class AdminFunctionalityTest extends DuskTestCase
                 'price' => '99.99'
             ]);
     }
+
+    /**
+     * @test
+     * admins can view all settings by visiting the settings url
+     */
+    public function admins_can_view_all_settings_by_visiting_the_settings_url()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
+    
+        //act
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->admin)
+                    ->visit('/settings')
+                    ->assertSee('ios_latest_app_version')
+                    ->assertSee('ios_min_app_version')
+                    ->assertSee('chronological_weight_distribution')
+                    ->assertSee('like_weight_distribution')
+                    ->assertDontsee('something random');
+        });
+    
+        //assert
+        
+    }
 }

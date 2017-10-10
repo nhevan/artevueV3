@@ -15,11 +15,10 @@ class SettingsController extends ApiController
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * returns the current status of the system including latest app versions
+     * @return [type] [description]
      */
-    public function index()
+    public function status()
     {
         $platform = strtolower(request()->header("X-ARTEVUE-App-Platform"));
         
@@ -36,6 +35,26 @@ class SettingsController extends ApiController
         return $this
                     ->setStatusCode(422)
                     ->respondWithError("Please provide the X-ARTEVUE-App-Platform key with a valid value (iOS/Android) with the header.");
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $app_settings = $this->settings->where('key', 'like', '%app%')->get();
+        $weight_settings = $this->settings->where('key', 'like', '%weight%')->get();
+
+        return view('settings.dashboard', compact(['app_settings', 'weight_settings']));
+    }
+
+    public function editAppSettings()
+    {
+        $app_settings = $this->settings->where('key', 'like', '%app%')->get();
+        
+        return view('settings.edit-app-settings', compact('app_settings'));
     }
 
     /**

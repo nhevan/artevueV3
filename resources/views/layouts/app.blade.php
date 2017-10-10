@@ -94,6 +94,7 @@
                         <li><a href="{{ url('/events') }}">Events</a></li>
                         <li><a href="{{ url('/news') }}">News</a></li>
                         <li><a href="{{ url('/posts') }}">Posts</a></li>
+                        <li><a href="{{ url('/settings') }}">Settings</a></li>
                     </ul>
 
                     <form method="POST" action="/search-users" class="navbar-form navbar-left">

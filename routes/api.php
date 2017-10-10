@@ -123,7 +123,7 @@ Route::middleware('api')->get('/art-types', 'ArtTypesController@index');
 Route::middleware('auth:api')->get('/test-slack', 'UsersController@testSlack');
 Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@sendWelcomeEmail');
 Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');
-Route::middleware('api')->get('/status', 'SettingsController@index');
+Route::middleware('api')->get('/status', 'SettingsController@status');
 
 Route::middleware('api')->get('/search-posts', 'SearchPostsController@search');
 Route::middleware('api')->get('/search-users', 'SearchUsersController@search');
