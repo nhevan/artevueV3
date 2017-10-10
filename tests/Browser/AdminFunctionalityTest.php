@@ -107,4 +107,30 @@ class AdminFunctionalityTest extends DuskTestCase
         });
     
     }
+
+    /**
+     * @test
+     * admins can directly change the password of any user
+     */
+    public function admins_can_directly_change_the_password_of_any_user()
+    {
+        //arrange
+        $usermeta = factory('App\UserMetadata')->create();
+        $user = $usermeta->user;
+    
+        //act
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($this->admin)
+                    ->visit('/users')
+                    ->click('#user-detail-'.$user->id)
+                    ->click("#change-password")
+                    ->assertSee('Enter new passoword')
+                    ->type('new_password', '123456')
+                    ->assertSee('Confirm password')
+                    ->type('confirm_password', '123456')
+                    ->press('Change Password')
+                    ->assertSee('Password successfully changed !')
+                    ->assertRouteIs('users.show', ['user' => $user->id]);
+        });
+    }
 }

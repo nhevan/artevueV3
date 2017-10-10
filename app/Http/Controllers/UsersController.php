@@ -1064,6 +1064,36 @@ class UsersController extends ApiController
     }
 
     /**
+     * displays a form to admins to set password for a given user
+     * @return [type] [description]
+     */
+    public function showSetPasswordForm(User $user)
+    {
+        return view('users.set-password', compact('user'));
+    }
+
+    /**
+     * set password for a given user
+     * @param User $user [description]
+     */
+    public function setPassword(User $user)
+    {
+        if($this->request->new_password !== $this->request->confirm_password){
+            return back()->withErrors(['The confirm password field did not match with the new password field.']);;
+        }
+        $rules = [
+            'new_password' => 'required|min:6'
+        ];
+        $this->validate($this->request, $rules);
+
+        $user->password = bcrypt($this->request->new_password);
+        $user->save();
+
+        request()->session()->flash('status', 'Password successfully changed !');
+        return redirect()->route('users.show', ['user' => $user->id]);
+    }
+
+    /**
      * sends a new generated password to a given user email address
      * @return [type] [description]
      */
