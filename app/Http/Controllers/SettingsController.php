@@ -70,6 +70,37 @@ class SettingsController extends ApiController
     }
 
     /**
+     * update weight distribution settings for explore api
+     * @return [type] [description]
+     */
+    public function editWeightSettings()
+    {
+        if ($this->request->isMethod('get')) {
+            $weight_settings = $this->settings->where('key', 'like', '%weight%')->get();
+
+            return view('settings.edit-weight-settings', compact('weight_settings'));
+        }
+
+        $total = 0;
+        foreach ($this->request->except(['_token']) as $key => $value) {
+            $setting_field_name = explode('-', $key)[1];
+
+            if ($setting_field_name == 'value') {
+                $this->validate($this->request, [ $key => 'bail|numeric|min:0|max:1' ]);
+                $total += (float) $value;
+            }
+        }
+
+        if ($total > 1) {
+            return back()->withErrors(['The total weight distribution must not exceed 1.']);
+        }
+
+        $this->updateAllGivenSettingsValue();
+
+        return redirect()->route('settings.index');
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

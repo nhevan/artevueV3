@@ -222,4 +222,48 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertSee('new description');
         });
     }
+
+    /**
+     * @test
+     * admins can update weight distribution settings
+     */
+    public function admins_can_update_weight_distribution_settings()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
+    
+        //act
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->admin)
+                    ->visit('/settings')
+                    ->click('#edit-weight-settings')
+                    ->type('chronological_weight_distribution-value', '.1')
+                    ->type('chronological_weight_distribution-description', 'new description')
+                    ->press('Update Settings')
+                    ->assertRouteIs('settings.index')
+                    ->assertSee('.1')
+                    ->assertSee('new description');
+        });
+    }
+
+    /**
+     * @test
+     * summation of all weight distribution can not exceed more than 1
+     */
+    public function summation_of_all_weight_distribution_can_not_exceed_more_than_1()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
+    
+        //act
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->admin)
+                    ->visit('/settings')
+                    ->click('#edit-weight-settings')
+                    ->type('chronological_weight_distribution-value', '.8')
+                    ->type('like_weight_distribution-value', '.8')
+                    ->press('Update Settings')
+                    ->assertSee('The total weight distribution must not exceed 1.');
+        });
+    }
 }

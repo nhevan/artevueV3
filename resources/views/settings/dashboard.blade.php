@@ -30,7 +30,10 @@
 						</tbody>
 					</table>
 
-					<h4 class="text-center"><strong>Explore weight distribution settings</strong></h4>
+					<h4 class="text-center">
+						<strong>Explore weight distribution settings</strong>
+						<a href="{{ route('settings.edit-weight-settings') }}" id="edit-weight-settings" class="pull-right btn btn-xs btn-primary">Edit</a>
+					</h4>
 					<table class="table table-striped table-bordered table-hover">
 						<thead>
 							<tr>

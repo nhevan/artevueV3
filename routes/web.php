@@ -49,6 +49,8 @@ Info@artevue.co.uk';
 Route::get('/settings', 'SettingsController@index')->middleware('auth')->name('settings.index');
 Route::get('/settings/edit/app', 'SettingsController@editAppSettings')->middleware('auth')->name('settings.edit-app-settings');
 Route::post('/settings/edit/app', 'SettingsController@editAppSettings')->middleware('auth')->name('settings.edit-app-settings');
+Route::get('/settings/edit/weight', 'SettingsController@editWeightSettings')->middleware('auth')->name('settings.edit-weight-settings');
+Route::post('/settings/edit/weight', 'SettingsController@editWeightSettings')->middleware('auth')->name('settings.edit-weight-settings');
 
 Route::get('/users', 'UsersController@index')->middleware('auth')->name('users.index');
 Route::get('/users/{user}', 'UsersController@show')->middleware('auth')->name('users.show');
