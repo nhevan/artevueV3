@@ -9,26 +9,49 @@
 					<h4 class="text-center">
 						<strong>App version settings </strong>
 					</h4>
-
-					<table class="table table-striped table-bordered table-hover">
-						<thead>
-							<tr>
-								<th class="text-center">Setting</th>
-								<th class="text-center">Value</th>
-								<th class="text-center">Description</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach ($app_settings as $app_setting)
+					
+					<form method="POST" action="{{ route('settings.edit-app-settings') }}">
+					{{ csrf_field() }}
+						<table class="table table-striped table-bordered table-hover">
+							<thead>
 								<tr>
-									<td>{{ $app_setting->key }}</td>
-									<td>{{ $app_setting->value }}</td>
-									<td>{{ $app_setting->description }}</td>
+									<th class="text-center">Setting</th>
+									<th class="text-center">Value</th>
+									<th class="text-center">Description</th>
 								</tr>
-							@endforeach
-						</tbody>
-					</table>
-
+							</thead>
+							<tbody>
+								@foreach ($app_settings as $app_setting)
+									<tr>
+										<td>{{ $app_setting->key }}</td>
+										<td>
+											<div class="form-group">
+												{{ Form::text($app_setting->key.'-value', $app_setting->value) }}
+											</div>
+										</td>
+										<td>
+											{{-- {{ $app_setting->description }} --}}
+											<div class="form-group">
+												{{ Form::text($app_setting->key.'-description', $app_setting->description) }}
+											</div>
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Update Settings</button>
+						</div>
+					</form>
+					@if (count($errors) > 0)
+		                <div class="alert alert-danger">
+		                    <ul>
+		                        @foreach ($errors->all() as $error)
+		                            <li>{{ $error }}</li>
+		                        @endforeach
+		                    </ul>
+		                </div>
+		            @endif
 				</div>
 			</div>
 		</div>

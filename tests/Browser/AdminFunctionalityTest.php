@@ -198,8 +198,28 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertSee('like_weight_distribution')
                     ->assertDontsee('something random');
         });
+    }
+
+    /**
+     * @test
+     * admins can update app version settings
+     */
+    public function admins_can_update_app_version_settings()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
     
-        //assert
-        
+        //act
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->admin)
+                    ->visit('/settings')
+                    ->click('#edit-app-settings')
+                    ->type('ios_latest_app_version-value', '1.55')
+                    ->type('ios_latest_app_version-description', 'new description')
+                    ->press('Update Settings')
+                    ->assertRouteIs('settings.index')
+                    ->assertSee('1.55')
+                    ->assertSee('new description');
+        });
     }
 }

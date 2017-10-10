@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 class SettingsController extends ApiController
 {
     protected $settings;
+    protected $request;
 
-    public function __construct(Settings $settings)
+    public function __construct(Settings $settings, Request $request)
     {
         $this->settings = $settings;
+        $this->request = $request;
     }
 
     /**
@@ -50,11 +52,21 @@ class SettingsController extends ApiController
         return view('settings.dashboard', compact(['app_settings', 'weight_settings']));
     }
 
+    /**
+     * update app settings
+     * @return [type] [description]
+     */
     public function editAppSettings()
     {
-        $app_settings = $this->settings->where('key', 'like', '%app%')->get();
-        
-        return view('settings.edit-app-settings', compact('app_settings'));
+        if ($this->request->isMethod('get')) {
+            $app_settings = $this->settings->where('key', 'like', '%app%')->get();
+
+            return view('settings.edit-app-settings', compact('app_settings'));
+        }
+
+        $this->updateAllGivenSettingsValue();
+
+        return redirect()->route('settings.index');
     }
 
     /**
@@ -121,5 +133,33 @@ class SettingsController extends ApiController
     public function destroy(Settings $settings)
     {
         //
+    }
+
+    /**
+     * updates a specific field of a given settings
+     * @param  [type] $key   [description]
+     * @param  [type] $value [description]
+     * @return [type]        [description]
+     */
+    public function updateSettingField($key, $value)
+    {
+        $setting_key = explode('-', $key)[0];
+        $setting_field_name = explode('-', $key)[1];
+
+        $setting = $this->settings->where('key', $setting_key)->first();
+        $setting->$setting_field_name = $value;
+
+        $setting->save();
+    }
+
+    /**
+     * updates all the settings passed by the request variable
+     * @return [type] [description]
+     */
+    public function updateAllGivenSettingsValue()
+    {
+        foreach ($this->request->except(['_token']) as $key => $value) {
+            $this->updateSettingField($key, $value);
+        }
     }
 }

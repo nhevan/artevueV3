@@ -8,7 +8,7 @@
 					
 					<h4 class="text-center">
 						<strong>App version settings </strong>
-						<a href="{{ route('settings.edit-app-settings') }}" class="pull-right btn btn-xs btn-primary">Edit</a>
+						<a href="{{ route('settings.edit-app-settings') }}" id="edit-app-settings" class="pull-right btn btn-xs btn-primary">Edit</a>
 					</h4>
 
 					<table class="table table-striped table-bordered table-hover">
