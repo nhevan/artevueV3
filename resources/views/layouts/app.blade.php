@@ -99,6 +99,7 @@
                                 <li><a href="{{ route('posts.index') }}">All Posts</a></li>
                                 <li><a href="{{ route('posts.trending') }}">Trending Posts</a></li>
                                 <li><a href="{{ route('posts.arteprize') }}">Arteprize Posts</a></li>
+                                <li><a href="{{ route('posts.buy') }}">Buy Art Posts</a></li>
                             </ul>
                         </li>
                         <li><a href="{{ url('/settings') }}">Settings</a></li>

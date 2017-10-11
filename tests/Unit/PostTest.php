@@ -28,4 +28,23 @@ class PostTest extends TestCase
 
     	$this->assertDatabaseHas('posts', ['id' => $post->id, 'is_undiscoverable' => false]);	
     }
+
+    /**
+     * @test
+     * sale status of a post can be swaped
+     */
+    public function sale_status_of_a_post_can_be_swaped()
+    {
+        $post = factory('App\Post')->create();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_for_sale' => false]);
+
+        $post->swapSaleStatus();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_for_sale' => true]);
+
+        $post->swapSaleStatus();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_for_sale' => false]);
+    }
 }

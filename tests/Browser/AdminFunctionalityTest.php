@@ -291,7 +291,6 @@ class AdminFunctionalityTest extends DuskTestCase
     public function admins_can_now_view_arteprize_posts_from_the_dashboard()
     {
         //arrange
-        $this->seed('SettingsTableSeeder');
         $post = factory('App\Post')->create();
         $arteprize_post = factory('App\Post')->create(['description' => 'a description with #artePrize2017']);
 
@@ -302,5 +301,53 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertDontSee($post->owner->name)
                     ->assertSee($arteprize_post->owner->name);
         });
+    }
+
+    /**
+     * @test
+     * admins can now view on buy posts from dashboard
+     */
+    public function admins_can_now_view_on_buy_posts_from_dashboard()
+    {
+        //arrange
+        $post = factory('App\Post')->create();
+        $on_buy = factory('App\Post')->create(['is_selected_for_sale' => 1]);
+    
+        //act
+        $this->browse(function (Browser $browser) use ($post, $on_buy) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/buy')
+                    ->assertDontSee($post->owner->name)
+                    ->assertSee($on_buy->owner->name);
+        });
+    }
+
+    /**
+     * @test
+     * admins can swap buy status of a post
+     */
+    public function admins_can_swap_buy_status_of_a_post()
+    {
+        //arrange
+        $post = factory('App\Post')->create();
+    
+        //act
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/buy')
+                    ->assertDontSee($post->owner->name)
+                    ->visit('/posts')
+                    ->assertSee($post->owner->name)
+                    ->click('#swap-buy-status-'.$post->id)
+                    ->acceptDialog()
+                    ->visit('/posts/buy')
+                    ->assertSee($post->owner->name)
+                    ->click('#swap-buy-status-'.$post->id)
+                    ->acceptDialog()
+                    ->assertDontSee($post->owner->name);
+        });
+    
+        //assert
+        
     }
 }

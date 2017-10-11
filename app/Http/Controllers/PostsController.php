@@ -105,9 +105,13 @@ class PostsController extends ApiController
      */
     public function onSalePosts()
     {
-        $on_sale_posts = $this->post->where('is_selected_for_sale', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $on_sale_posts = $this->post->where('is_selected_for_sale', 1)->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
-        return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
+        if ($this->request->wantsJson()) {
+            return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
+        }
+
+        return view('posts.index', ['posts' => $on_sale_posts]);
     }
 
     /**
@@ -118,6 +122,18 @@ class PostsController extends ApiController
     public function swapDiscoverability(Post $post)
     {
         $post->swapDiscoverability();
+
+        return back();
+    }
+
+    /**
+     * swaps the is_selected_for_sale property of a given post
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function swapSaleStatus(Post $post)
+    {
+        $post->swapSaleStatus();
 
         return back();
     }

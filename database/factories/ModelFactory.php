@@ -168,6 +168,12 @@ $factory->state(App\Post::class, 'noArtist', function ($faker) {
     ];
 });
 
+$factory->state(App\Post::class, 'onBuyArt', function () {
+    return [
+        'is_selected_for_sale' => 1
+    ];
+});
+
 $factory->define(App\Hashtag::class, function ($faker) {
     return [
         'hashtag' => '#'.$faker->word,

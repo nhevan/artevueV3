@@ -34,6 +34,11 @@ class Post extends Model
     {
         return $this->hasMany('App\Comment');
     }
+
+    /**
+     * swaps the discoverability of a post
+     * @return [type] [description]
+     */
     public function swapDiscoverability()
     {
         if ($this->is_undiscoverable) {
@@ -42,14 +47,57 @@ class Post extends Model
         
         return $this->makeUndiscoverable();
     }
+
+    /**
+     * makes a post discoverable
+     * @return [type] [description]
+     */
     public function makeDiscoverable()
     {
         $this->is_undiscoverable = false;
         return $this->save();
     }
+
+    /**
+     * makes a post undiscoverable
+     * @return [type] [description]
+     */
     public function makeUndiscoverable()
     {
         $this->is_undiscoverable = true;
+        return $this->save();
+    }
+
+    /**
+     * swaps the sale status of a post
+     * @return [type] [description]
+     */
+    public function swapSaleStatus()
+    {
+        if ($this->is_selected_for_sale) {
+            return $this->putOffSale();
+        }
+        
+        return $this->putOnSale();
+    }
+
+    /**
+     * takes off a post from sale
+     * @return [type] [description]
+     */
+    public function putOffSale()
+    {
+        $this->is_selected_for_sale = false;
+        return $this->save();
+    }
+
+    /**
+     * sets a post for sale
+     * @return [type] [description]
+     */
+    public function putOnSale()
+    {
+        $this->is_selected_for_sale = true;
         return $this->save();
     }
 }
