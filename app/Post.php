@@ -100,4 +100,37 @@ class Post extends Model
         $this->is_selected_for_sale = true;
         return $this->save();
     }
+
+    /**
+     * swaps the curators selection status of a post
+     * @return [type] [description]
+     */
+    public function swapCuratorSelectionStatus()
+    {
+        if ($this->is_selected_by_artevue) {
+            return $this->putOffCuratorsSelection();
+        }
+        
+        return $this->putOnCuratorsSelection();
+    }
+
+    /**
+     * takes off a post from Curtor's selection
+     * @return [type] [description]
+     */
+    public function putOffCuratorsSelection()
+    {
+        $this->is_selected_by_artevue = false;
+        return $this->save();
+    }
+
+    /**
+     * marks a post as Curtor's selection
+     * @return [type] [description]
+     */
+    public function putOnCuratorsSelection()
+    {
+        $this->is_selected_by_artevue = true;
+        return $this->save();
+    }
 }

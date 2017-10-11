@@ -94,9 +94,13 @@ class PostsController extends ApiController
      */
     public function artevueSelectedPosts()
     {
-        $selected_posts = $this->post->where('is_selected_by_artevue', 1)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $selected_posts = $this->post->where('is_selected_by_artevue', 1)->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
-        return $this->respondWithPagination($selected_posts, $this->postTransformer );
+        if ($this->request->wantsJson()) {
+            return $this->respondWithPagination($selected_posts, $this->postTransformer );
+        }
+
+        return view('posts.index', ['posts' => $selected_posts]);
     }
 
     /**
@@ -134,6 +138,18 @@ class PostsController extends ApiController
     public function swapSaleStatus(Post $post)
     {
         $post->swapSaleStatus();
+
+        return back();
+    }
+
+    /**
+     * swaps the is_selected_by_artevue property of a post (swaps curators selection status)
+     * @param  Post   $post [description]
+     * @return [type]       [description]
+     */
+    public function swapCuratorSelectionStatus(Post $post)
+    {
+        $post->swapCuratorSelectionStatus();
 
         return back();
     }

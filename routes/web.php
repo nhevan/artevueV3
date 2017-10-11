@@ -65,12 +65,14 @@ Route::middleware('auth')->get('/posts', 'PostsController@indexWeb')->name('post
 Route::middleware('auth')->get('/posts/trending', 'DiscoverPostsController@discoverPosts')->name('posts.trending');
 Route::middleware('auth')->get('/posts/arteprize', 'PostsController@artePrizePosts')->name('posts.arteprize');
 Route::middleware('auth')->get('/posts/buy', 'PostsController@onSalePosts')->name('posts.buy');
+Route::middleware('auth')->get('/posts/curators-choice', 'PostsController@artevueSelectedPosts')->name('posts.curators-choice');
 Route::middleware('auth')->get('/post/{post}', 'PostsController@showWeb')->name('posts.show');
 Route::middleware('auth')->get('/post/edit/{post}', 'PostsController@showEditForm')->name('posts.edit-form');
 Route::middleware('auth')->post('/post/{post}', 'PostsController@editWeb')->name('posts.edit');
 Route::middleware('auth')->delete('/post/{post}', 'PostsController@delete')->name('posts.destroy');
 Route::middleware('auth')->patch('/post/{post}/swap-discoverability', 'PostsController@swapDiscoverability')->name('posts.swapDiscoverability');
 Route::middleware('auth')->patch('/post/{post}/swap-sale-status', 'PostsController@swapSaleStatus')->name('posts.swapSaleStatus');
+Route::middleware('auth')->patch('/post/{post}/swap-curators-selection-status', 'PostsController@swapCuratorSelectionStatus')->name('posts.swapCuratorsSelectionStatus');
 
 Route::middleware('auth')->get('/events', 'EventsController@all');
 Route::middleware('auth')->get('/events/show-create-form', 'EventsController@showAddForm');

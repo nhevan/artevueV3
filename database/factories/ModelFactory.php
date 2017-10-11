@@ -174,6 +174,12 @@ $factory->state(App\Post::class, 'onBuyArt', function () {
     ];
 });
 
+$factory->state(App\Post::class, 'curatorsChoice', function () {
+    return [
+        'is_selected_by_artevue' => 1
+    ];
+});
+
 $factory->define(App\Hashtag::class, function ($faker) {
     return [
         'hashtag' => '#'.$faker->word,

@@ -346,8 +346,49 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->acceptDialog()
                     ->assertDontSee($post->owner->name);
         });
+    }
+
+    /**
+     * @test
+     * admins can now view curator choosed posts from dashboard
+     */
+    public function admins_can_now_view_curator_choosed_posts_from_dashboard()
+    {
+        //arrange
+        $post = factory('App\Post')->create();
+        $curators_choice = factory('App\Post')->states('curatorsChoice')->create();
     
-        //assert
-        
+        //act
+        $this->browse(function (Browser $browser) use ($post, $curators_choice) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/curators-choice')
+                    ->assertDontSee($post->owner->name)
+                    ->assertSee($curators_choice->owner->name);
+        });
+    }
+
+    /**
+     * @test
+     * admins can swap curators selection status of a post
+     */
+    public function admins_can_swap_curators_selection_status_of_a_post()
+    {
+        //arrange
+        $post = factory('App\Post')->create();
+    
+        //act
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/curators-choice')
+                    ->assertDontSee($post->owner->name)
+                    ->visit('/posts')
+                    ->click('#swap-curators-choice-status-'.$post->id)
+                    ->acceptDialog()
+                    ->visit('/posts/curators-choice')
+                    ->assertSee($post->owner->name)
+                    ->click('#swap-curators-choice-status-'.$post->id)
+                    ->acceptDialog()
+                    ->assertDontSee($post->owner->name);
+        });
     }
 }

@@ -47,4 +47,23 @@ class PostTest extends TestCase
 
         $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_for_sale' => false]);
     }
+
+    /**
+     * @test
+     * curator selection status of a post can be swaped
+     */
+    public function curator_selection_status_of_a_post_can_be_swaped()
+    {
+        $post = factory('App\Post')->create();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_by_artevue' => false]);
+
+        $post->swapCuratorSelectionStatus();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_by_artevue' => true]);
+
+        $post->swapCuratorSelectionStatus();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_by_artevue' => false]);
+    }
 }

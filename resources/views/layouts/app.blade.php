@@ -65,6 +65,9 @@
             right: 20px;
             border: 1px solid red;
         }
+        .strike-out{
+            text-decoration: line-through;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +103,7 @@
                                 <li><a href="{{ route('posts.trending') }}">Trending Posts</a></li>
                                 <li><a href="{{ route('posts.arteprize') }}">Arteprize Posts</a></li>
                                 <li><a href="{{ route('posts.buy') }}">Buy Art Posts</a></li>
+                                <li><a href="{{ route('posts.curators-choice') }}">Curators Choices</a></li>
                             </ul>
                         </li>
                         <li><a href="{{ url('/settings') }}">Settings</a></li>

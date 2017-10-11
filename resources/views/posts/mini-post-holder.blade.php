@@ -29,12 +29,22 @@
 	@endif
 
 	@if ($post->is_selected_for_sale)
-		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapSaleStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to show this post on Buy Art screen?")']) }}
-		    {{ Form::submit('Off Buy Art', ['id' => 'swap-buy-status-'.$post->id, 'class' => 'btn btn-xs btn-warning', 'style' => 'position: absolute; bottom: 35px; right: 114px; z-index: 999;']) }}
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapSaleStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to hide this post from Buy Art screen?")']) }}
+		    {{ Form::submit('Buy Art', ['id' => 'swap-buy-status-'.$post->id, 'class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 114px; z-index: 999;']) }}
 		{{ Form::close() }}
 	@else
-		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapSaleStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to hide this post from Buy Art screen?")']) }}
-		    {{ Form::submit('On Buy Art', ['id' => 'swap-buy-status-'.$post->id, 'class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 114px; z-index: 999;']) }}
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapSaleStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to show this post on Buy Art screen?")']) }}
+		    {{ Form::submit('Buy Art', ['id' => 'swap-buy-status-'.$post->id, 'class' => 'btn btn-xs btn-warning strike-out', 'style' => 'position: absolute; bottom: 35px; right: 114px; z-index: 999;']) }}
+		{{ Form::close() }}
+	@endif
+
+	@if ($post->is_selected_by_artevue)
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapCuratorsSelectionStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to hide this post from Curators Choice screen?")']) }}
+		    {{ Form::submit('Curators Choice', ['id' => 'swap-curators-choice-status-'.$post->id, 'class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 170px; z-index: 999;']) }}
+		{{ Form::close() }}
+	@else
+		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapCuratorsSelectionStatus', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to show this post on Curators Choice screen?")']) }}
+		    {{ Form::submit('Curators Choice', ['id' => 'swap-curators-choice-status-'.$post->id, 'class' => 'btn btn-xs btn-warning strike-out', 'style' => 'position: absolute; bottom: 35px; right: 170px; z-index: 999;']) }}
 		{{ Form::close() }}
 	@endif
 </div>
