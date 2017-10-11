@@ -266,4 +266,21 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertSee('The total weight distribution must not exceed 1.');
         });
     }
+
+    /**
+     * @test
+     * admins can now view trending posts from the dashboard
+     */
+    public function admins_can_now_view_trending_posts_from_the_dashboard()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
+        $post = factory('App\Post')->create();
+        //act
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/trending')
+                    ->assertSee($post->owner->name);
+        });
+    }
 }

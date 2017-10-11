@@ -93,7 +93,13 @@
                         <li><a href="{{ url('/users') }}">Users</a></li>
                         <li><a href="{{ url('/events') }}">Events</a></li>
                         <li><a href="{{ url('/news') }}">News</a></li>
-                        <li><a href="{{ url('/posts') }}">Posts</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Posts <span class="caret"></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('posts.index') }}">All Posts</a></li>
+                                <li><a href="{{ route('posts.trending') }}">Trending Posts</a></li>
+                            </ul>
+                        </li>
                         <li><a href="{{ url('/settings') }}">Settings</a></li>
                     </ul>
 

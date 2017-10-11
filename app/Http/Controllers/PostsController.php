@@ -51,7 +51,7 @@ class PostsController extends ApiController
 
     public function indexWeb()
     {
-        $all_posts =  $this->post->latest()->with(['owner'])->paginate(20);
+        $all_posts =  $this->post->latest()->with(['owner'])->paginate(21);
 
         return view('posts.index', ['posts' => $all_posts]);
     }

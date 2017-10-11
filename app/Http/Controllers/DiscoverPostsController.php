@@ -14,11 +14,13 @@ use Acme\Transformers\PostTransformer;
 
 class DiscoverPostsController extends DiscoverController
 {
-	/**
-	 * contains the weight distribution values for likes, pin, chronology etc
-	 * @var array
-	 */
-	protected $weights;
+    protected $request;
+
+    /**
+     * contains the weight distribution values for likes, pin, chronology etc
+     * @var array
+     */
+    protected $weights;
 
 	/**
 	 * more likes means adding more score to a post
@@ -43,9 +45,8 @@ class DiscoverPostsController extends DiscoverController
 	 */
 	public function __construct()
 	{
-		parent::__construct(new Request);
-		
-		$this->weights = $this->getPostWeightDistributionSettings();
+        $this->request = request();
+        $this->weights = $this->getPostWeightDistributionSettings();
 	}
 
 	/**
@@ -64,7 +65,13 @@ class DiscoverPostsController extends DiscoverController
      */
     public function discoverPosts()
     {
-    	$limit = 20;
+    	$limit = 21;
+        if (!request()->wantsJson()) {
+            $this->me_and_my_follower_ids = [];
+            $trending_posts = $this->getPaginatedPosts($limit);
+
+            return view('posts.index', ['posts' => $trending_posts]);
+        }
         if ($this->userIsGuest()) {
         	$this->me_and_my_follower_ids = [];
             $trending_posts = $this->getPaginatedPosts($limit);
