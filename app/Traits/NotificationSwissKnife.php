@@ -50,7 +50,7 @@ trait NotificationSwissKnife{
             'notification' => array('body'=>$message, 'title'=>$title,'sound'=>'default','content_available'=>1,'type'=>1),
             'priority' => $priority
         ];
-        if($receiver->metadata->is_notification_enabled)
+        if($receiver->metadata && $receiver->metadata->is_notification_enabled)
             $response = $this->postToFCM($params);
     }
 

@@ -149,13 +149,11 @@ $factory->define(App\Artist::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\Post::class, function (Faker\Generator $faker) {
-    $users = User::pluck('id');
-    $artists = Artist::pluck('id');
     return [
-        'image' => $faker->sentence(1),
+        'image' => "dummy.png",
         'description' => $faker->sentence(1),
         'owner_id' => function(){
-            return factory('App\User')->create()->id;
+            return factory('App\UserMetadata')->create()->user->id;
         },
         'artist_id' => function(){
             return factory('App\Artist')->create()->id;

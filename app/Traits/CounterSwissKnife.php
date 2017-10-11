@@ -60,9 +60,11 @@ trait CounterSwissKnife{
     public function decrementUserPostCount($user_id)
     {
         $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
-        if($metadata->post_count)
+        if($metadata && $metadata->post_count){
             $metadata->post_count = $metadata->post_count - 1;
-        return $metadata->save();
+            
+            return $metadata->save();
+        }
     }
 
     /**
@@ -134,9 +136,11 @@ trait CounterSwissKnife{
     public function decrementUserCommentCount($user_id)
     {
         $metadata = UserMetadata::where( [ 'user_id' => $user_id ] )->first();
-        if($metadata->comment_count)
+        if($metadata && $metadata->comment_count){
             $metadata->comment_count = $metadata->comment_count - 1;
-        return $metadata->save();
+            
+            return $metadata->save();
+        }
     }
 
     /**
