@@ -79,9 +79,13 @@ class PostsController extends ApiController
     public function artePrizePosts()
     {
         $artePrizeHashtag = '#arteprize2017';
-        $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
-        return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
+        if ($this->request->wantsJson()) {
+            return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
+        }
+
+        return view('posts.index', ['posts' => $arteprize_posts]);
     }
 
     /**

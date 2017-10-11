@@ -20,11 +20,11 @@
 
 	@if ($post->is_undiscoverable)
 		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapDiscoverability', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to show this post in app explore screen?")']) }}
-		    {{ Form::submit('Show in explore', ['class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
+		    {{ Form::submit('Show', ['class' => 'btn btn-xs btn-success', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
 		{{ Form::close() }}
 	@else
 		{{ Form::open(['method' => 'PATCH', 'route' => ['posts.swapDiscoverability', $post->id], 'onsubmit' => 'return confirm("Are you sure you want to hide this post from app explore screen?")']) }}
-		    {{ Form::submit('Hide from explore', ['class' => 'btn btn-xs btn-warning', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
+		    {{ Form::submit('Hide', ['class' => 'btn btn-xs btn-warning', 'style' => 'position: absolute; bottom: 35px; right: 70px; z-index: 999;']) }}
 		{{ Form::close() }}
 	@endif
 </div>

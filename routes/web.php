@@ -63,6 +63,7 @@ Route::middleware('auth')->post('/change-password/{user}', 'UsersController@setP
 
 Route::middleware('auth')->get('/posts', 'PostsController@indexWeb')->name('posts.index');
 Route::middleware('auth')->get('/posts/trending', 'DiscoverPostsController@discoverPosts')->name('posts.trending');
+Route::middleware('auth')->get('/posts/arteprize', 'PostsController@artePrizePosts')->name('posts.arteprize');
 Route::middleware('auth')->get('/post/{post}', 'PostsController@showWeb')->name('posts.show');
 Route::middleware('auth')->get('/post/edit/{post}', 'PostsController@showEditForm')->name('posts.edit-form');
 Route::middleware('auth')->post('/post/{post}', 'PostsController@editWeb')->name('posts.edit');

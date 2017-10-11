@@ -283,4 +283,24 @@ class AdminFunctionalityTest extends DuskTestCase
                     ->assertSee($post->owner->name);
         });
     }
+
+    /**
+     * @test
+     * admins can now view arteprize posts from the dashboard
+     */
+    public function admins_can_now_view_arteprize_posts_from_the_dashboard()
+    {
+        //arrange
+        $this->seed('SettingsTableSeeder');
+        $post = factory('App\Post')->create();
+        $arteprize_post = factory('App\Post')->create(['description' => 'a description with #artePrize2017']);
+
+        //act
+        $this->browse(function (Browser $browser) use ($post, $arteprize_post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/posts/arteprize')
+                    ->assertDontSee($post->owner->name)
+                    ->assertSee($arteprize_post->owner->name);
+        });
+    }
 }

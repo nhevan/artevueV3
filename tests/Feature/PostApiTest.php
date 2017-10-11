@@ -29,6 +29,25 @@ class PostApiTest extends TestCase
 
     /**
      * @test
+     * arteprize posts does not include undiscoverable posts
+     */
+    public function arteprize_posts_does_not_include_undiscoverable_posts()
+    {
+        //arrange
+        $post = factory('App\Post')->create(['description' => '#artePrize2017']);
+        $undiscoverable_post = factory('App\Post')->create(['description' => '#artePrize2017', 'is_undiscoverable' => 1]);
+    
+        //act
+        $response = $this->getJson('/api/posts/arteprize')->json();
+    
+        //assert
+        $this->assertArrayHasKey('data', $response);
+        $this->assertArrayHasKey('pagination', $response);
+        $this->assertEquals([$post->id], array_column($response['data'], 'id'));
+    }
+
+    /**
+     * @test
      * arteprize posts appear in chronological order
      */
     public function arteprize_posts_appear_in_chronological_order()
