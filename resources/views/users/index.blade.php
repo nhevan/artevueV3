@@ -9,6 +9,20 @@
 						@component('users.user-type-selector', ['user_types' => $user_types])
 						@endcomponent
 					</div>
+					<div class="row text-center">
+						<table class="table table-bordered table-hover">
+							<tbody>
+								<tr>
+									<td>@sortablelink('name')</td>
+									<td>@sortablelink('username')</td>
+									<td>@sortablelink('metadata.post_count', 'Post Count')</td>
+									<td>@sortablelink('metadata.like_count', 'Like Count')</td>
+									<td>@sortablelink('metadata.follower_count', 'Follower Count')</td>
+									<td>@sortablelink('created_at', 'Join Date')</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 	 	@endif

@@ -3,14 +3,23 @@
 namespace App;
 
 use Laravel\Passport\HasApiTokens;
+use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, Sortable;
 
     protected $casts = ['user_type_id' => 'integer'];
+
+    /**
+     * defines an array of fields that are sortable
+     * @var [type]
+     */
+    public $sortable = [
+        'id', 'created_at', 'updated_at', 'name', 'username'
+    ];
     
     /**
      * The attributes that are mass assignable.
