@@ -31,7 +31,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?: $password = bcrypt('secret'),
-        // 'user_type_id' =>$faker->randomElement($user_types->toArray()),
+        'profile_picture' => 'img/profile-holder.png',
         'user_type_id' => function(){
             return factory('App\UserType')->create()->id;
         },

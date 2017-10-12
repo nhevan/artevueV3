@@ -88,7 +88,11 @@ class UsersController extends ApiController
 
         $user->load(['userType', 'metadata', 'artPreferences', 'artTypes']);
 
-        return view('users.show', compact('user'));
+        $post_ids = Post::where('owner_id', $user->id)->pluck('id');
+        $comments_received = Comment::whereIn('post_id', $post_ids)->count();
+        $likes_received = Like::whereIn('post_id', $post_ids)->count();
+
+        return view('users.show', compact(['user', 'comments_received', 'likes_received']));
     }
 
     public function viewUserPosts($user_id)

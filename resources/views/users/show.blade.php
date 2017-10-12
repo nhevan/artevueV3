@@ -7,7 +7,7 @@
 				<div class="row" style="display: flex; flex-direction: row;">
 					@component('users.mini-user-holder', ['user' => $user])
 					@endcomponent
-					@component('users.metainfo', ['user' => $user])
+					@component('users.metainfo', ['user' => $user, 'comments_received' => $comments_received, 'likes_received' => $likes_received ])
 					@endcomponent
 				</div>
 				<div class="row text-right">

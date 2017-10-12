@@ -66,10 +66,34 @@
 						</td>
 					</tr>
 					<tr>
+						<td><strong>{{ $user->metadata->like_count  or "not available"}}</strong></td>
+						<td>
+							@if (isset($user->metadata))
+								{{ str_plural('like', $user->metadata->like_count) }} made
+							@endif
+						</td>
+					</tr>
+					<tr>
+						<td><strong>{{ $likes_received  or "not available"}}</strong></td>
+						<td>
+							@if (isset($likes_received))
+								{{ str_plural('like', $likes_received) }} received
+							@endif
+						</td>
+					</tr>
+					<tr>
 						<td><strong>{{ $user->metadata->comment_count  or "not available"}}</strong></td>
 						<td>
 							@if (isset($user->metadata))
-								{{ str_plural('comment', $user->metadata->comment_count) }}
+								{{ str_plural('comment', $user->metadata->comment_count) }} made
+							@endif
+						</td>
+					</tr>
+					<tr>
+						<td><strong>{{ $comments_received  or "not available"}}</strong></td>
+						<td>
+							@if (isset($comments_received))
+								{{ str_plural('comment', $comments_received) }} received
 							@endif
 						</td>
 					</tr>
@@ -78,14 +102,6 @@
 						<td>
 							@if (isset($user->metadata))
 								{{ str_plural('pin', $user->metadata->pin_count) }}
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->like_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('like', $user->metadata->like_count) }}
 							@endif
 						</td>
 					</tr>
