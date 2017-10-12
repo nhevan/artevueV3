@@ -57,86 +57,95 @@
 							<h4>
 						</td>
 					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->post_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('post', $user->metadata->post_count) }}
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->like_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('like', $user->metadata->like_count) }} made
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $likes_received  or "not available"}}</strong></td>
-						<td>
-							@if (isset($likes_received))
-								{{ str_plural('like', $likes_received) }} received
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->comment_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('comment', $user->metadata->comment_count) }} made
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $comments_received  or "not available"}}</strong></td>
-						<td>
-							@if (isset($comments_received))
-								{{ str_plural('comment', $comments_received) }} received
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->pin_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('pin', $user->metadata->pin_count) }}
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->message_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('message', $user->metadata->message_count) }} sent
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->follower_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('follower', $user->metadata->follower_count) }}
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->following_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								{{ str_plural('following', $user->metadata->following_count) }}
-							@endif
-						</td>
-					</tr>
-					<tr>
-						<td><strong>{{ $user->metadata->tagged_count  or "not available"}}</strong></td>
-						<td>
-							@if (isset($user->metadata))
-								tagged {{ str_plural('post', $user->metadata->tagged_count) }}
-							@endif
-						</td>
-					</tr>
+					
+					@if (!$user->metadata)
+						<tr>
+							<td colspan="2">
+								No activity info found
+							</td>
+						</tr>
+					@else
+						<tr>
+							<td><strong>{{ $user->metadata->post_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('post', $user->metadata->post_count) }}
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->like_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('like', $user->metadata->like_count) }} made
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $likes_received  or "not available"}}</strong></td>
+							<td>
+								@if (isset($likes_received))
+									{{ str_plural('like', $likes_received) }} received
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->comment_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('comment', $user->metadata->comment_count) }} made
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $comments_received  or "not available"}}</strong></td>
+							<td>
+								@if (isset($comments_received))
+									{{ str_plural('comment', $comments_received) }} received
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->pin_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('pin', $user->metadata->pin_count) }}
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->message_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('message', $user->metadata->message_count) }} sent
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->follower_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('follower', $user->metadata->follower_count) }}
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->following_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									{{ str_plural('following', $user->metadata->following_count) }}
+								@endif
+							</td>
+						</tr>
+						<tr>
+							<td><strong>{{ $user->metadata->tagged_count  or "not available"}}</strong></td>
+							<td>
+								@if (isset($user->metadata))
+									tagged {{ str_plural('post', $user->metadata->tagged_count) }}
+								@endif
+							</td>
+						</tr>
+					@endif
 				</table>
 			</div>
 		</div>

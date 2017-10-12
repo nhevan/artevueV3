@@ -55,6 +55,8 @@ Route::middleware('auth')->post('/settings/edit/weight', 'SettingsController@edi
 Route::middleware('auth')->get('/users', 'UsersController@index')->name('users.index');
 Route::middleware('auth')->get('/users/{user}', 'UsersController@show')->name('users.show');
 Route::middleware('auth')->delete('/users/{user}', 'UsersController@destroy')->name('users.destroy');
+Route::middleware('auth')->get('/user/{user}/edit-username', 'UsersController@editUsername')->name('user.edit-username-form');
+Route::middleware('auth')->patch('/user/{user}/edit-username', 'UsersController@editUsername')->name('user.edit-username');
 Route::middleware('auth')->post('/search-users', 'UsersController@searchUser')->name('users.search');
 Route::middleware('auth')->get('/user-posts/{user_id}', 'UsersController@viewUserPosts')->name('users.posts');
 Route::middleware('auth')->get('/send-reset-password-email/{user}', 'UsersController@resetPassword')->name('user.reset-password');

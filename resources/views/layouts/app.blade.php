@@ -15,7 +15,6 @@
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -176,6 +175,8 @@
       } );
 
   </script>
+  <script src="https://use.fontawesome.com/a1e873a5d5.js"></script>
+
   @yield('script')
 </body>
 </html>

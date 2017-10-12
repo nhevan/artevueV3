@@ -719,6 +719,37 @@ class UsersController extends ApiController
     }
 
     /**
+     * allows admins to edit username of any user
+     * @param  User   $user [description]
+     * @return [type]       [description]
+     */
+    public function editUsername(User $user)
+    {
+        if ($this->request->isMethod('GET')) {
+            return view('users.edit-username', compact('user'));
+        }
+
+        $this->validate($this->request, [
+                'username' => 'min:4|max:20'
+            ]);
+
+        if ($this->request->username) {
+            $duplicate_username = $this->user->where('id', '<>', $user->id)->where('username', $this->request->username)->first();
+
+            if ($duplicate_username) {
+                return back()->withErrors("The username '{$this->request->username}' is already taken.");
+            }
+        }
+
+        $user->username = $this->request->username;
+
+        $user->save();
+
+        request()->session()->flash('status', 'Username successfully changed !');
+        return redirect()->route('users.show', ['user' => $user->id]);
+    }
+
+    /**
      * updates selected art preferences of the current user
      * @return [type] [description]
      */
