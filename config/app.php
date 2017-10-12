@@ -185,7 +185,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
-
+        Kyslik\ColumnSortable\ColumnSortableServiceProvider::class,
+        
     ],
 
     /*

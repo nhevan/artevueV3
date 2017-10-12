@@ -2,11 +2,21 @@
 
 namespace App;
 
+use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 
 class UserMetadata extends Model
 {
+	use Sortable;
     protected $table = 'users_metadata';
+
+    /**
+     * defines an array of fields that are sortable
+     * @var [type]
+     */
+    public $sortable = [
+    	'post_count', 'like_count', 'follower_count'
+    ];
 
     public function user()
     {

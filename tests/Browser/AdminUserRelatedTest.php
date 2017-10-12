@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use Carbon\Carbon;
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use App\Mail\NewPasswordEmail;
@@ -108,6 +109,58 @@ class AdminUserRelatedTest extends DuskTestCase
                     ->press('Change username')
                     ->assertSee('Username successfully changed !')
                     ->assertRouteIs('users.show', ['user' => $user->id]);
+        });
+    }
+
+    /**
+     * @test
+     * admins can sort users by name
+     */
+    public function admins_can_sort_users_by_name()
+    {
+        //arrange
+        factory('App\User', 35)->create();
+        $alphabetA = factory('App\User')->create(['name' => 'AAAAAA']);
+        $alphabetZ = factory('App\User')->create(['name' => 'ZZZZZZ']);
+        factory('App\User', 35)->create();
+    
+        //act
+        $this->browse(function (Browser $browser) use ($alphabetA, $alphabetZ) {
+            $browser->loginAs($this->admin)
+                    ->visit('/users')
+                    ->assertDontSee($alphabetA->name)
+                    ->clickLink('Name')
+                    ->assertSee($alphabetA->name)
+                    ->assertDontSee($alphabetZ->name)
+                    ->clickLink('Name')
+                    ->assertSee($alphabetZ->name)
+                    ->assertDontSee($alphabetA->name);
+        });
+    }
+
+    /**
+     * @test
+     * admins can sort users by join date
+     */
+    public function admins_can_sort_users_by_join_date()
+    {
+        //arrange
+        factory('App\User', 35)->create(['created_at' => Carbon::now()->subHours(2)]);
+        $recent_post = factory('App\User')->create();
+        $old_post = factory('App\User')->create(['created_at' => Carbon::now()->subHours(8)]);
+        factory('App\User', 35)->create(['created_at' => Carbon::now()->subHours(2)]);
+        
+        //act
+        $this->browse(function (Browser $browser) use ($old_post, $recent_post) {
+            $browser->loginAs($this->admin)
+                    ->visit('/users')
+                    ->assertDontSee($old_post->name)
+                    ->clickLink('Join Date')
+                    ->assertSee($old_post->name)
+                    ->assertDontSee($recent_post->name)
+                    ->clickLink('Join Date')
+                    ->assertSee($recent_post->name)
+                    ->assertDontSee($old_post->name);
         });
     }
 }

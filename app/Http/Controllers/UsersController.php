@@ -66,11 +66,11 @@ class UsersController extends ApiController
     {
         $limit = 18;
         if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 18;
-        $users = $this->user->latest()->with(['metadata', 'userType'])->paginate($limit);
+        $users = $this->user->sortable()->latest()->with(['metadata', 'userType'])->paginate($limit);
 
         if(!request()->wantsJson()){
             if ($user_type_id = $this->foundMatchingUserType($type)) {
-                $users = $this->user->latest()->with(['metadata', 'userType'])->where('user_type_id', $user_type_id)->paginate($limit);
+                $users = $this->user->sortable()->latest()->with(['metadata', 'userType'])->where('user_type_id', $user_type_id)->paginate($limit);
             }
             $user_types = $this->getUserTypesArray();
 
