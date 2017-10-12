@@ -1,5 +1,5 @@
 <div class="col-md-4 text-center user-holder-block">
-	<a href="/users/{{$user->id}}" id="user-detail-{{$user->id}}" style="color: black;">
+	<a href="{{ route('users.show', [ 'user' => $user->id ]) }}" id="user-detail-{{$user->id}}" style="color: black;">
 		<div class="mini-holder-wrapper">
 			<h3>
 			{{ str_limit($user->name, 22)}}

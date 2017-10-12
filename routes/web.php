@@ -52,8 +52,8 @@ Route::middleware('auth')->post('/settings/edit/app', 'SettingsController@editAp
 Route::middleware('auth')->get('/settings/edit/weight', 'SettingsController@editWeightSettings')->name('settings.edit-weight-settings');
 Route::middleware('auth')->post('/settings/edit/weight', 'SettingsController@editWeightSettings')->name('settings.edit-weight-settings');
 
-Route::middleware('auth')->get('/users', 'UsersController@index')->name('users.index');
-Route::middleware('auth')->get('/users/{user}', 'UsersController@show')->name('users.show');
+Route::middleware('auth')->get('/users/{type?}', 'UsersController@index')->name('users.index');
+Route::middleware('auth')->get('/user/{user}', 'UsersController@show')->name('users.show');
 Route::middleware('auth')->delete('/users/{user}', 'UsersController@destroy')->name('users.destroy');
 Route::middleware('auth')->get('/user/{user}/edit-username', 'UsersController@editUsername')->name('user.edit-username-form');
 Route::middleware('auth')->patch('/user/{user}/edit-username', 'UsersController@editUsername')->name('user.edit-username');

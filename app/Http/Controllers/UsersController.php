@@ -9,6 +9,7 @@ use App\User;
 use App\Comment;
 use App\Message;
 use App\Follower;
+use App\UserType;
 use Carbon\Carbon;
 use App\BlockedUser;
 use App\UserArtType;
@@ -61,17 +62,48 @@ class UsersController extends ApiController
      * lists all users
      * @return response users array
      */
-    public function index(Request $request)
+    public function index(Request $request, $type = 'all')
     {
         $limit = 18;
         if((int)$request->limit <= 20) $limit = (int)$request->limit ?: 18;
         $users = $this->user->latest()->with(['metadata', 'userType'])->paginate($limit);
 
         if(!request()->wantsJson()){
-            return view('users.index', compact('users'));
+            if ($user_type_id = $this->foundMatchingUserType($type)) {
+                $users = $this->user->latest()->with(['metadata', 'userType'])->where('user_type_id', $user_type_id)->paginate($limit);
+            }
+            $user_types = $this->getUserTypesArray();
+
+            return view('users.index', compact(['users', 'user_types']));
         }
 
         return $this->respondWithPagination($users, $this->userTransformer);
+    }
+
+    /**
+     * returns the id of the user type if a match is found, otherwise false
+     * @param  [type] $user_type [description]
+     * @return [type]            [description]
+     */
+    public function foundMatchingUserType($user_type)
+    {
+        $available_usertypes = $this->getUserTypesArray();
+        $available_usertypes = array_map('strtolower', $available_usertypes);
+
+        if (in_array(strtolower($user_type), $available_usertypes)) {
+            $user_type_id = array_search(strtolower($user_type),$available_usertypes);
+            
+            return $user_type_id;
+        }
+    }
+
+    /**
+     * returns an array of user types
+     * @return [type] [description]
+     */
+    public function getUserTypesArray()
+    {
+        return UserType::where('id', '>', 1)->where('id', '<', 11)->get()->pluck('title', 'id')->toArray();
     }
 
     /**
