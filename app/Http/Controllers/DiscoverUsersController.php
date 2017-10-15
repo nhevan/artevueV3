@@ -52,8 +52,7 @@ class DiscoverUsersController extends DiscoverController
      */
     public function getPaginatedUsers($user_ids, $limit)
     {
-    	return UserMetadata::select(
-    		DB::raw("*, (`like_count`+`pin_count`+`comment_count`+`message_count`+`follower_count`+`following_count`+`post_count`+`tagged_count`) as total_count"))
+    	return UserMetadata::select(DB::raw("*, (`like_count`+`pin_count`+`comment_count`+`message_count`+`follower_count`+`following_count`+`post_count`+`tagged_count`) as total_count"))
     		->whereIn('user_id', $user_ids)
     		->orderBy('total_count', 'DESC')
     		->with('user')

@@ -16,8 +16,10 @@ class UserCrawler extends Crawler
 	}
 	public function defaultConditions()
 	{
-		$this->model = $this->model->whereNotIn('user_type_id', [1, 2]);
-
+		$this->model = $this->model->whereNotIn('user_type_id', [1, 2])
+								   ->join('users_metadata', 'users.id', '=', 'users_metadata.user_id')
+								   ->select('users.*', DB::raw('`users_metadata`.`like_count`+`users_metadata`.`pin_count`+`users_metadata`.`comment_count`+`users_metadata`.`message_count`+`users_metadata`.`follower_count`+`users_metadata`.`following_count`+`users_metadata`.`post_count`+`users_metadata`.`tagged_count` as total_count'))
+								   ->orderBy('total_count', 'desc');
 		return $this;
 	}
 

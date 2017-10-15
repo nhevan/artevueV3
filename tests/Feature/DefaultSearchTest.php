@@ -34,7 +34,7 @@ class DefaultSearchTest extends TestCase
     public function it_returns_full_User_record_set_if_no_specific_field_is_given()
     {
     	//arrange
-        $users = factory('App\User', 4)->create();
+        $users = factory('App\UserMetadata', 4)->create();
     
         //act
     	$response = $this->json( 'GET', "/api/search-users")->json();
@@ -165,8 +165,11 @@ class DefaultSearchTest extends TestCase
         $lowest_price = factory('App\Post')->create(['price' => 3]);
     
         $user_y = factory('App\User')->create(['name' => 'y']);
+        factory('App\UserMetadata')->create(['user_id'=>$user_y->id]);
         $user_x = factory('App\User')->create(['name' => 'x']);
+        factory('App\UserMetadata')->create(['user_id'=>$user_x->id]);
         $user_z = factory('App\User')->create(['name' => 'z']);
+        factory('App\UserMetadata')->create(['user_id'=>$user_z->id]);
 
         // act
         $search_post_response = $this->json( 'GET', "/api/search-posts", [

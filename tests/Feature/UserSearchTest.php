@@ -35,6 +35,7 @@ class UserSearchTest extends SearchTestCase
     {
     	//arrange
         $needle = factory('App\User')->create(['username'=> $this->matches_needle_string]);
+        factory('App\UserMetadata')->create(['user_id'=>$needle->id]);
         $users = factory('App\User', 4)->create();
     
         //act
@@ -50,6 +51,7 @@ class UserSearchTest extends SearchTestCase
     {
     	//arrange
         $needle = factory('App\User')->create(['email'=> $this->matches_needle_string]);
+        factory('App\UserMetadata')->create(['user_id'=>$needle->id]);
         $users = factory('App\User', 4)->create();
     
         //act
@@ -65,6 +67,7 @@ class UserSearchTest extends SearchTestCase
     {
     	//arrange
         $needle = factory('App\User')->create(['name'=> $this->matches_needle_string]);
+        factory('App\UserMetadata')->create(['user_id'=>$needle->id]);
         $users = factory('App\User', 4)->create();
     
         //act
@@ -79,6 +82,7 @@ class UserSearchTest extends SearchTestCase
     {
         //arrange
         $needle = factory('App\User')->create();
+        factory('App\UserMetadata')->create(['user_id'=>$needle->id]);
         $users = factory('App\User', 4)->create();
     
         //act
@@ -93,8 +97,11 @@ class UserSearchTest extends SearchTestCase
     {
         //arrange
         $collector = factory('App\User')->create(['user_type_id' => 3]);
+        factory('App\UserMetadata')->create(['user_id'=>$collector->id]);
         $gallery = factory('App\User')->create(['user_type_id' => 4]);
+        factory('App\UserMetadata')->create(['user_id'=>$gallery->id]);
         $enthusiast = factory('App\User')->create(['user_type_id' => 5]);
+        factory('App\UserMetadata')->create(['user_id'=>$enthusiast->id]);
         
         //act
         $response = $this->json( 'GET', "/api/search-users", [
@@ -103,13 +110,47 @@ class UserSearchTest extends SearchTestCase
     
         //assert
         $response->assertJsonFragment([
-            'id' => $collector->id
-        ]);
-        $response->assertJsonFragment([
+            'id' => $collector->id,
             'id' => $gallery->id
         ]);
         $response->assertJsonMissing([
             'id' => $enthusiast->id
+        ]);
+    }
+
+    /**
+     * @test
+     * users are returned in descending order of activity count
+     */
+    public function users_are_returned_in_descending_order_of_activity_count()
+    {
+        //arrange
+        $last = factory('App\UserMetadata')->create([
+            'post_count' => 5,
+            'follower_count' => 5,
+            'like_count' => 5
+        ]);
+        $second = factory('App\UserMetadata')->create([
+            'post_count' => 5,
+            'follower_count' => 10,
+            'like_count' => 10
+        ]);
+        $first = factory('App\UserMetadata')->create([
+            'post_count' => 10,
+            'follower_count' => 10,
+            'like_count' => 10
+        ]);
+        $unrelated = factory('App\UserMetadata')->create();
+
+        //act
+        $response = $this->json( 'GET', "/api/search-users", [
+            'user_type_id' => "{$last->user->user_type_id},{$second->user->user_type_id},{$first->user->user_type_id}"
+        ]);
+        
+        //assert
+        $this->assertEquals([$first->user_id, $second->user_id, $last->user_id], array_column($response->json()['data'], 'id'));
+        $response->assertJsonMissing([
+            'id' => $unrelated->user_id
         ]);
     }
 }
