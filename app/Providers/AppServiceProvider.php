@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         if ($this->app->isLocal()) {
-            $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+            // $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
             $this->app->register(\Laravel\Dusk\DuskServiceProvider::class);
         }
         $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);

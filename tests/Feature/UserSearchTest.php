@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\UserType;
 use Tests\SearchTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -23,6 +24,8 @@ class UserSearchTest extends SearchTestCase
 	public function setUp()
     {
         parent::setUp();
+
+        $this->seed('UserTypesTableSeeder');
     }
     /**
      * @test
@@ -80,5 +83,33 @@ class UserSearchTest extends SearchTestCase
     
         //act
         $this->search($needle)->equalityByField('user_type_id', $needle->user_type_id, 1)->checkSingularity();
+    }
+
+    /**
+     * @test
+     * users can be searched by multiple user types
+     */
+    public function users_can_be_searched_by_multiple_user_types()
+    {
+        //arrange
+        $collector = factory('App\User')->create(['user_type_id' => 3]);
+        $gallery = factory('App\User')->create(['user_type_id' => 4]);
+        $enthusiast = factory('App\User')->create(['user_type_id' => 5]);
+        
+        //act
+        $response = $this->json( 'GET', "/api/search-users", [
+            'user_type_id' => "3,4"
+        ]);
+    
+        //assert
+        $response->assertJsonFragment([
+            'id' => $collector->id
+        ]);
+        $response->assertJsonFragment([
+            'id' => $gallery->id
+        ]);
+        $response->assertJsonMissing([
+            'id' => $enthusiast->id
+        ]);
     }
 }

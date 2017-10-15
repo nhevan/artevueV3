@@ -20,4 +20,18 @@ class UserCrawler extends Crawler
 
 		return $this;
 	}
+
+	public function whereUserTypeId($query_string)
+	{
+		$is_multiple = strpos($query_string, ',');
+
+		if (!$is_multiple) {
+			$user_types = [ $query_string ];
+		}
+		if ($is_multiple) {
+			$user_types = explode(',', $query_string);
+		}
+
+		return $this->model = $this->model->whereIn('user_type_id', $user_types);
+	}
 }
