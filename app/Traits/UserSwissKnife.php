@@ -63,6 +63,25 @@ trait UserSwissKnife{
     }
 
     /**
+     * returns an array of facebook uid of all common friends
+     * @param  [type] $access_token [description]
+     * @return [type]               [description]
+     */
+    public function fetchUserFriendsSocialIdsFromFacebook($access_token)
+    {
+        $client = new Client();
+        
+        try {
+            $response = $client->get("https://graph.facebook.com/v2.10/me/friends?access_token={$access_token}");
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+        }
+        $fb_response_object = json_decode($response->getBody());
+        
+        return array_column($fb_response_object->data, 'id');
+    }
+
+    /**
      * fetch a users instagram id using instagram access token
      * @param  [type] $access_token [description]
      * @return [type]               [description]

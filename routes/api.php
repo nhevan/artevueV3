@@ -127,3 +127,4 @@ Route::middleware('api')->get('/status', 'SettingsController@status');
 
 Route::middleware('api')->get('/search-posts', 'SearchPostsController@search');
 Route::middleware('api')->get('/search-users', 'SearchUsersController@search');
+Route::middleware('auth:api')->get('/find-friends', 'SocialMediaController@findFriends');
