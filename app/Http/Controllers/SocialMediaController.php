@@ -63,4 +63,18 @@ class SocialMediaController extends ApiController
     		return true;
     	}
     }
+
+    /**
+     * returns all common followed users of the current user from instagram
+     * @return [type] [description]
+     */
+    public function getInstagramFriends()
+    {
+        $user_social_uids = $this->fetchUserFriendsSocialIdsFromInstagram(Auth::user()->social_media_access_token);
+
+        $users = User::where('social_media', 'instagram')->whereIn('social_media_uid', $user_social_uids )->paginate(30);
+
+        $userSearchTransformer = new UserSearchTransformer;
+        return $this->respondWithPagination($users, $userSearchTransformer );
+    }
 }
