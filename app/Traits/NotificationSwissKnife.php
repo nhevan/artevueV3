@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\User;
+use App\Message;
 use App\Follower;
 use Illuminate\Support\Facades\Auth;
 
@@ -52,6 +53,67 @@ trait NotificationSwissKnife{
         ];
         if($receiver->metadata && $receiver->metadata->is_notification_enabled)
             $response = $this->postToFCM($params);
+    }
+
+    /**
+     * sends a notification to a segment via OneSignal
+     * @param  [type] $content [description]
+     * @param  string $segment [description]
+     * @return [type]          [description]
+     */
+    public function sendNotificationToSegment( $en_notification_text, $data = [], $target_segment = ['All'])
+    {
+        $app_id = config('broadcasting.connections.onesignal.app_id');
+        $api_key = config('broadcasting.connections.onesignal.rest_api_key');
+
+        $content = array(
+            "en" => $en_notification_text
+            );
+        
+        $fields = array(
+            'app_id' => $app_id,
+            'included_segments' => $target_segment,
+            'data' => $data,
+            'contents' => $content
+        );
+        
+        $fields = json_encode($fields);
+        // print("\nJSON ready to be sent:\n");
+        // print($fields);
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8',
+                                                   "Authorization: Basic {$api_key}"));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return $response;
+    }
+
+    /**
+     * sends a new message notification via OneSignal
+     * @param  Message $message [description]
+     * @return [type]           [description]
+     */
+    public function sendNewMessageNotification(Message $message)
+    {
+        $target = "User-{$message->receiver->id}";
+        $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
+
+        $this->sendNotificationToSegment($message->message, $data, [ $target ]);
+
+        $content = [
+            "en" => $message->message
+        ];
+
+        $this->sendPusherNotification($target, 'New Message', [ 'contents' => $content ], [ 'data' => $data ]);
     }
 
     /**
