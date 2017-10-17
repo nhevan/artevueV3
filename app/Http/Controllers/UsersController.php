@@ -85,7 +85,7 @@ class UsersController extends ApiController
      * @param  [type] $user_type [description]
      * @return [type]            [description]
      */
-    public function foundMatchingUserType($user_type)
+    private function foundMatchingUserType($user_type)
     {
         $available_usertypes = $this->getUserTypesArray();
         $available_usertypes = array_map('strtolower', $available_usertypes);
@@ -101,7 +101,7 @@ class UsersController extends ApiController
      * returns an array of user types
      * @return [type] [description]
      */
-    public function getUserTypesArray()
+    private function getUserTypesArray()
     {
         return UserType::where('id', '>', 1)->where('id', '<', 11)->get()->pluck('title', 'id')->toArray();
     }
@@ -188,12 +188,12 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function signupViaArtevue(Request $request)
+    protected function signupViaArtevue(Request $request)
     {
         return $this->store($request);
     }
 
-    public function processSocialSignup($media, Request $request)
+    protected function processSocialSignup($media, Request $request)
     {
         $rules = [
             'name' => 'required|max:50',
@@ -228,7 +228,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function signupViaFacebook(Request $request)
+    protected function signupViaFacebook(Request $request)
     {
         return $this->processSocialSignup('facebook', $request);
     }
@@ -238,7 +238,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function signupViaInstagram(Request $request)
+    protected function signupViaInstagram(Request $request)
     {
         return $this->processSocialSignup('instagram', $request);
     }
@@ -294,7 +294,7 @@ class UsersController extends ApiController
      * @param  User   $user [description]
      * @return [type]       [description]
      */
-    public function respondWithAccessToken(User $user)
+    protected function respondWithAccessToken(User $user)
     {
         $access_token = $user->createToken('signup-token')->accessToken;
         return $this->respond([
@@ -333,7 +333,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function loginViaArtevue(Request $request)
+    protected function loginViaArtevue(Request $request)
     {
         $rules = [
             'username' => 'required|min:4|max:20',
@@ -356,7 +356,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function loginViaFacebook(Request $request)
+    protected function loginViaFacebook(Request $request)
     {
         $rules = [
             'access_token' => 'required'
@@ -388,7 +388,7 @@ class UsersController extends ApiController
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function loginViaInstagram(Request $request)
+    protected function loginViaInstagram(Request $request)
     {
         $rules = [
             'access_token' => 'required'
@@ -421,7 +421,7 @@ class UsersController extends ApiController
      * @param  Request $request  [description]
      * @return [type]            [description]
      */
-    public function updateUsersSocialMediaInfo(User $user, $provider, $social_media_uid, $social_media_access_token)
+    protected function updateUsersSocialMediaInfo(User $user, $provider, $social_media_uid, $social_media_access_token)
     {
         $user->social_media = $provider;
         $user->social_media_uid = $social_media_uid;
@@ -435,7 +435,7 @@ class UsersController extends ApiController
      * @param  [type]  $provider [description]
      * @return boolean           [description]
      */
-    public function isAllowed($provider)
+    protected function isAllowed($provider)
     {
         return in_array($provider, ['artevue', 'facebook', 'instagram']);
     }
@@ -512,7 +512,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingShoChoudhury($follower_id)
+    protected function startFollowingShoChoudhury($follower_id)
     {
         $this->startFollowing(74, $follower_id);
     }
@@ -522,7 +522,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingUnitGallery($follower_id)
+    protected function startFollowingUnitGallery($follower_id)
     {
         $this->startFollowing(601, $follower_id);
     }
@@ -532,7 +532,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingThirdline($follower_id)
+    protected function startFollowingThirdline($follower_id)
     {
         $this->startFollowing(663, $follower_id);
     }
@@ -542,7 +542,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingAfficheGallery($follower_id)
+    protected function startFollowingAfficheGallery($follower_id)
     {
         $this->startFollowing(306, $follower_id);
     }
@@ -552,7 +552,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingDelfinaFoundation($follower_id)
+    protected function startFollowingDelfinaFoundation($follower_id)
     {
         $this->startFollowing(1637, $follower_id);
     }
@@ -562,7 +562,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingEmergeast($follower_id)
+    protected function startFollowingEmergeast($follower_id)
     {
         $this->startFollowing(567, $follower_id);
     }
@@ -572,7 +572,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingAndakulova($follower_id)
+    protected function startFollowingAndakulova($follower_id)
     {
         $this->startFollowing(2523, $follower_id);
     }
@@ -582,7 +582,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingMestaria($follower_id)
+    protected function startFollowingMestaria($follower_id)
     {
         $this->startFollowing(128, $follower_id);
     }
@@ -592,7 +592,7 @@ class UsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function startFollowingArtevue($follower_id)
+    protected function startFollowingArtevue($follower_id)
     {
         $this->startFollowing(33, $follower_id);
     }
@@ -602,7 +602,7 @@ class UsersController extends ApiController
      * @param  [type] $follower_id [description]
      * @return [type]              [description]
      */
-    public function startFollowingHarpersBazaar($follower_id)
+    protected function startFollowingHarpersBazaar($follower_id)
     {
         $this->startFollowing(204, $follower_id);
     }
@@ -613,7 +613,7 @@ class UsersController extends ApiController
      * @param  [type] $follower_id [description]
      * @return [type]              [description]
      */
-    public function startFollowing($user_id, $follower_id)
+    protected function startFollowing($user_id, $follower_id)
     {
         Follower::create(['user_id'=> $user_id, 'follower_id' => $follower_id]);
 
@@ -1202,7 +1202,7 @@ class UsersController extends ApiController
      * returns true if old password matches
      * @return [type] [description]
      */
-    public function oldPasswordMatches()
+    protected function oldPasswordMatches()
     {
         return Hash::check($this->request->old_password, $this->request->user()->password);
     }
