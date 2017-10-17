@@ -153,7 +153,7 @@ class MessagesController extends ApiController
     	try {
     		$message = $this->createMessage($request);
     	} catch (QueryException $e) {
-    		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('Something went wrong, probably the receiver does not exist.');
+    		return $this->setStatusCode(IlluminateResponse::HTTP_NOT_FOUND)->respondWithError('Receiver id not found!');
     	}
     	
     	dispatch(new SendNewMessageNotification($message));
