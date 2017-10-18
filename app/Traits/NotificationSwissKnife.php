@@ -117,6 +117,29 @@ trait NotificationSwissKnife{
     }
 
     /**
+     * sends generic notification to all or any specific user
+     * @param  [type] $notification_text [description]
+     * @param  [type] $user_id           [description]
+     * @return [type]                    [description]
+     */
+    public function sendGenericNotification($notification_text, $user_id = null)
+    {
+        $target = "User-{$user_id}";
+        $data = ['type' => 'general-notification'];
+
+        if ($user_id) {
+            $this->sendNotificationToSegment($notification_text, $data, [ $target ]);
+        }else{
+            $this->sendNotificationToSegment($notification_text, $data);
+        }
+
+        $content = [
+            "en" => $notification_text
+        ];
+        $this->sendPusherNotification($target, 'General Notification', [ 'contents' => $content ], [ 'data' => $data ]);
+    }
+
+    /**
      * makes a POST call to FCM server using guzzle
      * @param  [type] $params [description]
      * @return GuzzleHttp\Psr7\Response         [description]

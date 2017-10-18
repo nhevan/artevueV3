@@ -62,6 +62,8 @@ Route::middleware('auth')->get('/user-posts/{user_id}', 'UsersController@viewUse
 Route::middleware('auth')->get('/send-reset-password-email/{user}', 'UsersController@resetPassword')->name('user.reset-password');
 Route::middleware('auth')->get('/change-password-form/{user}', 'UsersController@showSetPasswordForm')->name('user.change-password-form');
 Route::middleware('auth')->post('/change-password/{user}', 'UsersController@setPassword')->name('user.change-password');
+Route::middleware('auth')->get('/send-notification-form/{user?}', 'UsersController@sendNotification')->name('user.send-notification-form');
+Route::middleware('auth')->post('/send-notification/{user?}', 'UsersController@sendNotification')->name('user.send-notification');
 
 Route::middleware('auth')->get('/posts', 'PostsController@indexWeb')->name('posts.index');
 Route::middleware('auth')->get('/posts/trending', 'DiscoverPostsController@discoverPosts')->name('posts.trending');

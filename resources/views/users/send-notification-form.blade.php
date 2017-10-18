@@ -5,18 +5,15 @@
 		<div class="col-md-4 col-md-offset-4">
 			<div class="container-fluid">
 				<div class="row">
-					<form method="POST" action="/change-password/{{$user->id}}">
+					<form method="POST" action="{{ route('user.send-notification', ['user' => $user->id]) }}">
 						{{ csrf_field() }}
 						<div class="form-group">
-							<label>Enter new passoword</label>
-							<input type="password" name="new_password" class="form-control" required>
+
+							<label>Send personal notification to {{ isset($user->username) ? $user->username : 'all users' }}</label>
+							<input type="text" name="notification" class="form-control" required>
 						</div>
 						<div class="form-group">
-							<label>Confirm password</label>
-							<input type="password" name="confirm_password" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Change Password</button>
+							<button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Send notification</button>
 						</div>
 					</form>
 		            @if (count($errors) > 0)

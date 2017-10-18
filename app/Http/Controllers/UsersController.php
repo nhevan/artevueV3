@@ -1265,6 +1265,30 @@ class UsersController extends ApiController
     }
 
     /**
+     * sends notification to a single or all user
+     * @param  User|null $user [description]
+     * @return [type]          [description]
+     */
+    public function sendNotification(User $user = null)
+    {
+        if ($this->request->isMethod('GET')) {
+            return view('users.send-notification-form', compact('user'));
+        }
+
+        if ($user->id) {
+            $this->sendGenericNotification($this->request->notification, $user->id);
+
+            request()->session()->flash('status', 'Notification successfully sent!');
+            return redirect()->route('users.show', ['user' => $user->id]);
+        }
+
+        $this->sendGenericNotification($this->request->notification);
+
+        request()->session()->flash('status', 'Notification successfully sent!');
+        return redirect()->route('users.index');
+    }
+
+    /**
      * test method to check if slack notifications are working
      * @return [type] [description]
      */

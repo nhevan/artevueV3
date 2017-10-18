@@ -163,4 +163,46 @@ class AdminUserRelatedTest extends DuskTestCase
                     ->assertDontSee($old_post->name);
         });
     }
+
+    /**
+     * @test
+     * admins can send notification to individual users
+     */
+    public function admins_can_send_notification_to_individual_users()
+    {
+        //arrange
+        $usermeta = factory('App\UserMetadata')->create();
+        $user = $usermeta->user;
+    
+        //act
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($this->admin)
+                    ->visit('/users')
+                    ->click('#user-detail-'.$user->id)
+                    ->clickLink('Send notification')
+                    ->assertSee('Send personal notification to '.$user->username)
+                    ->type('notification', 'test notification')
+                    ->press('Send notification')
+                    ->assertSee('Notification successfully sent!')
+                    ->assertRouteIs('users.show', ['user' => $user->id]);
+        });
+    }
+
+    /**
+     * @test
+     * admins can send notification to all users at once
+     */
+    public function admins_can_send_notification_to_all_users_at_once()
+    {
+        //act
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->admin)
+                    ->visit('/send-notification-form')
+                    ->assertSee('Send personal notification to all users')
+                    ->type('notification', 'test notification')
+                    ->press('Send notification')
+                    ->assertSee('Notification successfully sent!')
+                    ->assertRouteIs('users.index');
+        });
+    }
 }
