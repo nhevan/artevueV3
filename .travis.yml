@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 language: php
 
 php:
@@ -7,14 +10,21 @@ before_script:
   - chmod 777 -R storage
   - cp .env.travis .env
   - mkdir storage/app/public/images
-  - mysql -e 'create database artevue_test;'
+  - mysql -e 'create database artevue_dev_test;'
   - composer self-update
-  - composer install --no-interaction
+  - travis_retry composer install --no-interaction
   - php artisan key:generate
   - php artisan config:cache
   - php artisan migrate --database mysql_test
   - php artisan passport:install
   - php artisan storage:link
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - ./vendor/laravel/dusk/bin/chromedriver-linux &
+  - php artisan config:cache
+  - php artisan config:clear
+  - php artisan serve --env=dusk.testing > /dev/null 2>&1 &
 
 script:
   - vendor/bin/phpunit --testdox
+  - php artisan dusk
