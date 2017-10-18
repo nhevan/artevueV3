@@ -8,6 +8,7 @@ use App\Events\MessageSent;
 use App\MessageParticipant;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use App\Traits\FileUploadSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Database\QueryException;
@@ -18,7 +19,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class MessagesController extends ApiController
 {
-	use NotificationSwissKnife, CounterSwissKnife;
+	use NotificationSwissKnife, CounterSwissKnife, FileUploadSwissKnife;
 
 	protected $message;
 	protected $request;
@@ -170,7 +171,7 @@ class MessagesController extends ApiController
      * checks if sending message has both is_file and is_post key set to value 1
      * @return boolean [description]
      */
-    public function isBothFileAndPost()
+    protected function isBothFileAndPost()
     {
     	if ($this->request->is_file == 1 && $this->request->is_post == 1) {
     		return true;
@@ -181,7 +182,7 @@ class MessagesController extends ApiController
      * checks if the sender is trying send message to himself/herself
      * @return boolean [description]
      */
-    public function isReceiverSameAsSender()
+    protected function isReceiverSameAsSender()
     {
     	if ($this->request->receiver_id == $this->request->user()->id) {
     		return true;
@@ -202,9 +203,11 @@ class MessagesController extends ApiController
 
     	if ($request->is_file) {
     		$message->is_file = 1;
-    		$message->url = $request->file('url')->store(
-	            'img/messages', 's3'
-	        );
+    		// $message->url = $request->file('url')->store(
+	     //        'img/messages', 's3'
+	     //    );
+	     	$path = $this->uploadPostImageTos3('url', 'img/messages');
+	     	$message->url = $path;
     	}
     	if ($request->is_post) {
     		$message->is_post = $request->is_post;
@@ -238,12 +241,12 @@ class MessagesController extends ApiController
      * @param  [type] $participant_ids [description]
      * @return [type]                  [description]
      */
-    public function deleteEntryInMessageParticipantTable($participant_ids)
+    protected function deleteEntryInMessageParticipantTable($participant_ids)
     {
     	return MessageParticipant::whereIN('participant_one', $participant_ids)->whereIN('participant_two', $participant_ids)->delete();
     }
 
-    public function deleteAllMessages($sender_id, $receiver_id)
+    protected function deleteAllMessages($sender_id, $receiver_id)
     {
     	$owner_message_count = $this->message->where('sender_id', $sender_id)->where('receiver_id', $receiver_id)->delete();
     	$receiver_message_count = $this->message->where('sender_id', $receiver_id)->where('receiver_id', $sender_id)->delete();
