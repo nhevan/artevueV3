@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 7.0
+
+before_script:
+  - chmod 777 -R storage
+  - cp .env.travis .env
+  - mkdir storage/app/public/images
+  - mysql -e 'create database artevue_test;'
+  - composer self-update
+  - composer install --no-interaction
+  - php artisan key:generate
+  - php artisan config:cache
+  - php artisan migrate --database mysql_test
+  - php artisan passport:install
+  - php artisan storage:link
+
+script:
+  - vendor/bin/phpunit --testdox
