@@ -61,7 +61,7 @@ trait NotificationSwissKnife{
      * @param  string $segment [description]
      * @return [type]          [description]
      */
-    public function sendNotificationToSegment( $en_notification_text, $data = [], $target_segment = ['All'])
+    public function sendNotificationToSegment( $en_notification_text, $data = [], $target_segment = 'All')
     {
         $app_id = config('broadcasting.connections.onesignal.app_id');
         $api_key = config('broadcasting.connections.onesignal.rest_api_key');
@@ -72,7 +72,13 @@ trait NotificationSwissKnife{
         
         $fields = array(
             'app_id' => $app_id,
-            'included_segments' => $target_segment,
+            'filters' => [
+                [
+                    "field" => "tag",
+                    "key" => "channel",
+                    "value" => $target_segment
+                ]
+            ],
             'data' => $data,
             'contents' => $content
         );
@@ -107,7 +113,7 @@ trait NotificationSwissKnife{
         $target = "User-{$message->receiver->id}";
         $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
 
-        $this->sendNotificationToSegment($message->message, $data, [ $target ]);
+        $this->sendNotificationToSegment($message->message, $data, $target);
 
         $content = [
             "en" => $message->message

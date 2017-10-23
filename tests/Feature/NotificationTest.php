@@ -20,13 +20,13 @@ class NotificationTest extends TestCase
     	//arrange
     	$sender = factory('App\User')->create();
         $this->signIn($sender);
-    	$receiver = factory('App\User')->create(['id'=>1]);
+    	$receiver = factory('App\User')->create(['id'=>176]);
     	factory('App\UserMetadata')->create(['user_id' => $sender->id]);
 
         //act
     	$response = $this->json('POST','api/message',[
     		'receiver_id' => $receiver->id,
-    		'message' => 'Test Message'
+    		'message' => 'Testing OneSignal - unit test'
 		]);
     
         //assert
