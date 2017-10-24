@@ -99,7 +99,7 @@ trait NotificationSwissKnife{
 
         $response = curl_exec($ch);
         curl_close($ch);
-        
+
         return $response;
     }
 
@@ -111,7 +111,7 @@ trait NotificationSwissKnife{
     public function sendNewMessageNotification(Message $message)
     {
         $target = "User-{$message->receiver->id}";
-        $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
+        $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'profile_picture' => $message->sender->profile_picture ,'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
 
         $this->sendNotificationToSegment($message->message, $data, $target);
 
