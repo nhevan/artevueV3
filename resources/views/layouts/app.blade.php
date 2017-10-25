@@ -176,7 +176,22 @@
 
   </script>
   <script src="https://use.fontawesome.com/a1e873a5d5.js"></script>
-
+{{-- One Signal official Opt-in form starts --}}
+    {{-- @auth
+        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async='async'></script>
+        <script>
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(["init", {
+          appId: "{{ env('ONESIGNAL_APP_ID') }}",
+          autoRegister: false, /* Set to true to automatically prompt visitors */
+          notifyButton: {
+              enable: true /* Set to false to hide */
+          }
+        }]);
+        OneSignal.push(["sendTag", "channel", "User-{{ Auth::user()->id }}"])
+        </script>
+    @endauth --}}
+{{-- One Signal official Opt-in form ends --}}
   @yield('script')
 </body>
 </html>

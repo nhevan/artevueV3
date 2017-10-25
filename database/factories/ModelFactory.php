@@ -24,7 +24,6 @@ use App\ArtInteraction;
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     static $password;
-    $user_types = UserType::pluck('id');
 
     return [
         'name' => $faker->name,
@@ -132,12 +131,34 @@ $factory->define(App\ReportedUser::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Message::class, function (Faker\Generator $faker) {
-    $users = User::pluck('id');
-
+$factory->define(App\MessageParticipant::class, function (Faker\Generator $faker) {
+    $sender = factory('App\UserMetadata')->create()->user_id;
+    $receiver = factory('App\UserMetadata')->create()->user_id;
     return [
-        'sender_id' => $faker->randomElement($users->toArray()),
-        'receiver_id' => $faker->randomElement($users->toArray()),
+        'participant_one' =>  function() use ($sender){
+            return $sender;
+        },
+        'participant_two' =>  function() use ($receiver){
+            return $receiver;
+        },
+        'last_message_id' => function() use ($sender, $receiver){
+            return factory('App\Message')->create([
+                'sender_id' => $sender,
+                'receiver_id' => $receiver,
+            ])->id;
+        },
+        'total_messages' => 1
+    ];
+});
+
+$factory->define(App\Message::class, function (Faker\Generator $faker) {
+    return [
+        'sender_id' =>  function(){
+            return factory('App\UserMetadata')->create()->user_id;
+        },
+        'receiver_id' =>  function(){
+            return factory('App\UserMetadata')->create()->user_id;
+        },
         'message' => $faker->sentence(10)
     ];
 });

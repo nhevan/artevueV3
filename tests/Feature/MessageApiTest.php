@@ -153,4 +153,69 @@ class MessageApiTest extends TestCase
         	'url' => null
     	]);
     }
+
+    /**
+     * @test
+     * when a message is sent to a user for the first time a new message participant row is created on the desired table
+     */
+    public function when_a_message_is_sent_to_a_user_for_the_first_time_a_new_message_participant_row_is_created_on_the_desired_table()
+    {
+        //arrange
+        $sender = factory('App\User')->create();
+        $receiver = factory('App\User')->create();
+        factory('App\UserMetadata')->create(['user_id' => $sender->id]);
+        factory('App\UserMetadata')->create(['user_id' => $receiver->id]);
+        $this->signIn($sender);
+    
+        //act
+        $response = $this->json('POST','api/message',[
+            'receiver_id' => $receiver->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+    
+        //assert
+        $this->assertDatabaseHas('message_participants', [
+            'participant_one' => $sender->id,
+            'participant_two' => $receiver->id,
+            'total_messages' => 1
+        ]);
+    }
+
+    /**
+     * @test
+     * total messages count increases in message participant table when a new message is sent for both way messaging
+     */
+    public function total_messages_count_increases_in_message_participant_table_when_a_new_message_is_sent()
+    {
+        //arrange
+        $userA = factory('App\User')->create();
+        $userB = factory('App\User')->create();
+        factory('App\UserMetadata')->create(['user_id' => $userA->id]);
+        factory('App\UserMetadata')->create(['user_id' => $userB->id]);
+        $this->signIn($userA);
+    
+        //act
+        $first_message_to_user_b = $this->json('POST','api/message',[
+            'receiver_id' => $userB->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+
+        $second_message_to_user_b = $this->json('POST','api/message',[
+            'receiver_id' => $userB->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+
+        $this->signIn($userB);
+        $first_message_to_user_a = $this->json('POST','api/message',[
+            'receiver_id' => $userA->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+    
+        //assert
+        $this->assertDatabaseHas('message_participants', [
+            'participant_one' => $userA->id,
+            'participant_two' => $userB->id,
+            'total_messages' => 3
+        ]);
+    }
 }

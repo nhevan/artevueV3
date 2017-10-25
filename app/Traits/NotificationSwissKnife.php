@@ -61,7 +61,7 @@ trait NotificationSwissKnife{
      * @param  string $segment [description]
      * @return [type]          [description]
      */
-    public function sendNotificationToSegment( $en_notification_text, $data = [], $target_segment = 'All')
+    public function sendNotificationToSegment( $en_notification_text, $data = [], $target_segment = 'All', $additional_fields = [])
     {
         $app_id = config('broadcasting.connections.onesignal.app_id');
         $api_key = config('broadcasting.connections.onesignal.rest_api_key');
@@ -82,7 +82,8 @@ trait NotificationSwissKnife{
             'data' => $data,
             'contents' => $content
         );
-        
+        $fields = array_merge($additional_fields, $fields);
+
         $fields = json_encode($fields);
         // print("\nJSON ready to be sent:\n");
         // print($fields);
@@ -113,7 +114,11 @@ trait NotificationSwissKnife{
         $target = "User-{$message->receiver->id}";
         $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'profile_picture' => $message->sender->profile_picture ,'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
 
-        $this->sendNotificationToSegment($message->message, $data, $target);
+        $additional_fields = [
+            'ios_badgeType' => 'SetTo',
+            'ios_badgeCount' => $message->getUnreadConversationLastMessageCount()
+        ];
+        $this->sendNotificationToSegment($message->message, $data, $target, $additional_fields);
 
         $content = [
             "en" => $message->message

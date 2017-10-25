@@ -20,7 +20,7 @@ class NotificationTest extends TestCase
     	//arrange
     	$sender = factory('App\User')->create();
         $this->signIn($sender);
-    	$receiver = factory('App\User')->create(['id'=>176]);
+    	$receiver = factory('App\User')->create(['id'=>1]);
     	factory('App\UserMetadata')->create(['user_id' => $sender->id]);
 
         //act
