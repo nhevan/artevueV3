@@ -8,6 +8,7 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body text-center">
+                	<p>Dashboard data management information will be displayed here, coming soon !</p>
                 </div>
             </div>
         </div>
