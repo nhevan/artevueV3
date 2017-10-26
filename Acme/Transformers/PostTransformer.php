@@ -5,6 +5,7 @@ namespace Acme\Transformers;
 use App\Pin;
 use App\Like;
 use App\Comment;
+use App\Follower;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -15,6 +16,7 @@ class PostTransformer extends Transformer
     protected $comment_count = 0;
     public function transform($post)
     {
+        $is_following = $this->isFollowing($post['owner_id']);
         $is_liked = $this->isPostLiked($post['id']);
         $is_pinned = $this->isPostPinned($post['id']);
         $comments = $this->fetchComments($post['id']);
@@ -63,6 +65,7 @@ class PostTransformer extends Transformer
                     'name' => $post['owner']['name'],
                 	'username' => $post['owner']['username'],
                 	'profile_picture' => $post['owner']['profile_picture'],
+                    'is_following' => $is_following
                 ],
                 'is_liked' => $is_liked,
                 'is_pinned' => $is_pinned,
@@ -74,6 +77,19 @@ class PostTransformer extends Transformer
                 $transformatted_post['score'] = $post['score'];
             }
         return $transformatted_post;
+    }
+
+    /**
+     * checks whether the authenticated user is following given user
+     * @param  [type]  $user_id [description]
+     * @return boolean          [description]
+     */
+    public function isFollowing($user_id)
+    {
+        if (Auth::check()) {
+            return !! Follower::where(['user_id' => $user_id, 'follower_id' => Auth::user()->id, 'is_still_following' => 1])->first();
+        }
+        return false;
     }
 
     /**
