@@ -34,6 +34,10 @@ class Post extends Model
     {
         return $this->hasMany('App\Comment');
     }
+    public function type()
+    {
+        return $this->belongsTo('App\PostArtType', 'post_art_type_id');
+    }
 
     /**
      * swaps the discoverability of a post

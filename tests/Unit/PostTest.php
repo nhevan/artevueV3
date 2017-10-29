@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Post;
 use Tests\TestCase;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -65,5 +67,37 @@ class PostTest extends TestCase
         $post->swapCuratorSelectionStatus();
 
         $this->assertDatabaseHas('posts', ['id' => $post->id, 'is_selected_by_artevue' => false]);
+    }
+
+    /**
+     * @test
+     * a post has a art type relationship
+     */
+    public function a_post_has_a_art_type_relationship()
+    {
+        //arrange
+        $this->seed('PostArtTypesTableSeeder');
+        $post = factory('App\Post')->create([ 'post_art_type_id' => 1]);
+        
+        //assert
+        $this->assertInstanceOf(BelongsTo::class, $post->type());
+        $this->assertInstanceOf('App\PostArtType', $post->type);
+        $this->assertEquals($post->type->title, 'Painting');
+    }
+
+    /**
+     * @test
+     * by default a post is set to others art type
+     */
+    public function by_default_a_post_is_set_to_others_art_type()
+    {
+        //arrange
+        $this->seed('PostArtTypesTableSeeder');
+        
+        //act
+        $post = Post::find(factory('App\Post')->create()->id);
+
+        //assert
+        $this->assertEquals($post->type->title, 'Others');
     }
 }

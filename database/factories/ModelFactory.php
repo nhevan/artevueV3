@@ -307,3 +307,9 @@ $factory->define(App\Gallery::class, function ($faker) {
         'website' => $faker->url
     ];
 });
+
+$factory->define(App\PostArtType::class, function ($faker) {
+    return [
+        'title' => $faker->sentence(1),
+    ];
+});
