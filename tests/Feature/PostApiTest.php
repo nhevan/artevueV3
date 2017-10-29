@@ -179,7 +179,6 @@ class PostApiTest extends TestCase
     {
         //arrange
         $this->signIn();
-        $this->seed('PostArtTypesTableSeeder');
         Storage::fake('s3');
 
         //act

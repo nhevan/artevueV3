@@ -91,9 +91,6 @@ class PostTest extends TestCase
      */
     public function by_default_a_post_is_set_to_others_art_type()
     {
-        //arrange
-        $this->seed('PostArtTypesTableSeeder');
-        
         //act
         $post = Post::find(factory('App\Post')->create()->id);
 
