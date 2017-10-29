@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Carbon\Carbon;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -168,5 +169,32 @@ class PostApiTest extends TestCase
         		'id' => $post->id,
         		'like_count' => 0
         	]);
+    }
+
+    /**
+     * @test
+     * post art type can be set when a post is being created by the user
+     */
+    public function post_art_type_can_be_set_when_a_post_is_being_created_by_the_user()
+    {
+        //arrange
+        $this->signIn();
+        $this->seed('PostArtTypesTableSeeder');
+        Storage::fake('s3');
+
+        //act
+        $response = $this->post("/api/post",[
+                'post_image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABREAAAJPCAYAAADrIZMWAAABfGlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGAqSSwoyGFhYGDIzSspCnJ3UoiIjFJgv8PAzcDDIMRgxSCemFxc4BgQ4MOAE3y7xsAIoi/rgsxK8/x506a1fP4WNq+ZclYlOrj1gQF3SmpxMgMDIweQnZxSnJwLZOcA2TrJBUUlQPYMIFu3vKQAxD4BZIsUAR0IZN8BsdMh7A8gdhKYzcQCVhMS5AxkSwDZAkkQtgaInQ5hW4DYyRmJKUC2B8guiBvAgNPDRcHcwFLXkYC7SQa5OaUwO0ChxZOaFxoMcgcQyzB4MLgwKDCYMxgwWDLoMjiWpFaUgBQ65xdUFmWmZ5QoOAJDNlXBOT+3oLQktUhHwTMvWU9HwcjA0ACkDhRnEKM/B4FNZxQ7jxDLX8jAYKnMwMDcgxBLmsbAsH0PA4PEKYSYyjwGBn5rBoZt5woSixLhDmf8xkKIX5xmbARh8zgxMLDe+///sxoDA/skBoa/E////73',
+                'description' => 'test description',
+                'post_art_type_id' => 1
+            ],[
+                'X-ARTEVUE-App-Version' => '2'
+            ]); 
+
+        //assert
+        $this->assertDatabaseHas('posts', [
+                'description' => 'test description',
+                'post_art_type_id' => 1
+            ]);
     }
 }

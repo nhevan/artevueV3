@@ -513,6 +513,7 @@ class PostsController extends ApiController
                 'address_title' => 'nullable|max:120',
                 'is_public' => 'nullable|in:0,1',
                 'is_gallery' => 'nullable|in:0,1',
+                'post_art_type_id' => 'nullable|numeric|min:1|max:10',
             ];
         }else{
             $rules = [

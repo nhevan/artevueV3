@@ -11,7 +11,7 @@ class Post extends Model
     protected $casts = [ 'is_gallery_item' => 'integer', 'price' => 'float' ];
 
     protected $fillable = [
-    	'image', 'description', 'hashtags', 'aspect_ratio', 'price', 'has_buy_btn', 'google_place_id', 'address', 'address_title', 'is_public', 'is_gallery_item', 'artist_id'
+    	'image', 'description', 'hashtags', 'aspect_ratio', 'price', 'has_buy_btn', 'google_place_id', 'address', 'address_title', 'is_public', 'is_gallery_item', 'artist_id', 'post_art_type_id'
     ];
 
     public function owner()
