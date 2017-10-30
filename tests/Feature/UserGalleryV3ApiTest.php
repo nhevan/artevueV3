@@ -9,8 +9,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserGalleryV3ApiTest extends TestCase
 {
-	use DatabaseTransactions, WithoutMiddleware;
-	protected $user;
+	use DatabaseTransactions;
 
     public function setUp()
     {
@@ -18,9 +17,7 @@ class UserGalleryV3ApiTest extends TestCase
 
         $user = factory('App\User')->create();
         $user_metadata = factory('App\UserMetadata')->create(['user_id' => $user->id]);
-        $this->be($user);
-
-        $this->user = $user;
+        $this->signIn($user);
     }
     
     /**
@@ -41,6 +38,22 @@ class UserGalleryV3ApiTest extends TestCase
     		'gallery_id'
 		]);
         $this->assertDatabaseHas('galleries', ['user_id' => $this->user->id, 'name' => $gallery['name']]);
+    }
+
+    /**
+     * @test
+     * a user can create a private gallery
+     */
+    public function a_user_can_create_a_private_gallery()
+    {
+        //arrange
+        $gallery = factory('App\Gallery')->raw(['user_id' => $this->user->id, 'is_private' => 1]);
+    
+        //act
+        $response = $this->json( 'POST', "/api/gallery", $gallery);
+    
+        //assert
+        $this->assertDatabaseHas('galleries', ['user_id' => $this->user->id, 'name' => $gallery['name'], 'is_private' => 1]);
     }
 
     /**
@@ -82,6 +95,51 @@ class UserGalleryV3ApiTest extends TestCase
 		$response->assertJsonFragment([
 			'id' => $gallery2->id
 		]);
+    }
+
+    /**
+     * @test
+     * it does not return private galleries of other users
+     */
+    public function it_does_not_return_private_galleries_of_other_users()
+    {
+        //arrange
+        $other_user = factory('App\User')->create();
+        $public_gallery = factory('App\Gallery')->create(['user_id' => $other_user->id]);
+        $private_gallery = factory('App\Gallery')->create(['user_id' => $other_user->id, 'is_private' => 1]);
+    
+        //act
+        $response = $this->json( 'GET', "/api/user/{$other_user->id}/galleries");
+    
+        //assert
+        $response->assertJsonFragment([
+            'id' => $public_gallery->id
+        ]);
+        $response->assertJsonMissing([
+            'id' => $private_gallery->id
+        ]);
+    }
+
+    /**
+     * @test
+     * it returns all galleires including private one when a user requests his own list of galleries
+     */
+    public function it_returns_all_galleires_including_private_one_when_a_user_requests_his_own_list_of_galleries()
+    {
+        //arrange
+        $public_gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $private_gallery = factory('App\Gallery')->create(['user_id' => $this->user->id, 'is_private' => 1]);
+    
+        //act
+        $response = $this->json( 'GET', "/api/user/{$this->user->id}/galleries");
+    
+        //assert
+        $response->assertJsonFragment([
+            'id' => $public_gallery->id
+        ]);
+        $response->assertJsonFragment([
+            'id' => $private_gallery->id
+        ]);
     }
 
     /**
@@ -131,7 +189,39 @@ class UserGalleryV3ApiTest extends TestCase
     	$response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", ['name'=>'edited gallery name']);
     
         //assert
-		$this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'name' => 'edited gallery name']);     
+		$this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'name' => 'edited gallery name']);
+    }
+
+    /**
+     * @test
+     * a gallery owner can update a gallery info to make it private
+     */
+    public function a_gallery_owner_can_update_a_gallery_info_to_make_it_private()
+    {
+        //arrange
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+    
+        //act
+        $response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", ['name' => 'gallery name', 'is_private' => 1]);
+
+        //assert
+        $this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'is_private' => 1]);
+    }
+
+    /**
+     * @test
+     * a gallery owner can update a gallery info to make it public
+     */
+    public function a_gallery_owner_can_update_a_gallery_info_to_make_it_public()
+    {
+        //arrange
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id, 'is_private' => 1]);
+    
+        //act
+        $response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", ['name' => 'gallery name', 'is_private' => 0]);
+
+        //assert
+        $this->assertDatabaseHas('galleries', ['id' => $gallery->id, 'is_private' => 0]);
     }
 
     /**
@@ -189,7 +279,7 @@ class UserGalleryV3ApiTest extends TestCase
         //act
         $response = $this->json( 'PATCH', "/api/gallery/{$gallery->id}", [
                 'name' => 'gallery two',
-                'description' => '',
+                'description' => null,
                 'email' => null,
                 'website' => 'http://www.somethingelse.com'
             ]);
@@ -199,7 +289,7 @@ class UserGalleryV3ApiTest extends TestCase
         $this->assertDatabaseHas('galleries', [
             'id' => $gallery->id,
             'name' => 'gallery two',
-            'description' => '',
+            'description' => null,
             'email' => null,
             'website' => 'http://www.somethingelse.com'
         ]);

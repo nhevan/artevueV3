@@ -27,4 +27,5 @@ before_script:
 
 script:
   - vendor/bin/phpunit --testdox
+  - php artisan migrate:refresh --database mysql_test
   - php artisan dusk

@@ -32,9 +32,15 @@ class GalleriesController extends ApiController
     {
         $user = User::find($user_id);
         if ($user) {
-            // $galleries = Gallery::where('user_id', $user->id)->get();
 
-            $galleries = $user->galleries()->orderBy('sequence')->paginate(30);
+            if(Auth::check() && $user->id == Auth::user()->id){
+                $galleries = $user->galleries()->orderBy('sequence')->paginate(30);
+
+                return $this->respondWithPagination($galleries, $this->galleryTransformer );
+            }
+
+            $galleries = $user->galleries()->public()->orderBy('sequence')->paginate(30);
+
             return $this->respondWithPagination($galleries, $this->galleryTransformer );
         }
 
@@ -61,7 +67,8 @@ class GalleriesController extends ApiController
     {
         $rules = [
             'name' => 'required|max:40',
-            'description' => 'max:350'
+            'description' => 'max:350',
+            'is_private' => 'nullable|in:0,1'
         ];
         if (!$this->setRequest($this->request)->isValidated($rules)) {
             return $this->responseValidationError();
@@ -131,6 +138,7 @@ class GalleriesController extends ApiController
             'description' => 'nullable|max:350',
             'email' => 'nullable|email',
             'website' => 'nullable|url',
+            'is_private' => 'nullable|in:0,1'
         ];
         if (!$this->setRequest($this->request)->isValidated($rules)) {
             return $this->responseValidationError();
@@ -149,6 +157,10 @@ class GalleriesController extends ApiController
             $gallery->description = $this->request->description;
             $gallery->email = $this->request->email;
             $gallery->website = $this->request->website;
+            if ($this->request->is_private == null) {
+                $this->request->is_private = 0;
+            }
+            $gallery->is_private = $this->request->is_private;
 
             $gallery->save();
 
