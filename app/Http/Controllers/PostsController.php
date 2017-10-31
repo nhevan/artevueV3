@@ -17,6 +17,7 @@ use App\PostHashtag;
 use Illuminate\Http\File;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
+use App\Events\NewBuyPostRequest;
 use App\Traits\CounterSwissKnife;
 use App\Jobs\SendDetectedHashtags;
 use Illuminate\Support\Facades\Auth;
@@ -946,5 +947,13 @@ class PostsController extends ApiController
     public function isAllowedExtension($extension)
     {
         return in_array($extension, ['jpg', 'jpeg', 'png']);
+    }
+
+    public function buy(Post $post)
+    {
+        $interested_user = $this->request->user();
+        event(new NewBuyPostRequest($interested_user, $post));
+
+        return $this->respond(["message" => 'Post buy notification successgully sent.']);
     }
 }

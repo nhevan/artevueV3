@@ -64,6 +64,7 @@ Route::middleware('auth:api')->delete('/conversation/{friend_id}', 'MessagesCont
 Route::middleware('auth.optional:api')->get('/post', 'PostsController@index');
 Route::middleware('auth.optional:api')->get('/post/{owner_id}', 'PostsController@index');
 Route::middleware('auth.optional:api')->get('/post/detail/{post}', 'PostsController@show');
+Route::middleware('auth:api')->get('/post/detail/{post}/buy', 'PostsController@buy');
 Route::middleware('auth:api')->post('/post', 'PostsController@store'); //v2-3
 Route::middleware('auth:api')->post('/fetch-suggested-hashtags', 'PostsController@fetchSuggestedHashtags'); //v3
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');

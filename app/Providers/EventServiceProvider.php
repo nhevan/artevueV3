@@ -13,10 +13,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        // 'App\Events\MessageSent' => [
-        //     'App\Listeners\SendPusherNotification',
-        //     'App\Listeners\SendFcmNotification',
-        // ],
+        'App\Events\NewBuyPostRequest' => [
+            'App\Listeners\SendBuyPostRequestNotifications'
+        ],
     ];
 
     /**

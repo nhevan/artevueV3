@@ -2,9 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Post;
+use App\User;
 use Carbon\Carbon;
 use Tests\TestCase;
+use Illuminate\Http\Request;
+use App\Events\NewBuyPostRequest;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\SendNewMessageNotification;
+use App\Listeners\SendBuyPostRequestNotifications;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -195,5 +204,79 @@ class PostApiTest extends TestCase
                 'description' => 'test description',
                 'post_art_type_id' => 1
             ]);
+    }
+
+    /**
+     * @test
+     * a request can be sent to buy a post
+     */
+    public function a_request_can_be_sent_to_buy_a_post()
+    {
+        //arrange
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'has_buy_btn' => 1, 'price' => '100']);
+
+        //act
+        $response = $this->get("/api/post/detail/{$post->id}/buy");
+
+        //assert
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            "message" => "Post buy notification successgully sent."
+        ]);
+        //assert a push notification is sent to the post via both onesignal and pusher
+        //a email is sent to the post owner
+    }
+
+    /**
+     * @test
+     * a NewBuyPostRequest event is diapatched when someone requests to buy a post
+     */
+    public function a_NewBuyPostRequest_event_is_diapatched_containing_the_post_when_someone_requests_to_buy_that_post()
+    {
+        //arrange
+        Event::fake();
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'has_buy_btn' => 1, 'price' => '100']);
+
+        //act
+        $response = $this->get("/api/post/detail/{$post->id}/buy");
+
+        //assert
+        Event::assertDispatched(NewBuyPostRequest::class, function ($e) use ($post) {
+            return $e->post->id === $post->id && $e->interested_user->id === $this->user->id;
+        });
+    }
+
+    /**
+     * @test
+     * when a user requests to buy a post a message is sent to the post owner from the requested user
+     */
+    public function when_a_user_requests_to_buy_a_post_a_message_is_sent_to_the_post_owner_from_the_requested_user()
+    {
+        //arrange
+        $this->signIn();
+
+        $postOwner = factory('App\User')->create(['id'=>1]);
+        factory('App\UserMetadata')->create(['user_id' => 1]);
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->id, 'has_buy_btn' => 1, 'price' => '100']);
+
+        //act
+        $response = $this->get("/api/post/detail/{$post->id}/buy");
+    
+        //assert
+        $this->assertDatabaseHas('messages', [
+            'receiver_id' => $postOwner->id,
+            'sender_id' => $this->user->id,
+            'is_post' => $post->id,
+            'url' => $post->image
+        ]);
+        $this->assertDatabaseHas('message_participants', [
+            'participant_one' => $this->user->id,
+            'participant_two' => $postOwner->id,
+            'total_messages' => 1
+        ]);
     }
 }
