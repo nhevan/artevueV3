@@ -218,4 +218,37 @@ class MessageApiTest extends TestCase
             'total_messages' => 3
         ]);
     }
+
+    /**
+     * @test
+     * a user can delete a entire conversation
+     */
+    public function a_user_can_delete_a_entire_conversation()
+    {
+        //arrange
+        $sender = factory('App\User')->create();
+        $receiver = factory('App\User')->create();
+        factory('App\UserMetadata')->create(['user_id' => $sender->id]);
+        factory('App\UserMetadata')->create(['user_id' => $receiver->id]);
+        $this->signIn($sender);
+    
+        $this->json('POST','api/message',[
+            'receiver_id' => $receiver->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+
+        //act
+        $response = $this->json('DELETE', "api/conversation/{$receiver->id}");
+    
+        //assert
+        $this->assertDatabaseMissing('message_participants', [
+            'participant_one' => $sender->id,
+            'participant_two' => $receiver->id,
+            'total_messages' => 1
+        ]);
+        $this->assertDatabaseMissing('messages', [
+            'sender_id' => $sender->id,
+            'receiver_id' => $receiver->id
+        ]);
+    }
 }

@@ -46,7 +46,7 @@ Route::middleware('auth:api')->delete('/user/{user}', 'UsersController@destroy')
 
 Route::middleware('auth:api')->get('/followers', 'FollowersController@getMyFollowers');
 Route::middleware('auth.optional:api')->get('/followers/{user_id}', 'FollowersController@getUserFollowers');
-Route::middleware('auth:api')->post('/follower/{user_id}', 'FollowersController@store');
+Route::middleware('auth:api')->post('/follow/{user_id}', 'FollowersController@store');
 Route::middleware('auth:api')->get('/following', 'FollowersController@getFollowingUsers');
 Route::middleware('auth.optional:api')->get('/following/{user_id}', 'FollowersController@getFollowingUsersByUser');
 

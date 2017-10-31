@@ -128,7 +128,7 @@ class FollowersController extends ApiController
 
     	$this->decrementFollowingCount(Auth::user()->id);
     	$this->decrementFollowerCount($user_id);
-    	return $this->respond(['message' => Auth::user()->name.' stopped following a user.']);
+    	return $this->respond(['message' => Auth::user()->name.' unfollowed a user.']);
     }
 
     /**
