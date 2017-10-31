@@ -50,7 +50,7 @@ Route::middleware('auth:api')->post('/follow/{user_id}', 'FollowersController@st
 Route::middleware('auth:api')->get('/following', 'FollowersController@getFollowingUsers');
 Route::middleware('auth.optional:api')->get('/following/{user_id}', 'FollowersController@getFollowingUsersByUser');
 
-Route::middleware('auth:api')->post('/block/{user_id}', 'BlockedUsersController@store');
+Route::middleware('auth:api')->post('/block/{user}', 'BlockedUsersController@store');
 
 Route::middleware('auth:api')->post('/report/{user_id}', 'ReportedUsersController@store');
 

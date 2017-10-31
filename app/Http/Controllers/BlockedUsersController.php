@@ -41,7 +41,8 @@ class BlockedUsersController extends ApiController
         $this->removeALlPinsOfBlockedUser($user_id);
         $this->removeBlockedUserFromFollowerList($user_id);
 
-        return $this->blockUser($user_id);
+
+        return $this->blockUser($user);
     }
 
     /**
@@ -72,11 +73,11 @@ class BlockedUsersController extends ApiController
      * @param  [type] $user_id [description]
      * @return [type]          [description]
      */
-    public function blockUser($user_id)
+    public function blockUser(User $target)
     {
-    	$this->blockedUser->create(['user_id' => Auth::user()->id, 'blocked_user_id' => $user_id]);
+    	$this->blockedUser->create(['user_id' => Auth::user()->id, 'blocked_user_id' => $target->id]);
 
-    	return $this->respond(['message' => Auth::user()->name.' blocked a user.']);
+    	return $this->respond(['message' => Auth::user()->name.' blocked '.$target->name]);
     }
 
     /**
