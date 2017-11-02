@@ -55,6 +55,7 @@ Route::middleware('auth:api')->post('/block/{user}', 'BlockedUsersController@sto
 Route::middleware('auth:api')->post('/report/{user_id}', 'ReportedUsersController@store');
 
 Route::middleware('api')->get('/usertypes', 'UserTypesController@index');
+Route::middleware('api')->get('/user-types/avatars', 'UserTypesController@avatars');
 
 Route::middleware('auth:api')->post('/message', 'MessagesController@store');
 Route::middleware('auth:api')->get('/message-participants', 'MessageParticipantsController@index');
