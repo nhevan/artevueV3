@@ -79,8 +79,7 @@ class PostsController extends ApiController
      */
     public function artePrizePosts()
     {
-        $artePrizeHashtag = '#arteprize2017';
-        $arteprize_posts = $this->post->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $arteprize_posts = $this->post->arteprizePosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
         if ($this->request->wantsJson()) {
             return $this->respondWithPagination($arteprize_posts, $this->postTransformer );
@@ -95,7 +94,7 @@ class PostsController extends ApiController
      */
     public function artevueSelectedPosts()
     {
-        $selected_posts = $this->post->where('is_selected_by_artevue', 1)->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $selected_posts = $this->post->artevueSelectedPosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
         if ($this->request->wantsJson()) {
             return $this->respondWithPagination($selected_posts, $this->postTransformer );
@@ -110,7 +109,7 @@ class PostsController extends ApiController
      */
     public function onSalePosts()
     {
-        $on_sale_posts = $this->post->where('is_selected_for_sale', 1)->where('is_undiscoverable', 0)->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $on_sale_posts = $this->post->onSalePosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
         if ($this->request->wantsJson()) {
             return $this->respondWithPagination($on_sale_posts, $this->postTransformer );

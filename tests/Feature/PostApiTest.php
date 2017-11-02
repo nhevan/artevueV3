@@ -79,14 +79,14 @@ class PostApiTest extends TestCase
      */
     public function a_user_can_fetch_artevue_selected_posts()
     {
-    	$post = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
-
+    	$selected_post = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
+        $general_post = factory('App\Post')->create();
     	$response = $this->getJson('/api/posts/selected')->json();
 
     	$this->assertArrayHasKey('data', $response);
     	$this->assertArrayHasKey('pagination', $response);
-    	$this->assertEquals([$post->id], array_column($response['data'], 'id'));
-    }
+    	$this->assertEquals([$selected_post->id], array_column($response['data'], 'id'));
+    }       
 
     /**
      * @test
@@ -112,7 +112,7 @@ class PostApiTest extends TestCase
     public function a_user_can_fetch_all_posts_selected_for_sale()
     {
     	$post = factory('App\Post')->create(['is_selected_for_sale' => 1]);
-
+        factory('App\Post')->create();
     	$response = $this->getJson('/api/posts/sale')->json();
 
     	$this->assertArrayHasKey('data', $response);

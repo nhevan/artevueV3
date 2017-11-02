@@ -8,9 +8,11 @@ use App\Follower;
 use App\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Acme\Transformers\Transformer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
+use Illuminate\Contracts\Pagination\Paginator;
 
 class DiscoverPostsController extends DiscoverController
 {
@@ -86,6 +88,86 @@ class DiscoverPostsController extends DiscoverController
         $this->trackAction(Auth::user(), "Explore Posts");
 
 		return $this->respondWithPagination($trending_posts, new PostTransformer);
+    }
+
+    /**
+     * responds a json containing data, pagination and category_images
+     * @param  Paginator   $posts       [description]
+     * @param  Transformer $transformer [description]
+     * @return [type]                   [description]
+     */
+    public function respondWithPagination(Paginator $posts, Transformer $transformer)
+    {
+        $model_array = $posts->toArray();
+        return $this->respond([
+            'data'=>$transformer->transformCollection($model_array['data']),
+            'pagination' => [
+                'total' => $model_array['total'],
+                'per_page' => $model_array['per_page'],
+                'current_page' => $model_array['current_page'],
+                'last_page' => $model_array['last_page'],
+                'next_page_url' => $model_array['next_page_url'],
+                'prev_page_url' => $model_array['prev_page_url'],
+                'from' => $model_array['from'],
+                'to' => $model_array['to'],
+            ],
+            'category_images' => $this->getCategoryImages()
+        ]);
+    }
+
+    /**
+     * returns an associated array image urls of the first post from different dicover categories like selected, sale, arteprize and trending
+     * @return [type] [description]
+     */
+    private function getCategoryImages()
+    {
+        return [
+            'sale' => $this->getOnSaleFirstPostImage(),
+            'selected' => $this->getArtevueSelectedFirstPostImage(),
+            'arteprize' => $this->getArteprizeFirstPostImage()
+        ];
+    }
+
+    /**
+     * returns the first image from on sale posts
+     * @return [type] [description]
+     */
+    private function getOnSaleFirstPostImage()
+    {
+        $on_sale_first_post = Post::onSalePosts()->latest()->first();
+        if (!$on_sale_first_post) {
+            return 'img/posts/FbwOjCAYkSEDUfmJPYoe9lWzw5karyhF05qEVQuA.jpeg';
+        }
+    
+        return $on_sale_first_post->image;
+    }
+
+    /**
+     * returns the first post image that were selected by Artevue
+     * @return [type] [description]
+     */
+    private function getArtevueSelectedFirstPostImage()
+    {
+        $artevue_selected_first_post = Post::artevueSelectedPosts()->latest()->first();
+        if (!$artevue_selected_first_post) {
+            return 'img/posts/FbwOjCAYkSEDUfmJPYoe9lWzw5karyhF05qEVQuA.jpeg';
+        }
+     
+        return $artevue_selected_first_post->image;
+    }
+
+    /**
+     * returns the first post image that was enrolled in arteprize
+     * @return [type] [description]
+     */
+    private function getArteprizeFirstPostImage()
+    {
+        $arteprize_first_post = Post::arteprizePosts()->latest()->first();
+        if (!$arteprize_first_post) {
+            return 'img/posts/FbwOjCAYkSEDUfmJPYoe9lWzw5karyhF05qEVQuA.jpeg';
+        }
+
+        return $arteprize_first_post->image;
     }
 
     /**

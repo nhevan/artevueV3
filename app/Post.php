@@ -40,6 +40,40 @@ class Post extends Model
     }
 
     /**
+     * Scope a query to only include arteprize posts.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeArteprizePosts($query)
+    {
+        $artePrizeHashtag = '#arteprize2017';
+        return $query->where('description', 'LIKE', '%'.$artePrizeHashtag.'%')->where('is_undiscoverable', 0);
+    }
+
+    /**
+     * Scope a query to only include artevue selected posts.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeArtevueSelectedPosts($query)
+    {
+        return $query->where('is_selected_by_artevue', 1)->where('is_undiscoverable', 0);
+    }
+
+    /**
+     * Scope a query to only include posts selected for sale.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOnSalePosts($query)
+    {
+        return $query->where('is_selected_for_sale', 1)->where('is_undiscoverable', 0);
+    }
+
+    /**
      * swaps the discoverability of a post
      * @return [type] [description]
      */
