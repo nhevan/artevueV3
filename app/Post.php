@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -72,6 +73,20 @@ class Post extends Model
     {
         return $query->where('is_selected_for_sale', 1)->where('is_undiscoverable', 0);
     }
+
+    /**
+     * Scope a query to only include trending posts.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTrending($query)
+    {
+        return $query->select(DB::raw("*, (`like_count`+`comment_count`) as trending_count"))
+            ->where('is_undiscoverable', false)
+            ->orderByDesc('trending_count');
+    }
+
 
     /**
      * swaps the discoverability of a post

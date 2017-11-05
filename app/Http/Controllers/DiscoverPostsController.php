@@ -134,10 +134,25 @@ class DiscoverPostsController extends DiscoverController
     private function getCategoryImages()
     {
         return [
+            'trending' => $this->getTrendingFirstPostImage(),
             'sale' => $this->getOnSaleFirstPostImage(),
             'selected' => $this->getArtevueSelectedFirstPostImage(),
             'arteprize' => $this->getArteprizeFirstPostImage()
         ];
+    }
+
+    /**
+     * returns the first image from trending posts
+     * @return [type] [description]
+     */
+    private function getTrendingFirstPostImage()
+    {
+        $trending_first_post = Post::trending()->first();
+        if (!$trending_first_post) {
+            return 'img/posts/FbwOjCAYkSEDUfmJPYoe9lWzw5karyhF05qEVQuA.jpeg';
+        }
+    
+        return $trending_first_post->image;
     }
 
     /**

@@ -275,6 +275,7 @@ class DiscoverPostTest extends TestCase
     public function it_returns_category_images_for_other_discoverable_post_types_like_trending_selected_sale_and_arteprize()
     {
         //arrange
+        $trending_post = factory('App\Post')->create(['like_count' => 10, 'comment_count' => 10]);
         $arteprize_post = factory('App\Post')->create(['description' => '#artePrize2017']);
         $artevue_selected_post = factory('App\Post')->create(['is_selected_by_artevue' => 1]);
         $on_sale_post = factory('App\Post')->create(['is_selected_for_sale' => 1]);
@@ -285,6 +286,7 @@ class DiscoverPostTest extends TestCase
         //assert
         $this->assertArrayHasKey('category_images', $response->json());
         $response->assertJsonFragment([
+            'trending' => $trending_post->image,
             'selected' => $artevue_selected_post->image,
             'sale' => $on_sale_post->image,
             'arteprize' => $arteprize_post->image
