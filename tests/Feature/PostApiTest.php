@@ -182,6 +182,94 @@ class PostApiTest extends TestCase
 
     /**
      * @test
+     * when a post is pinned, its pin_count increases by 1
+     */
+    public function when_a_post_is_pinned_its_pin_count_increases_by_1()
+    {
+        //arrange
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id]);
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+
+        //act
+        $response = $this->post("/api/gallery/{$gallery->id}/pin/{$post->id}")->json();
+    
+        //assert
+        $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'pin_count' => 1
+            ]);
+    }
+
+    /**
+     * @test
+     * when a post is unpinned its pin_count decreases by 1
+     */
+    public function when_a_post_is_unpinned_its_pin_count_decreases_by_1()
+    {
+        //arrange
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'pin_count' => 10]);
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+
+        //act
+        $this->post("/api/gallery/{$gallery->id}/pin/{$post->id}")->json(); // pin the post
+        $this->delete("/api/gallery/{$gallery->id}/pin/{$post->id}")->json(); // unpin the post
+    
+        //assert
+        $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'pin_count' => 10
+            ]);
+    }
+
+    /**
+     * @test
+     * when a comment is made on a post its comment count increases by 1
+     */
+    public function when_a_comment_is_made_on_a_post_its_comment_count_increases_by_1()
+    {
+        //arrange
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'comment_count' => 10]);
+    
+        //act
+        $this->post("/api/comment/{$post->id}", [ 'comment' => 'test comment' ])->json();
+    
+        //assert
+        $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'comment_count' => 11
+            ]);
+    }
+
+    /**
+     * @test
+     * when a comment is deleted the posts comment count decreases by 1
+     */
+    public function when_a_comment_is_deleted_the_posts_comment_count_decreases_by_1()
+    {
+        //arrange
+        $this->signIn();
+        $postOwner = factory('App\UserMetadata')->create();
+        $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'comment_count' => 10]);
+        $comment = factory('App\Comment')->create([ 'user_id' => $this->user->id, 'post_id' => $post->id]);
+    
+        //act
+        $response = $this->delete("/api/comment/{$comment->id}")->json();
+
+        //assert
+        $this->assertDatabaseHas('posts', [
+                'id' => $post->id,
+                'comment_count' => 9
+            ]);
+    }
+
+    /**
+     * @test
      * post art type can be set when a post is being created by the user
      */
     public function post_art_type_can_be_set_when_a_post_is_being_created_by_the_user()

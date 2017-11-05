@@ -70,24 +70,24 @@ class DiscoverPostsController extends DiscoverController
     	$limit = 21;
         if (!request()->wantsJson()) {
             $this->me_and_my_follower_ids = [];
-            $trending_posts = $this->getPaginatedPosts($limit);
+            $discover_posts = $this->getPaginatedPosts($limit);
 
-            return view('posts.index', ['posts' => $trending_posts]);
+            return view('posts.index', ['posts' => $discover_posts]);
         }
         if ($this->userIsGuest()) {
         	$this->me_and_my_follower_ids = [];
-            $trending_posts = $this->getPaginatedPosts($limit);
+            $discover_posts = $this->getPaginatedPosts($limit);
 
-            return $this->respondWithPagination($trending_posts, new PostTransformer);
+            return $this->respondWithPaginationAndCategoryImages($discover_posts, new PostTransformer);
         }
         $this->user = Auth::user();
         $this->me_and_my_follower_ids = $this->includeMyself($this->getMyFollowersIds());
 
-		$trending_posts = $this->getPaginatedPosts($limit);
+		$discover_posts = $this->getPaginatedPosts($limit);
 
         $this->trackAction(Auth::user(), "Explore Posts");
 
-		return $this->respondWithPagination($trending_posts, new PostTransformer);
+		return $this->respondWithPaginationAndCategoryImages($discover_posts, new PostTransformer);
     }
 
     /**
@@ -96,7 +96,7 @@ class DiscoverPostsController extends DiscoverController
      * @param  Transformer $transformer [description]
      * @return [type]                   [description]
      */
-    public function respondWithPagination(Paginator $posts, Transformer $transformer)
+    private function respondWithPaginationAndCategoryImages(Paginator $posts, Transformer $transformer)
     {
         $model_array = $posts->toArray();
         return $this->respond([

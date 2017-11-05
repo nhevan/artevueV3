@@ -241,9 +241,9 @@ class DiscoverPostTest extends TestCase
         //assert
         $this->assertArrayHasKey('category_images', $response->json());
         $response->assertJsonFragment([
-                'selected' => $artevue_selected_post->image,
-                'sale' => $on_sale_post->image,
-                'arteprize' => $arteprize_post->image
-            ]);
+            'selected' => $artevue_selected_post->image,
+            'sale' => $on_sale_post->image,
+            'arteprize' => $arteprize_post->image
+        ]);
     }
 }
