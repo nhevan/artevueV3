@@ -131,6 +131,40 @@ class DiscoverPostTest extends TestCase
 
     /**
      * @test
+     * it can correctly calculate a post's pin score
+     */
+    public function it_can_correctly_calculate_a_posts_pin_score()
+    {
+        //arrange
+        $total_pins = 10;
+        $post = factory('App\Post')->create(['pin_count' => $total_pins]);
+    
+        //act
+        $response = $this->getJson('/api/discover-posts');
+
+        //assert
+        $this->assertEquals($this->calculatePinScore($total_pins) , $response->json()['data'][0]['score']);
+    }
+
+    /**
+     * @test
+     * it can correctly calculate a post's comment score
+     */
+    public function it_can_correctly_calculate_a_posts_comment_score()
+    {
+        //arrange
+        $total_comments = 10;
+        $post = factory('App\Post')->create(['comment_count' => $total_comments]);
+    
+        //act
+        $response = $this->getJson('/api/discover-posts');
+
+        //assert
+        $this->assertEquals($this->calculateCommentScore($total_comments) , $response->json()['data'][0]['score']);
+    }
+
+    /**
+     * @test
      * it returns posts sorted chronologically
      */
     public function it_returns_posts_sorted_chronologically()
@@ -166,7 +200,7 @@ class DiscoverPostTest extends TestCase
     }
 
     /**
-     * @ignore test
+     * @test
      * it returns posts sorted by pin count
      */
     public function it_returns_posts_sorted_by_pin_count()
@@ -221,7 +255,17 @@ class DiscoverPostTest extends TestCase
      */
     public function calculatePinScore($pins)
     {
-        return $pins * $this->weights['pin_weight_distribution'];
+        return (new DiscoverPostsController())->calculatePinScore($pins);
+    }
+
+    /**
+     * returns the comment score 
+     * @param  int $pins no of pins
+     * @return float        [description]
+     */
+    public function calculateCommentScore($comments)
+    {
+        return (new DiscoverPostsController())->calculateCommentScore($comments);
     }
 
     /**

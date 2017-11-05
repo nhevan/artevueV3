@@ -128,8 +128,8 @@ class AdminPostRelatedTest extends DuskTestCase
                     ->visit('/settings')
                     ->assertSee('ios_latest_app_version')
                     ->assertSee('ios_min_app_version')
-                    ->assertSee('chronological_weight_distribution')
-                    ->assertSee('like_weight_distribution')
+                    ->assertSee('chronological_discover_weight_distribution')
+                    ->assertSee('like_discover_weight_distribution')
                     ->assertDontsee('something random');
         });
     }
@@ -171,8 +171,8 @@ class AdminPostRelatedTest extends DuskTestCase
             $browser->loginAs($this->admin)
                     ->visit('/settings')
                     ->click('#edit-weight-settings')
-                    ->type('chronological_weight_distribution-value', '.1')
-                    ->type('chronological_weight_distribution-description', 'new description')
+                    ->type('chronological_discover_weight_distribution-value', '.1')
+                    ->type('chronological_discover_weight_distribution-description', 'new description')
                     ->press('Update Settings')
                     ->assertRouteIs('settings.index')
                     ->assertSee('.1')
@@ -194,8 +194,8 @@ class AdminPostRelatedTest extends DuskTestCase
             $browser->loginAs($this->admin)
                     ->visit('/settings')
                     ->click('#edit-weight-settings')
-                    ->type('chronological_weight_distribution-value', '.8')
-                    ->type('like_weight_distribution-value', '.8')
+                    ->type('chronological_discover_weight_distribution-value', '.8')
+                    ->type('like_discover_weight_distribution-value', '.8')
                     ->press('Update Settings')
                     ->assertSee('The total weight distribution must not exceed 1.');
         });

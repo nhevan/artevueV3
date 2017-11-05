@@ -23,9 +23,10 @@ class SettingsTableSeeder extends Seeder
     	$this->newSetting(	'ios_min_app_version',							'1.3.4', 			'Minimum iOS app version required to continue using the app. Please keep updated.' );
         $this->newSetting(	'android_latest_app_version', 					'0', 				'Currently Latest Android app version, Please keep updated.' );
         $this->newSetting(	'android_min_app_version', 						'0', 				'Minimum Android app version required to continue using the app. Please keep updated.' );
-        $this->newSetting(	'chronological_weight_distribution', 			'.25', 				'The chronological impact factor that will affect the Trending Art algorithm.' );        
-        $this->newSetting(	'like_weight_distribution', 					'.75', 				'The like impact factor that will affect the Trending Art algorithm.' );
-        $this->newSetting(	'pin_weight_distribution', 						'0.00001', 			'The pin impact factor that will affect the Trending Art algorithm.' );
+        $this->newSetting(	'chronological_discover_weight_distribution', 	'.40', 				'The chronological impact factor that will affect the Discover Post algorithm.' );        
+        $this->newSetting(	'like_discover_weight_distribution', 			'.25', 				'The like impact factor that will affect the Discover Post algorithm.' );
+        $this->newSetting(  'comment_discover_weight_distribution',         '.25',              'The comment impact factor that will affect the Discover Post algorithm.' );
+        $this->newSetting(  'pin_discover_weight_distribution',             '.10',              'The pin impact factor that will affect the Discover Post algorithm.' );
     }
 
     /**

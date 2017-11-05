@@ -30,6 +30,18 @@ class DiscoverPostsController extends DiscoverController
 	 */
 	protected $like_unit = 1;
 
+    /**
+     * more pins means adding more score to a post
+     * @var integer
+     */
+    protected $pin_unit = 1;
+
+    /**
+     * more comments means adding more score to a post
+     * @var integer
+     */
+    protected $comment_unit = 1;
+
 	/**
 	 * more hours old means deducting more scores from a post
 	 * @var integer
@@ -52,12 +64,12 @@ class DiscoverPostsController extends DiscoverController
 	}
 
 	/**
-	 * fetches all keys that has a matching string of 'weight_distribution'
+	 * fetches all keys that has a matching string of 'discover_weight_distribution'
 	 * @return array a array of key value pairs for related settings
 	 */
 	public static function getPostWeightDistributionSettings()
 	{
-		return Settings::where('key', 'like', '%weight_distribution%')->get()->pluck('value', 'key')->toArray();
+		return Settings::where('key', 'like', '%discover_weight_distribution%')->get()->pluck('value', 'key')->toArray();
 	}
 
 
@@ -225,9 +237,8 @@ class DiscoverPostsController extends DiscoverController
     {
         $this->assignChronologyRelevancy($post);
         $this->assignLikeRelevancy($post);
-
-        //Sho wants to cosider like and chronological order only, so ignoring pin relevancy for now
-        // $this->assignPinRelevancy($post);
+        $this->assignPinRelevancy($post);
+        $this->assignCommentRelevancy($post);
 
         return $post;
     }
@@ -254,7 +265,7 @@ class DiscoverPostsController extends DiscoverController
      */
     public function calculateChronologicalScore($hours_till_posted)
     {
-    	$chronological_unit_weight = $this->calculateUnitWeight($this->weights['chronological_weight_distribution'], $this->chronological_unit);
+    	$chronological_unit_weight = $this->calculateUnitWeight($this->weights['chronological_discover_weight_distribution'], $this->chronological_unit);
 
         $chronological_score = $hours_till_posted * $chronological_unit_weight;
 
@@ -309,7 +320,7 @@ class DiscoverPostsController extends DiscoverController
 
     public function calculateLikeScore($like_count)
     {
-    	$like_unit_weight = $this->calculateUnitWeight($this->weights['like_weight_distribution'], $this->like_unit);
+    	$like_unit_weight = $this->calculateUnitWeight($this->weights['like_discover_weight_distribution'], $this->like_unit);
 
         $like_score = $like_count * $like_unit_weight;
 
@@ -323,7 +334,47 @@ class DiscoverPostsController extends DiscoverController
      */
     private function assignPinRelevancy(&$post)
     {
-        $post['score'] += $post['pin_count'] * $this->weights['pin_weight_distribution'];
+        $pin_score = $this->calculatePinScore($post['pin_count']);
+        $post['score'] += $pin_score;
+    }
+
+    /**
+     * calculates the pin score for a given number of pin count
+     * @param  [type] $pin_count [description]
+     * @return [type]            [description]
+     */
+    public function calculatePinScore($pin_count)
+    {
+        $pin_unit_weight = $this->calculateUnitWeight($this->weights['pin_discover_weight_distribution'], $this->pin_unit);
+
+        $pin_score = $pin_count * $pin_unit_weight;
+
+        return $pin_score;
+    }
+
+    /**
+     * assingns Comment Relevancy to a post
+     * @param  [type] &$post [description]
+     * @return [type]        [description]
+     */
+    private function assignCommentRelevancy(&$post)
+    {
+        $comment_score = $this->calculateCommentScore($post['comment_count']);
+        $post['score'] += $comment_score;
+    }
+
+    /**
+     * calculates the comment score for a given number of comment count
+     * @param  [type] $comment_count [description]
+     * @return [type]            [description]
+     */
+    public function calculateCommentScore($comment_count)
+    {
+        $comment_unit_weight = $this->calculateUnitWeight($this->weights['comment_discover_weight_distribution'], $this->comment_unit);
+
+        $comment_score = $comment_count * $comment_unit_weight;
+
+        return $comment_score;
     }
 
     /**
