@@ -76,7 +76,7 @@ Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsContr
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
 
 Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverPostsController@discoverPosts'); //v2
-Route::middleware('auth.optional:api')->get('/posts/trending', 'DiscoverPostsController@discoverPosts'); //v3
+Route::middleware('auth.optional:api')->get('/posts/trending', 'TrendingPostsController@trendingPosts'); //v3
 Route::middleware('api')->get('/posts/arteprize', 'PostsController@artePrizePosts'); // v3
 Route::middleware('api')->get('/posts/selected', 'PostsController@artevueSelectedPosts'); // v3
 Route::middleware('api')->get('/posts/sale', 'PostsController@onSalePosts'); // v3
