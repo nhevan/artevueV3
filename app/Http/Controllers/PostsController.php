@@ -8,6 +8,7 @@ use App\Post;
 use App\User;
 use Exception;
 use App\Artist;
+use App\Gallery;
 use App\Hashtag;
 use App\Follower;
 use Vision\Image;
@@ -163,8 +164,12 @@ class PostsController extends ApiController
     	if ($this->hasValidationError()) {
     		return $this->responseValidationError();
     	}
+        if($this->request->is_gallery && $this->givenInvalidGalleryIds()) {
+            $this->setValidationErrors(['is_gallery' => 'The provided galleries does not exist or does not belong to the logged in user.']);
+            return $this->responseValidationError();   
+        }
 
-    	$this->setArtist();
+        $this->setArtist();
         $new_post = $this->request->user()->posts()->save($this->savePost());
         $this->post = $new_post;
         $this->pinIfGalleryItem();
@@ -463,9 +468,17 @@ class PostsController extends ApiController
      */
     public function pinIfGalleryItem()
     {
-    	if ($this->request->is_gallery_item) {
+        if ($this->request->is_gallery) {
     		$this->pinPost();
     	}
+    }
+
+    private function getGalleriesFromIsGalleryField()
+    {
+        if(gettype($this->request->is_gallery) == 'array') 
+            return $this->request->is_gallery;
+        
+        return $target_galleries = explode(',', str_replace(' ','',$this->request->is_gallery));
     }
 
     /**
@@ -474,7 +487,11 @@ class PostsController extends ApiController
      */
     public function pinPost()
     {
-    	return Pin::create([ 'post_id' => $this->post->id, 'user_id' => $this->request->user()->id]);
+        $target_galleries = $this->getGalleriesFromIsGalleryField();
+
+        foreach ($target_galleries as $gallery_id) {
+        	Pin::create([ 'post_id' => $this->post->id, 'user_id' => $this->request->user()->id, 'gallery_id' => $gallery_id]);
+        }
     }
 
     /**
@@ -512,7 +529,7 @@ class PostsController extends ApiController
                 'address' => 'nullable|max:120',
                 'address_title' => 'nullable|max:120',
                 'is_public' => 'nullable|in:0,1',
-                'is_gallery' => 'nullable|in:0,1',
+                'is_gallery' => 'nullable',
                 'post_art_type_id' => 'nullable|numeric|min:1|max:10',
             ];
         }else{
@@ -539,8 +556,8 @@ class PostsController extends ApiController
      */
     public function savePost()
     {
-    	$path = $this->uploadPostImageTos3();
-    	$this->request->merge(['image' => $path]);
+        $path = $this->uploadPostImageTos3();
+        $this->request->merge(['image' => $path]);
 
     	return New Post($this->request->all());
     }
@@ -954,5 +971,29 @@ class PostsController extends ApiController
         event(new NewBuyPostRequest($interested_user, $post));
 
         return $this->respond(["message" => 'Post buy notification successgully sent.']);
+    }
+
+    /**
+     * checks if the provided galleries exists and belongs to the logged in user
+     * @return [type] [description]
+     */
+    private function givenInvalidGalleryIds()
+    {
+        $target_galleries = $this->getGalleriesFromIsGalleryField();
+
+        foreach ($target_galleries as $gallery_id) {
+            if (!$this->isCurrentUserGalleryOwner($gallery_id)) 
+                return true;
+        }
+    }
+
+    /**
+     * returns true if the logged in user is the owner of the giver gallery
+     * @param  [type]  $gallery_id [description]
+     * @return boolean             [description]
+     */
+    private function isCurrentUserGalleryOwner($gallery_id)
+    {
+        return !! Gallery::where('id', $gallery_id)->where('user_id', Auth::user()->id)->first();
     }
 }
