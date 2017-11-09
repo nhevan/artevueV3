@@ -32,7 +32,7 @@ class BuyPostRequestMail extends Mailable
     public function build()
     {
         return $this->from(['address' => 'noreply@artevue.co.uk', 'name' => 'Artevue'])
-                    ->subject('A user has shown interest in one of your art work.')
+                    ->subject('You have a potential buyer for your artwork!')
                     ->markdown('mails.buy_post_request_email');
     }
 }

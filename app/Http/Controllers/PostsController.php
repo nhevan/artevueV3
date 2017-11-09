@@ -521,7 +521,7 @@ class PostsController extends ApiController
         if($app_version >= 2){
             $rules = [
                 'post_image' => 'required',
-                'description' => 'nullable|max:250',
+                'description' => 'nullable|max:500',
                 'hashtags' => 'nullable|max:250',
                 'aspect_ratio' => 'nullable|numeric',
                 'price' => 'nullable|numeric',
