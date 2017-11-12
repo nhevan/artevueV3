@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Post;
 use App\User;
+use App\Artist;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Http\Request;
@@ -477,6 +478,54 @@ class PostApiTest extends TestCase
             'participant_one' => $this->user->id,
             'participant_two' => $postOwner->id,
             'total_messages' => 1
+        ]);
+    }
+
+    /**
+     * @test
+     * a user can delete any of his posts
+     */
+    public function a_user_can_delete_any_of_his_posts()
+    {
+        //arrange
+        $this->signIn();
+        $post = factory('App\Post')->create(['owner_id' => $this->user->id]);
+
+        //act
+        $response = $this->delete("/api/post/{$post->id}");
+    
+        //assert
+        $this->assertDatabaseMissing('posts', [
+            'id' => $post->id
+        ]);
+    }
+
+    /**
+     * @test
+     * a user can provide an artist name while creating a post
+     */
+    public function a_user_can_provide_an_artist_name_while_creating_a_post()
+    {
+        //arrange
+        $this->signIn();
+        Storage::fake('s3');
+
+        //act
+        $response = $this->post("/api/post",[
+                'post_image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABREAAAJPCAYAAADrIZMWAAABfGlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGAqSSwoyGFhYGDIzSspCnJ3UoiIjFJgv8PAzcDDIMRgxSCemFxc4BgQ4MOAE3y7xsAIoi/rgsxK8/x506a1fP4WNq+ZclYlOrj1gQF3SmpxMgMDIweQnZxSnJwLZOcA2TrJBUUlQPYMIFu3vKQAxD4BZIsUAR0IZN8BsdMh7A8gdhKYzcQCVhMS5AxkSwDZAkkQtgaInQ5hW4DYyRmJKUC2B8guiBvAgNPDRcHcwFLXkYC7SQa5OaUwO0ChxZOaFxoMcgcQyzB4MLgwKDCYMxgwWDLoMjiWpFaUgBQ65xdUFmWmZ5QoOAJDNlXBOT+3oLQktUhHwTMvWU9HwcjA0ACkDhRnEKM/B4FNZxQ7jxDLX8jAYKnMwMDcgxBLmsbAsH0PA4PEKYSYyjwGBn5rBoZt5woSixLhDmf8xkKIX5xmbARh8zgxMLDe+///sxoDA/skBoa/E////73',
+                'description' => 'test description',
+                'artist' => 'new artist'
+            ],[
+                'X-ARTEVUE-App-Version' => '2'
+            ]); 
+    
+        //assert
+        $this->assertDatabaseHas('artists', [
+            'title' => 'new artist'
+        ]);
+        $artist = Artist::where('title', 'new artist')->first();
+        $this->assertDatabaseHas('posts', [
+            'artist_id' => $artist->id
         ]);
     }
 }
