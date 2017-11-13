@@ -67,6 +67,6 @@ class SendDetectedHashtags implements ShouldQueue
             'hashtags' => $hashtags
         ];
         
-        $this->sendPusherNotification($this->user->id.'-personal-channel','hashtags-detected', $data);
+        $this->sendPusherNotification('User-'.$this->user->id,'hashtags-detected', $data);
     }
 }
