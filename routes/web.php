@@ -93,3 +93,5 @@ Route::middleware('auth')->get('/news/{news}', 'NewsController@show');
 Route::middleware('auth')->get('/news/edit/{news}', 'NewsController@showEditForm');
 Route::middleware('auth')->post('/news/edit/{news}', 'NewsController@edit');
 Route::middleware('auth')->get('/news/delete/{news}', 'NewsController@destroy');
+
+Route::middleware('auth')->get('/mail-templates', 'MailsController@templates')->name('mail.templates');
