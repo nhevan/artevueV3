@@ -49,6 +49,7 @@ class AdminUserRelatedTest extends DuskTestCase
     public function admins_can_send_password_reset_email_to_any_user()
     {
         //arrange
+        $this->seed('EmailTemplatesSeeder');
         $usermeta = factory('App\UserMetadata')->create();
         $user = $usermeta->user;
     

@@ -32,7 +32,7 @@ class NewPasswordEmail extends Mailable
 
         if (!$is_previewing) {
             $this->new_password = str_random(8);
-            $this->user->password = bcrypt($new_password);
+            $this->user->password = bcrypt($this->new_password);
             $this->user->save();
         }
     }

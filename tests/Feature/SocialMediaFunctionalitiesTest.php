@@ -20,7 +20,7 @@ class SocialMediaFunctionalitiesTest extends TestCase
         $user = factory('App\User')->create([
         	'social_media' => 'facebook',
         	'social_media_uid' => '1555685954491783',
-        	'social_media_access_token' => 'EAAEKXpBRuKwBAKvk8dmNNG3PTPQJUb7ghbJh9ie68w1wtPWjrW63F5xxqIZAfWY6JZBTjfrdIHTfbJjvHRrCj8VaIoOuwUvMeZBuGzjdYOZBznsoIgTt4tHwkZAVZBMqZB8j9V0ox1MfibnMsMGQMYkoioKMRjwr1aOG0i4rqSDrQZDZD'
+        	'social_media_access_token' => 'EAAEKXpBRuKwBALEd9JKhmTCELHqKsSCj0YxGgkyQlkZB9R20SRZAwovgQvkn4dZCogaXoTSPziQhcOwVc7OZA9DfEh445wqC7iVGVYoJLFEN9WZBPZAaQA24Xv4ZCSiZCeusejt4JMCSzT50rAlY1wTDxQ12JLHDlj0CH5mUmmdbshydsiUwXHbi6576QK4CqPYQcZCsZATrb8LwZDZD'
     	]);
 
     	$users_friend = factory('App\User')->create([
@@ -33,7 +33,7 @@ class SocialMediaFunctionalitiesTest extends TestCase
     	
         //act
         $response = $this->json( 'GET', "/api/find-friends");
-    
+        // dd($response->json());
         //assert
     	$response->assertStatus(200);
     	$this->assertEquals(1, sizeof($response->json()['data']));
