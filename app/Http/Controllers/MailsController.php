@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
+use App\User;
 use App\EmailTemplate;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
+use App\Events\NewBuyPostRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -97,6 +100,14 @@ class MailsController extends ApiController
 
     	if (in_array($mail_class, ['App\Mail\NewPasswordEmail'])) {
 			return new $mail_class(Auth::user(), 1);
+    	}
+
+    	if (in_array($mail_class, ['App\Mail\BuyPostRequestMail'])) {
+    		$interested_user = User::where('username', 'nhevan')->first();
+    		$post = Post::where('owner_id', Auth::user()->id)->first();
+    		$buy_request = new NewBuyPostRequest($interested_user, $post);
+
+			return new $mail_class($buy_request);
     	}
     }
 }
