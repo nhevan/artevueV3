@@ -37,8 +37,7 @@ class MailsController extends ApiController
      */
     public function preview(EmailTemplate $template)
     {
-    	$mail_class = $template->mail_class;
-    	$mail = new $mail_class(Auth::user());
+    	$mail = $this->buildMailFromTemplate($template);
 
         return $mail->preview()['html'];
     }
@@ -77,10 +76,27 @@ class MailsController extends ApiController
      */
     public function test(EmailTemplate $template)
     {
-    	$mail_class = $template->mail_class;
-    	Mail::to(Auth::user()->email)->queue(new $mail_class(Auth::user()));
+    	$mail = $this->buildMailFromTemplate($template);
+    	Mail::to(Auth::user()->email)->queue($mail);
 
     	$this->request->session()->flash('status', 'Test email sent to your email address !');
     	return redirect()->route('mail.templates');
+    }
+
+    /**
+     * builds an email object from given template
+     * @param  EmailTemplate $template [description]
+     * @return [type]                  [description]
+     */
+    public function buildMailFromTemplate(EmailTemplate $template)
+    {
+    	$mail_class = $template->mail_class;
+    	if (in_array($mail_class, ['App\Mail\WelcomeEmail', 'App\Mail\NotifyIssueEmail'])) {
+	    	return new $mail_class(Auth::user());
+    	}
+
+    	if (in_array($mail_class, ['App\Mail\NewPasswordEmail'])) {
+			return new $mail_class(Auth::user(), 1);
+    	}
     }
 }
