@@ -8,19 +8,21 @@
 					<table class="table table-bordered table-hover">
 						<thead>
 							<tr>
-								<th class="text-center">Template Name</th>
+								<th style="width: 50%" class="text-center">Template Name</th>
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>Welcome Email Template</td>
-								<td>
-									<a class="btn btn-primary" href="/test-welcome-email/1">Send test email</a>
-									<a class="btn btn-primary" href="/test-welcome-email/1">Edit Template</a>
-									<a class="btn btn-success" href="/test-welcome-email/1">Preview Template</a>
-								</td>
-							</tr>
+							@foreach ($templates as $template)
+								<tr>
+									<td>{{ $template->name }}</td>
+									<td class="text-center">
+										<a class="btn btn-sm btn-primary" href="{{ route('mail.test', ['mail_template' => $template->id]) }}">Send test email</a>
+										<a class="btn btn-sm btn-primary" href="{{ route('mail.edit', ['mail_template' => $template->id]) }}">Edit Template</a>
+										<a class="btn btn-sm btn-success" href="{{ route('mail.preview', ['mail_template' => $template->id]) }}" target="_blank">Preview Template</a>
+									</td>
+								</tr>
+							@endforeach
 						</tbody>
 					</table>
 				</div>
@@ -29,22 +31,3 @@
 	</div>
 </div>
 @endsection
-{{-- 
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
-  <script>tinymce.init({ 
-  	selector:'textarea',
-  	plugins: "image imagetools" 
-  });</script>
-</head>
-<body>
-<form method="POST" action="/test-tinymce">
-	{{ csrf_field() }}
-	<textarea name='custom-input'>Next, start a free trial!</textarea>
-
-	<button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Submit</button>
-</form>
-</body>
-</html> --}}

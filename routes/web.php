@@ -94,4 +94,8 @@ Route::middleware('auth')->get('/news/edit/{news}', 'NewsController@showEditForm
 Route::middleware('auth')->post('/news/edit/{news}', 'NewsController@edit');
 Route::middleware('auth')->get('/news/delete/{news}', 'NewsController@destroy');
 
-Route::middleware('auth')->get('/mail-templates', 'MailsController@templates')->name('mail.templates');
+Route::middleware('auth')->get('/mails/templates', 'MailsController@templates')->name('mail.templates');
+Route::middleware('auth')->get('/mails/{template}/preview', 'MailsController@preview')->name('mail.preview');
+Route::middleware('auth')->get('/mails/{template}/test', 'MailsController@test')->name('mail.test');
+Route::middleware('auth')->get('/mails/{template}/edit', 'MailsController@edit')->name('mail.edit');
+Route::middleware('auth')->post('/mails/{template}/edit', 'MailsController@update')->name('mail.update');
