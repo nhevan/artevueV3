@@ -11,6 +11,8 @@
 						<form method="POST" action="{{ route('mail.update', ['template' => $template->id]) }}">
 							{{ csrf_field() }}
 
+							<button id='email-template-edit-submit-button-2' type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Save</button>
+
 							<div class="form-group">
 								<label>Sender Email address</label>
 								<input type="text" name="sender_email" class="form-control" value="{{ $template->sender_email }}" >
@@ -33,7 +35,7 @@
 								<textarea rows="30" name='content'>{{ $template->content }}</textarea>
 							</div>
 
-							<button type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Save</button>
+							<button id='email-template-edit-submit-button-2' type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Save</button>
 						</form>
 					</div>
 				</div>
