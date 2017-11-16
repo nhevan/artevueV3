@@ -5,6 +5,8 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="container-fluid">
 				<div class="row">
+					<h3>Email Templates</h3>
+					<hr>
 					<table class="table table-bordered table-hover">
 						<thead>
 							<tr>
@@ -25,6 +27,10 @@
 							@endforeach
 						</tbody>
 					</table>
+				</div>
+				<div class="row">
+					<hr>
+					<a class="pull-right btn btn-sm btn-warning" href="{{ route('mail.dispatch-announcement') }}">Send Announcement email to all users</a>
 				</div>
 			</div>
 		</div>

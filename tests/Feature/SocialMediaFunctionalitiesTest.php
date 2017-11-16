@@ -16,11 +16,18 @@ class SocialMediaFunctionalitiesTest extends TestCase
      */
     public function users_can_search_their_common_fb_friends_that_are_using_our_system()
     {
+
+        /**
+         * I am using a test app under the facebook coldvenom account with app name "Socialite"
+         * The sample access token has all the debug info on this like https://developers.facebook.com/tools/debug/accesstoken/?q=EAAEKXpBRuKwBAJtZBcST3mPSH4q9KjbPCYJxWBBdfDSSUQ6uht5w53c5xGAyP4ngGckmuKMdHv7bATxRFCQhOIN1yzvt4a0trNUbwNg83YEUWiUqfOW21lX6VEDC7VZASunMXqXu1GUZCFXXpzrJ3beiSojTbrPL6kkylEoMgZDZD
+         * which expires on Jan 15 2018 
+         */
+
         //arrange
         $user = factory('App\User')->create([
         	'social_media' => 'facebook',
         	'social_media_uid' => '1555685954491783',
-        	'social_media_access_token' => 'EAAEKXpBRuKwBAJhGFccpKxHKs65ZCl2MDV5QFwsxhGZCiXKn6e78XWjDc7DrLO14Tcg8PtNpktnoJsDgUDwk91Gs7y5yo1K2v911Mv35s0YW5iwYsuzfvZCMwZCpeAHPPDu7DhQLaFFqQMrWM9ZCZCA8grxZBjw8ZBHAsWeED8zRKu801k1eRVxZBV7SWyFI5sOTHZAo3hlXkZAW3tohGvPpyISDWfIIolNWD7MfROrdhhfJwBi6jXwt2ZB2'
+        	'social_media_access_token' => 'EAAEKXpBRuKwBAJtZBcST3mPSH4q9KjbPCYJxWBBdfDSSUQ6uht5w53c5xGAyP4ngGckmuKMdHv7bATxRFCQhOIN1yzvt4a0trNUbwNg83YEUWiUqfOW21lX6VEDC7VZASunMXqXu1GUZCFXXpzrJ3beiSojTbrPL6kkylEoMgZDZD'
     	]);
 
     	$users_friend = factory('App\User')->create([

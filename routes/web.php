@@ -18,8 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/send-email-to-all', 'UsersController@sendEmailRegardingIssue');
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
@@ -99,3 +97,4 @@ Route::middleware('auth')->get('/mails/{template}/preview', 'MailsController@pre
 Route::middleware('auth')->get('/mails/{template}/test', 'MailsController@test')->name('mail.test');
 Route::middleware('auth')->get('/mails/{template}/edit', 'MailsController@edit')->name('mail.edit');
 Route::middleware('auth')->post('/mails/{template}/edit', 'MailsController@update')->name('mail.update');
+Route::middleware('auth')->get('/mails/dispatch-announcement', 'MailsController@dispatchAnnouncement')->name('mail.dispatch-announcement');

@@ -631,19 +631,6 @@ class UsersController extends ApiController
         return Mail::to($user->email)->queue(new WelcomeEmail($user));
     }
 
-    public function sendEmailRegardingIssue()
-    {
-        // $user = User::find(33);
-        $users = User::where('created_at', '<=', Carbon::createFromDate(2017, 6, 29))->orderBy('id', 'desc')->get();
-        // $users = User::where('id', 12)->orderBy('id', 'desc')->get();
-        
-        foreach ($users as $user) {
-            Mail::to($user->email)->queue(new NotifyIssueEmail($user));
-            echo "mail sent to {$user->name}. <br/>";
-        }
-        // return Mail::to($user->email)->queue(new NotifyIssueEmail($user));
-    }
-
     /**
      * returns a user if a user is found with the provided username
      * @param  Request $request [description]

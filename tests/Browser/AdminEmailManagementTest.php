@@ -148,4 +148,17 @@ class AdminEmailManagementTest extends DuskTestCase
                     ->assertSee('Email template successfully updated!');
         });
     }
+
+    /**
+     * @test
+     * admins can dispatch announcement email to all Artevue users
+     */
+    public function admins_can_dispatch_announcement_email_to_all_Artevue_users()
+    {
+        $this->browse(function (Browser $browser){
+            $browser->loginAs($this->admin)
+                    ->visit('/mails/dispatch-announcement')
+                    ->assertSee('Announcement emails are now being sent to all Artevue users.');
+        });
+    }
 }
