@@ -7,7 +7,7 @@ use App\User;
 use App\EmailTemplate;
 use App\Mail\WelcomeEmail;
 use Illuminate\Http\Request;
-use App\Mail\NotifyIssueEmail;
+use App\Mail\AnnouncementEmail;
 use App\Events\NewBuyPostRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -95,7 +95,7 @@ class MailsController extends ApiController
     public function buildMailFromTemplate(EmailTemplate $template)
     {
     	$mail_class = $template->mail_class;
-    	if (in_array($mail_class, ['App\Mail\WelcomeEmail', 'App\Mail\NotifyIssueEmail'])) {
+    	if (in_array($mail_class, ['App\Mail\WelcomeEmail', 'App\Mail\AnnouncementEmail'])) {
 	    	return new $mail_class(Auth::user());
     	}
 
@@ -119,11 +119,9 @@ class MailsController extends ApiController
     public function dispatchAnnouncement()
     {
         $users = User::all();
-        // $users = User::where('created_at', '<=', Carbon::createFromDate(2017, 6, 29))->orderBy('id', 'desc')->get();
-        // $users = User::where('id', 12)->orderBy('id', 'desc')->get();
         
         foreach ($users as $user) {
-            Mail::to($user->email)->queue(new NotifyIssueEmail($user));
+            Mail::to($user->email)->queue(new AnnouncementEmail($user));
         }
         
         $this->request->session()->flash('status', 'Announcement emails are now being sent to all Artevue users.');

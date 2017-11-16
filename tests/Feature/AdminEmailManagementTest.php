@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Mail\NotifyIssueEmail;
+use App\Mail\AnnouncementEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -30,13 +30,13 @@ class AdminEmailManagementTest extends TestCase
     	$response = $this->get("/mails/dispatch-announcement");
     	$new_user = factory('App\User')->create();
         //assert
-        Mail::assertSent(NotifyIssueEmail::class, function($mail){
+        Mail::assertSent(AnnouncementEmail::class, function($mail){
         	return $mail->user->id === $this->user->id;
         });
-        Mail::assertSent(NotifyIssueEmail::class, function($mail) use ($user2){
+        Mail::assertSent(AnnouncementEmail::class, function($mail) use ($user2){
         	return $mail->user->id === $user2->id;
         });
-        Mail::assertNotSent(NotifyIssueEmail::class, function($mail) use ($new_user){
+        Mail::assertNotSent(AnnouncementEmail::class, function($mail) use ($new_user){
         	return $mail->user->id === $new_user->id;
         });
     }

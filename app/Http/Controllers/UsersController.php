@@ -22,7 +22,6 @@ use App\MessageParticipant;
 use App\UserArtInteraction;
 use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
-use App\Mail\NotifyIssueEmail;
 use App\Traits\UserSwissKnife;
 use App\Traits\CounterSwissKnife;
 use Illuminate\Support\Facades\Auth;

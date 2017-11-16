@@ -57,7 +57,7 @@ class EmailTemplatesSeeder extends Seeder
 
     	$this->newEmailTemplate(
         	'Announcement Email', 
-        	'App\Mail\NotifyIssueEmail',
+        	'App\Mail\AnnouncementEmail',
         	'noreply@artevue.co.uk',
         	'Artevue',
         	'Announcement from Artevue.',
