@@ -145,6 +145,7 @@ class AdminEmailManagementTest extends DuskTestCase
                     ->type('sender_name', 'NH Evan')
                     ->type('subject', 'Welcome test subject')
                     ->press('Save')
+                    ->acceptDialog()
                     ->assertSee('Email template successfully updated!');
         });
     }

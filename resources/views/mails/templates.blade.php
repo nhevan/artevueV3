@@ -30,7 +30,10 @@
 				</div>
 				<div class="row">
 					<hr>
-					<a class="pull-right btn btn-sm btn-warning" href="{{ route('mail.dispatch-announcement') }}">Send Announcement email to all users</a>
+					<a class="pull-right btn btn-sm btn-warning" href="{{ route('mail.dispatch-announcement') }}"
+						onclick="return confirm('Please confirm that you want to SEND ANNOUNCEMENT EMAILS TO ALL USERS by clicking \'ok\' button.\nOtherwise click cancel.')">
+						Send Announcement email to all users
+					</a>
 				</div>
 			</div>
 		</div>

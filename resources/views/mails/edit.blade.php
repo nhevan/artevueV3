@@ -6,12 +6,19 @@
 			<div class="col-md-10 col-md-offset-1">
 				<div class="container-fluid">
 					<div class="row">
+						<form method="POST" action="{{ route('mail.update', ['template' => $template->id]) }}">
+						
+						<button 
+							id='email-template-edit-submit-button-1' type="submit" 
+							class="btn btn-sm btn-primary pull-right" 
+							onclick="return confirm('Please confirm that you want to save the changes by clicking \'ok\' button.\nOtherwise click cancel.')">
+						
+							Save
+						</button>
+
 						<h3 class="text-center">Editing {{ $template->name }} template</h3>
 						<hr>
-						<form method="POST" action="{{ route('mail.update', ['template' => $template->id]) }}">
 							{{ csrf_field() }}
-
-							<button id='email-template-edit-submit-button-2' type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Save</button>
 
 							<div class="form-group">
 								<label>Sender Email address</label>
@@ -35,7 +42,13 @@
 								<textarea rows="30" name='content'>{{ $template->content }}</textarea>
 							</div>
 
-							<button id='email-template-edit-submit-button-2' type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;">Save</button>
+							<button 
+								id='email-template-edit-submit-button-2' type="submit" 
+								class="btn btn-primary pull-right" 
+								onclick="return confirm('Please confirm that you want to save the changes by clicking \'ok\' button.\nOtherwise click cancel.')">
+							
+								Save
+							</button>
 						</form>
 					</div>
 				</div>

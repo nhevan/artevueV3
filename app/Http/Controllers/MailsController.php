@@ -119,7 +119,7 @@ class MailsController extends ApiController
     public function dispatchAnnouncement()
     {
         $users = User::all();
-        
+
         foreach ($users as $user) {
             Mail::to($user->email)->queue(new AnnouncementEmail($user));
         }
