@@ -105,6 +105,7 @@
                                 <li><a href="{{ route('posts.curators-choice') }}">Curators Choices</a></li>
                             </ul>
                         </li>
+                        <li><a href="{{ route('mail.templates') }}">Email Templates</a></li>
                         <li><a href="{{ url('/settings') }}">Settings</a></li>
                     </ul>
 

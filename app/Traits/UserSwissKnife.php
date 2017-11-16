@@ -77,7 +77,7 @@ trait UserSwissKnife{
             $response = $e->getResponse();
         }
         $fb_response_object = json_decode($response->getBody());
-        
+        // dd($fb_response_object);
         return array_column($fb_response_object->data, 'id');
     }
 

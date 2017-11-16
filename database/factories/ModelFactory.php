@@ -313,3 +313,9 @@ $factory->define(App\PostArtType::class, function ($faker) {
         'title' => $faker->sentence(1),
     ];
 });
+
+$factory->define(App\EmailTemplate::class, function ($faker) {
+    return [
+        'name' => $faker->sentence(1)
+    ];
+});

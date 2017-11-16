@@ -414,6 +414,7 @@ class PostApiTest extends TestCase
     public function a_request_can_be_sent_to_buy_a_post()
     {
         //arrange
+        $this->seed('EmailTemplatesSeeder');
         $this->signIn();
         $postOwner = factory('App\UserMetadata')->create();
         $post = factory('App\Post')->create(['owner_id' => $postOwner->user_id, 'has_buy_btn' => 1, 'price' => '100']);

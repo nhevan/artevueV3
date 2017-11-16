@@ -49,6 +49,7 @@ class AdminUserRelatedTest extends DuskTestCase
     public function admins_can_send_password_reset_email_to_any_user()
     {
         //arrange
+        $this->seed('EmailTemplatesSeeder');
         $usermeta = factory('App\UserMetadata')->create();
         $user = $usermeta->user;
     
@@ -80,9 +81,9 @@ class AdminUserRelatedTest extends DuskTestCase
                     ->click('#user-detail-'.$user->id)
                     ->click("#change-password")
                     ->assertSee('Enter new passoword')
-                    ->type('new_password', '123456')
+                    ->type('new_password', '1234567')
                     ->assertSee('Confirm password')
-                    ->type('confirm_password', '123456')
+                    ->type('confirm_password', '1234567')
                     ->press('Change Password')
                     ->assertSee('Password successfully changed !')
                     ->assertRouteIs('users.show', ['user' => $user->id]);
