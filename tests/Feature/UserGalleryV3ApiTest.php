@@ -144,6 +144,30 @@ class UserGalleryV3ApiTest extends TestCase
 
     /**
      * @test
+     * it returns is_private key along with the response for each gallery
+     */
+    public function it_returns_is_private_key_along_with_the_response_for_each_gallery()
+    {
+        //arrange
+        $public_gallery  = factory('App\Gallery')->create(['user_id' => $this->user->id, 'is_private' => 0]);
+        $private_gallery = factory('App\Gallery')->create(['user_id' => $this->user->id, 'is_private' => 1]);
+    
+        //act
+        $response = $this->json( 'GET', "/api/user/{$this->user->id}/galleries");
+    
+        //assert
+        $response->assertJsonFragment([
+            'id' => $public_gallery->id,
+            'is_private' => 0
+        ]);
+        $response->assertJsonFragment([
+            'id' => $private_gallery->id,
+            'is_private' => 1
+        ]);
+    }
+
+    /**
+     * @test
      * it returns galleries according to sequence 
      */
     public function it_returns_galleries_according_to_sequence()

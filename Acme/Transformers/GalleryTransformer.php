@@ -21,7 +21,7 @@ class GalleryTransformer extends Transformer
                 'description' => $gallery['description'],
                 'email' => $gallery['email'],
                 'website' => $gallery['website'],
-                
+                'is_private' => $gallery['is_private'],
                 'first_four_pins' => $first_four_pins
             ];
 
