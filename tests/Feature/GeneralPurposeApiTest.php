@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class GeneralPurposeApiTest extends TestCase
 {
     use DatabaseTransactions;
-    
+
     /**
      * @test
      * avatars endpoint returns 4 avatars for artist type users
@@ -125,5 +125,27 @@ class GeneralPurposeApiTest extends TestCase
         $response->assertJsonFragment([
             "professional" => [ $professional4->profile_picture, $professional3->profile_picture, $professional2->profile_picture, $professional1->profile_picture ]
         ]);
+    }
+
+    /**
+     * @test
+     * an authenticated user can report another user
+     */
+    public function an_authenticated_user_can_report_another_user()
+    {
+        //arrange
+        $this->signIn();
+        $suspect = factory('App\User')->create();
+    
+        //act
+        $response = $this->post("api/report/{$suspect->id}");
+    
+        //assert
+        $response->assertStatus(200);
+        //basically reporting a user does not do anything other than just storing the information on a database table
+        $this->assertDatabaseHas('reported_users', [
+                'user_id' => $this->user->id,
+                'suspect_id' => $suspect->id
+            ]);
     }
 }
