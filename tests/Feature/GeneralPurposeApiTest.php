@@ -148,4 +148,29 @@ class GeneralPurposeApiTest extends TestCase
                 'suspect_id' => $suspect->id
             ]);
     }
+
+    /**
+     * @test
+     * an authenticated user can update his location, latitude and longitude
+     */
+    public function an_authenticated_user_can_update_his_location_latitude_and_longitude()
+    {
+        //arrange
+        $this->signIn();
+    
+        //act
+        $response = $this->post("api/user/location", [
+                'latitude' => '93.125454',
+                'longitude' => '23.646646364564',
+                'location' => 'London, UK'
+            ]);
+    
+        //assert
+        $this->assertDatabaseHas('users', [
+                'id' => $this->user->id,
+                'latitude' => '93.125454',
+                'longitude' => '23.646646364564',
+                'location' => 'London, UK'
+            ]);
+    }
 }

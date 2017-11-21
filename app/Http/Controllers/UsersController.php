@@ -737,6 +737,30 @@ class UsersController extends ApiController
     }
 
     /**
+     * updates the authenticated users location
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateLocation(Request $request)
+    {
+        $rules = [
+            'location' => 'max:100',
+            'latitude' => 'max:100',
+            'longitude' => 'max:100'
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $user = $request->user();
+        $user->fill($request->all());
+        $user->save();
+
+        return $this->respond( [ 'message' => 'The users location has been updated.' ] );
+    }
+
+
+    /**
      * allows admins to edit username of any user
      * @param  User   $user [description]
      * @return [type]       [description]
