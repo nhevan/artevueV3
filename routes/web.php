@@ -20,7 +20,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 Route::get('/manage-tokens', function() {
     return view('tokens');
 })->middleware('auth');
@@ -43,6 +42,8 @@ Info@artevue.co.uk';
 	$pdf->setPaper('a4')->setOption('margin-bottom', '0mm');
 	return $pdf->inline();
 });
+
+Route::middleware('auth')->get('/dashboard', 'DashboardController@dashboard')->name('dashboard');
 
 Route::middleware('auth')->get('/settings', 'SettingsController@index')->name('settings.index');
 Route::middleware('auth')->get('/settings/edit/app', 'SettingsController@editAppSettings')->name('settings.edit-app-settings');

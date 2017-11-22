@@ -4,11 +4,30 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading text-center">Global System information</div>
+                        <div class="panel-body">
+                            
+                            <div class="col-md-6">
+                                @include('dashboard.system-summary')
+                            </div>
 
-                <div class="panel-body text-center">
-                	<p>Dashboard data management information will be displayed here, coming soon !</p>
+                            <div class="col-md-6">
+                                @include('dashboard.user-activities')
+                            </div>
+
+                            <div class="col-md-5">
+                                @include('dashboard.user-types')
+                            </div>
+
+                            <div class="col-md-7">
+                                @include('dashboard.posts')
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

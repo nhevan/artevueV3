@@ -2,27 +2,90 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
+use App\User;
+use App\Analytics;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+	protected $analytics;
+
+	public function __construct(Analytics $analytics)
+	{
+		$this->analytics = $analytics;
+	}
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function dashboard()
     {
-        return view('dashboard');
+    	$analytics = [];
+
+    	$this->analytics->setModel('App\User');
+    	$analytics['total_users'] = $this->analytics->getCount();
+    	$analytics['total_male_users'] = $this->analytics->where('sex', 1)->getCount();
+    	$analytics['total_female_users'] = $this->analytics->where('sex', 2)->getCount();
+    	$analytics['total_collector_users'] = $this->analytics->where('user_type_id', 3)->getCount();
+    	$analytics['total_gallery_users'] = $this->analytics->where('user_type_id', 4)->getCount();
+    	$analytics['total_enthusiast_users'] = $this->analytics->where('user_type_id', 5)->getCount();
+    	$analytics['total_artist_users'] = $this->analytics->where('user_type_id', 6)->getCount();
+    	$analytics['total_art_professional_users'] = $this->analytics->where('user_type_id', 7)->getCount();
+    	$analytics['total_fair_users'] = $this->analytics->where('user_type_id', 8)->getCount();
+    	$analytics['total_public_institute_users'] = $this->analytics->where('user_type_id', 9)->getCount();
+    	$analytics['total_others_users'] = $this->analytics->where('user_type_id', 10)->getCount();
+
+    	$this->analytics->setModel('App\UserType');
+    	$analytics['total_user_types'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\Post');
+    	$analytics['total_posts'] = $this->analytics->getCount();
+    	$analytics['total_public_posts'] = $this->analytics->where('is_public', 1)->getCount();
+    	$analytics['total_private_posts'] = $this->analytics->where('is_public', 0)->getCount();
+    	$analytics['total_posts_for_sale'] = $this->analytics->where('has_buy_btn', 1)->getCount();
+    	$analytics['total_posts_with_artist'] = $this->analytics->whereNot('artist_id', null)->getCount();
+    	$analytics['top_3_post_locations'] = $this->analytics->top('address_title')->whereNot('address_title', null)->whereNot('address_title', "")->limit(3)->get();
+
+    	$this->analytics->setModel('App\Message');
+    	$analytics['total_messages_sent'] = $this->analytics->getCount();
+
+		$this->analytics->setModel('App\Follower');
+    	$analytics['total_follows'] = $this->analytics->where('is_still_following', 1)->getCount();
+
+    	$this->analytics->setModel('App\Like');
+    	$analytics['total_likes'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\Pin');
+    	$analytics['total_pins'] = $this->analytics->getCount();
+    	
+    	$this->analytics->setModel('App\Comment');
+    	$analytics['total_comments'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\Gallery');
+    	$analytics['total_galleries'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\Hashtag');
+    	$analytics['total_hashtags'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\ArtType');
+    	$analytics['total_art_types'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\News');
+    	$analytics['total_news'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\Event');
+    	$analytics['total_events'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\ReportedUser');
+    	$analytics['total_reported_users'] = $this->analytics->getCount();
+
+    	$this->analytics->setModel('App\BlockedUser');
+    	$analytics['total_blocked_users'] = $this->analytics->getCount();
+
+        return view('dashboard', compact('analytics'));
     }
 }
