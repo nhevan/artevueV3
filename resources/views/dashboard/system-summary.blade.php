@@ -12,10 +12,7 @@
         <span class="badge">{{ $analytics['total_users'] }}</span> Total Users
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_male_users'] }}</span> Male Users
-    </li>
-    <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_female_users'] }}</span> Female Users
+        @include('dashboard.male-female-chart')
     </li>
     <li class="list-group-item">
         <span class="badge">{{ $analytics['total_user_types'] }}</span> Available User Types

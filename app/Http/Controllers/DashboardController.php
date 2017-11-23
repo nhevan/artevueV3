@@ -30,14 +30,15 @@ class DashboardController extends Controller
     	$analytics['total_users'] = $this->analytics->getCount();
     	$analytics['total_male_users'] = $this->analytics->where('sex', 1)->getCount();
     	$analytics['total_female_users'] = $this->analytics->where('sex', 2)->getCount();
-    	$analytics['total_collector_users'] = $this->analytics->where('user_type_id', 3)->getCount();
-    	$analytics['total_gallery_users'] = $this->analytics->where('user_type_id', 4)->getCount();
-    	$analytics['total_enthusiast_users'] = $this->analytics->where('user_type_id', 5)->getCount();
-    	$analytics['total_artist_users'] = $this->analytics->where('user_type_id', 6)->getCount();
-    	$analytics['total_art_professional_users'] = $this->analytics->where('user_type_id', 7)->getCount();
-    	$analytics['total_fair_users'] = $this->analytics->where('user_type_id', 8)->getCount();
-    	$analytics['total_public_institute_users'] = $this->analytics->where('user_type_id', 9)->getCount();
-    	$analytics['total_others_users'] = $this->analytics->where('user_type_id', 10)->getCount();
+
+    	$analytics['user_types']['collector'] = $this->analytics->where('user_type_id', 3)->getCount();
+    	$analytics['user_types']['gallery'] = $this->analytics->where('user_type_id', 4)->getCount();
+    	$analytics['user_types']['enthusiast'] = $this->analytics->where('user_type_id', 5)->getCount();
+    	$analytics['user_types']['artist'] = $this->analytics->where('user_type_id', 6)->getCount();
+    	$analytics['user_types']['art_professional'] = $this->analytics->where('user_type_id', 7)->getCount();
+    	$analytics['user_types']['fair'] = $this->analytics->where('user_type_id', 8)->getCount();
+    	$analytics['user_types']['public_institute'] = $this->analytics->where('user_type_id', 9)->getCount();
+    	$analytics['user_types']['others'] = $this->analytics->where('user_type_id', 10)->getCount();
 
     	$this->analytics->setModel('App\UserType');
     	$analytics['total_user_types'] = $this->analytics->getCount();

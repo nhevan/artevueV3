@@ -3,27 +3,27 @@
         <strong>User Types</strong>
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_fair_users'] }}</span> Fair
+        <span class="badge">{{ $analytics['user_types']['fair'] }}</span> Fair
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_gallery_users'] }}</span> Gallery
+        <span class="badge">{{ $analytics['user_types']['gallery'] }}</span> Gallery
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_artist_users'] }}</span> Artists
+        <span class="badge">{{ $analytics['user_types']['artist'] }}</span> Artists
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_collector_users'] }}</span> Collectors
+        <span class="badge">{{ $analytics['user_types']['collector'] }}</span> Collectors
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_enthusiast_users'] }}</span> Enthusiasts
+        <span class="badge">{{ $analytics['user_types']['enthusiast'] }}</span> Enthusiasts
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_art_professional_users'] }}</span> Art Professionals
+        <span class="badge">{{ $analytics['user_types']['art_professional'] }}</span> Art Professionals
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_public_institute_users'] }}</span> Public Institutes
+        <span class="badge">{{ $analytics['user_types']['public_institute'] }}</span> Public Institutes
     </li>
     <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_others_users'] }}</span> Others
+        <span class="badge">{{ $analytics['user_types']['others'] }}</span> Others
     </li>
 </ul>

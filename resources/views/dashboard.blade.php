@@ -18,11 +18,11 @@
                                 @include('dashboard.user-activities')
                             </div>
 
-                            <div class="col-md-5">
-                                @include('dashboard.user-types')
+                            <div class="col-md-7">
+                                @include('dashboard.user-types-chart', [ 'dataset' => $analytics['user_types'] ] )
                             </div>
 
-                            <div class="col-md-7">
+                            <div class="col-md-5">
                                 @include('dashboard.posts')
                             </div>
 
