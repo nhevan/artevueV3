@@ -9,6 +9,9 @@
         <span class="badge">{{ $analytics['total_likes'] }}</span> Total Likes
     </li>
     <li class="list-group-item">
+        <span class="badge">{{ $analytics['total_posts_for_sale'] }}</span> Posts for sale
+    </li>
+    <li class="list-group-item">
         <span class="badge">{{ $analytics['total_comments'] }}</span> Total Comments
     </li>
     <li class="list-group-item">
