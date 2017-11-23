@@ -319,3 +319,12 @@ $factory->define(App\EmailTemplate::class, function ($faker) {
         'name' => $faker->sentence(1)
     ];
 });
+
+$factory->define(App\MixpanelActions::class, function ($faker) {
+    return [
+        'user_id' => $faker->randomDigitNotNull,
+        'action' => $faker->sentence(1),
+        'parameters' => $faker->sentence(1),
+        'ip' => $faker->ipv4
+    ];
+});

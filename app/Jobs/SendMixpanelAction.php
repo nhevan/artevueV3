@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\User;
+use App\MixpanelActions;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -40,6 +41,12 @@ class SendMixpanelAction implements ShouldQueue
     public function handle()
     {
         $this->sendMixpanelAction();
+        MixpanelActions::create([
+            'user_id' => $this->user->id,
+            'action' => $this->action,
+            'parameters' => json_encode($this->properties),
+            'ip' => $this->ip
+        ]);
     }
 
 
