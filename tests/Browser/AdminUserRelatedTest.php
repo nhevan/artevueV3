@@ -34,7 +34,7 @@ class AdminUserRelatedTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs($this->admin)
-                    ->visit('/home')
+                    ->visit('/dashboard')
                     ->type('search_string', 'ben')
                     ->press('Search User')
                     ->assertSee('ben')

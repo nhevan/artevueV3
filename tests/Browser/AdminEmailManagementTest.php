@@ -31,7 +31,7 @@ class AdminEmailManagementTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser){
             $browser->loginAs($this->admin)
-                    ->visit('/home')
+                    ->visit('/dashboard')
                     ->assertSee('Email Templates');
         });
     }
