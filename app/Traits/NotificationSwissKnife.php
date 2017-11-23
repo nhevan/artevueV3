@@ -105,13 +105,23 @@ trait NotificationSwissKnife{
     }
 
     /**
+     * generates one signal channel name
+     * @param  [type] $user_id [description]
+     * @return [type]          [description]
+     */
+    public function getOneSignalTarget($user_id)
+    {
+        return "User-{$user_id}";
+    }
+
+    /**
      * sends a new message notification via OneSignal
      * @param  Message $message [description]
      * @return [type]           [description]
      */
     public function sendNewMessageNotification(Message $message)
     {
-        $target = "User-{$message->receiver->id}";
+        $target = $this->getOneSignalTarget($message->receiver->id);
         $data = ['type' => 'message', 'sender' => $message->sender->username, 'user_id' => $message->sender->id, 'profile_picture' => $message->sender->profile_picture ,'is_file' => $message->is_file, 'is_post' => $message->is_post, 'url' => $message->url ];
 
         $additional_fields = [
@@ -135,11 +145,12 @@ trait NotificationSwissKnife{
      */
     public function sendGenericNotification($notification_text, $user_id = null)
     {
-        $target = "User-{$user_id}";
+        $target = $this->getOneSignalTarget($user_id);
+
         $data = ['type' => 'general-notification'];
 
         if ($user_id) {
-            $this->sendNotificationToSegment($notification_text, $data, [ $target ]);
+            $this->sendNotificationToSegment($notification_text, $data, $target);
         }else{
             $this->sendNotificationToSegment($notification_text, $data);
         }
