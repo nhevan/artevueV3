@@ -131,11 +131,9 @@ class Analytics
     public function getByUnit()
     {
         $y_values = [];
-        // dd(sizeof($this->axis['axis_points']));
-        $i = 0;
-        while ($i <= sizeof($this->axis['axis_points']) - 1) {
-            $end_date = $this->axis['axis_points'][$i];
 
+        $i = 0;
+        foreach ($this->axis['axis_points'] as $end_date) {
             if ($this->axis['interval'] == 'hour') {
                 $start_date = $end_date->copy()->subHour();
             }
@@ -151,7 +149,6 @@ class Analytics
             $record_count = $this->query->where('created_at', '>', $start_date)->where('created_at', '<=', $end_date)->count();
 
             array_push($y_values, $record_count);
-            $i++;
         }
 
         $this->query = $this->model;
@@ -226,23 +223,41 @@ class Analytics
      * @param  [type] $interval   [description]
      * @return [type]             [description]
      */
-    public function setXAxis(Carbon $start_date, Carbon $end_date, $interval)
+    public function setXAxis($start_date, $end_date, $interval)
     {
-        $axis['interval'] = $interval;
-        $axis['axis_points'] = [];
+        $start_date = Carbon::parse($start_date);
+        $end_date = Carbon::parse($end_date);
 
         $intervalFunc = $this->getIntervalFunctions($interval);
         $intervalDifferenceFunc = $this->getIntervalDiffFunctions($interval);
         
         $i = 0;
+        $axis['axis_points'] = [];
         $total_interval_slots = $start_date->copy()->$intervalDifferenceFunc($end_date);
         while ($i <= $total_interval_slots) {
             array_push($axis['axis_points'], $start_date->copy()->$intervalFunc($i));
             $i++;
         }
 
+        $axis['interval'] = $interval;
+        $axis['axis_label_format'] = $this->getXAxisLabelFormat($interval);
         $this->axis = $axis;
 
         return $this;
+    }
+
+    public function getXAxisLabelFormat($interval)
+    {
+        if ($interval == 'hour') {
+            return 'ga';
+        }
+
+        if ($interval == 'day') {
+            return 'D';
+        }
+
+        if ($interval == 'month') {
+            return 'M-y';
+        }
     }
 }

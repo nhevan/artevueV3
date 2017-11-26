@@ -1,14 +1,29 @@
+<form method="GET" action="/dashboard" class="navbar-form" style="text-align: center;">
+    {{ csrf_field() }}
+    <div class="form-group">
+        <input name='start_date' type="date" class="form-control input-sm" placeholder="Start Date" value="{{ \Carbon\Carbon::parse($dataset['start_date'])->format("Y-m-d")}}">
+        <input name='end_date' type="date" class="form-control input-sm" placeholder="End Date" value="{{ \Carbon\Carbon::parse($dataset['end_date'])->format("Y-m-d") }}">
+
+        <select class="form-control input-sm" name='interval'>
+          <option>Select Interval</option>
+          <option value="hour" {{ $dataset['interval'] == 'hour' ? "selected":"" }} >Hour</option>
+          <option value="day" {{ $dataset['interval'] == 'day' ? "selected":"" }} >Day</option>
+          <option value="month" {{ $dataset['interval'] == 'month' ? "selected":"" }} >Month</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-info btn-sm">Show</button>
+    <a href="/dashboard" class="btn btn-success btn-sm">Today</a>
+</form>    
+
 <canvas id="activities-line-chart" width="400" height="100"></canvas>
 
-{{-- "{{ \Carbon\Carbon::parse($x)->format("y-m-d") }}" --}}
-{{-- "{{ \Carbon\Carbon::parse($x)->format("ga") }}" --}}
 @section('script')
     <script>
         var activities_chart = document.getElementById("activities-line-chart");
         var chart_data = {
             labels: [
                     @foreach ($dataset['x_axis']['axis_points'] as $x) 
-                        "{{ \Carbon\Carbon::parse($x)->format("M") }}"
+                        "{{ \Carbon\Carbon::parse($x)->format($dataset['x_axis']['axis_label_format']) }}"
                         @if (!$loop->last)
                             ,
                         @endif
@@ -29,9 +44,10 @@
             }, {
                 label: 'Female',
                 backgroundColor: '#fc5a7b',
+                fill: false,
                 data: [
-                    @foreach ($dataset as $type => $user_type) 
-                        {{ sizeof($user_type) }}
+                    @foreach ($dataset['new_users'] as $type => $new_users) 
+                        {{ $new_users }}
                         @if (!$loop->last)
                             ,
                         @endif

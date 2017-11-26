@@ -35,9 +35,14 @@ class DashboardController extends Controller
     	$analytics['total_male_users'] = $this->analytics->where('sex', 1)->getCount();
     	$analytics['total_female_users'] = $this->analytics->where('sex', 2)->getCount();
         
-        $start_date = Carbon::now()->subMonths(8);
-        $end_date = Carbon::now();
-        $analytics['timed']['new_users'] = $this->analytics->setXAxis($start_date, $end_date, 'month')->getByUnit();
+        $start_date = $this->request->input('start_date') ? $this->request->input('start_date') : Carbon::now()->subDay(1);
+        $end_date = $this->request->input('end_date') ? $this->request->input('end_date') : Carbon::now();
+        $interval = $this->request->input('interval') ? $this->request->input('interval') : 'hour';
+
+        $analytics['timed']['start_date'] = $start_date;
+        $analytics['timed']['end_date'] = $end_date;
+        $analytics['timed']['interval'] = $interval;
+        $analytics['timed']['new_users'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
         $analytics['timed']['x_axis'] = $this->analytics->getXAxis();
         // return $analytics['timed']['x_axis'];
         // return $analytics['timed']['new_users'];
