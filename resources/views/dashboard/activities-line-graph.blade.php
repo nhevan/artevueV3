@@ -12,7 +12,8 @@
         </select>
     </div>
     <button type="submit" class="btn btn-info btn-sm">Show</button>
-    <a href="/dashboard" class="btn btn-success btn-sm">Today</a>
+    - or -
+    <a href="/dashboard" class="btn btn-success btn-sm">See Today</a>
 </form>    
 
 <canvas id="activities-line-chart" width="400" height="100"></canvas>
@@ -32,6 +33,7 @@
             datasets: [{
                 label: 'New Users',
                 backgroundColor: '#48b8b7',
+                borderColor: '#48b8b7',
                 fill: false,
                 data: [
                     @foreach ($dataset['new_users'] as $type => $new_users) 
@@ -42,12 +44,13 @@
                     @endforeach
                 ]
             }, {
-                label: 'Female',
+                label: 'New Posts',
                 backgroundColor: '#fc5a7b',
+                borderColor: '#fc5a7b',
                 fill: false,
                 data: [
-                    @foreach ($dataset['new_users'] as $type => $new_users) 
-                        {{ $new_users }}
+                    @foreach ($dataset['new_posts'] as $type => $new_posts) 
+                        {{ $new_posts }}
                         @if (!$loop->last)
                             ,
                         @endif

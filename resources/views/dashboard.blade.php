@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="panel panel-default">
-                        <div class="panel-heading text-center">Last 12 Hour Actitivies</div>
+                        <div class="panel-heading text-center">Quick View</div>
                         <div class="panel-body">
                             <div class="col-md-12">
                                 @include('dashboard.activities-line-graph', [

@@ -44,8 +44,7 @@ class DashboardController extends Controller
         $analytics['timed']['interval'] = $interval;
         $analytics['timed']['new_users'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
         $analytics['timed']['x_axis'] = $this->analytics->getXAxis();
-        // return $analytics['timed']['x_axis'];
-        // return $analytics['timed']['new_users'];
+        
     	$analytics['user_types']['collector'] = $this->analytics->where('user_type_id', 3)->getCount();
     	$analytics['user_types']['gallery'] = $this->analytics->where('user_type_id', 4)->getCount();
     	$analytics['user_types']['enthusiast'] = $this->analytics->where('user_type_id', 5)->getCount();
@@ -65,6 +64,7 @@ class DashboardController extends Controller
     	$analytics['total_posts_for_sale'] = $this->analytics->where('has_buy_btn', 1)->getCount();
     	$analytics['total_posts_with_artist'] = $this->analytics->whereNot('artist_id', null)->getCount();
     	$analytics['top_3_post_locations'] = $this->analytics->top('address_title')->whereNot('address_title', null)->whereNot('address_title', "")->limit(3)->get();
+        $analytics['timed']['new_posts'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
 
     	$this->analytics->setModel('App\Message');
     	$analytics['total_messages_sent'] = $this->analytics->getCount();
