@@ -68,18 +68,22 @@ class DashboardController extends Controller
 
     	$this->analytics->setModel('App\Message');
     	$analytics['total_messages_sent'] = $this->analytics->getCount();
+        $analytics['timed']['new_messages'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
 
 		$this->analytics->setModel('App\Follower');
     	$analytics['total_follows'] = $this->analytics->where('is_still_following', 1)->getCount();
 
     	$this->analytics->setModel('App\Like');
     	$analytics['total_likes'] = $this->analytics->getCount();
+        $analytics['timed']['new_likes'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
 
     	$this->analytics->setModel('App\Pin');
     	$analytics['total_pins'] = $this->analytics->getCount();
+        $analytics['timed']['new_pins'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
     	
     	$this->analytics->setModel('App\Comment');
     	$analytics['total_comments'] = $this->analytics->getCount();
+        $analytics['timed']['new_comments'] = $this->analytics->setXAxis($start_date, $end_date, $interval)->getByUnit();
 
     	$this->analytics->setModel('App\Gallery');
     	$analytics['total_galleries'] = $this->analytics->getCount();
