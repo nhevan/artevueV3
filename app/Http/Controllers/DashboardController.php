@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\User;
 use App\Analytics;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
 	protected $analytics;
+    protected $request;
 
-	public function __construct(Analytics $analytics)
+	public function __construct(Analytics $analytics, Request $request)
 	{
 		$this->analytics = $analytics;
+        $this->request = $request;
 	}
 
     /**
@@ -24,13 +27,20 @@ class DashboardController extends Controller
      */
     public function dashboard()
     {
+        // dd($this->request->all());
     	$analytics = [];
 
     	$this->analytics->setModel('App\User');
     	$analytics['total_users'] = $this->analytics->getCount();
     	$analytics['total_male_users'] = $this->analytics->where('sex', 1)->getCount();
     	$analytics['total_female_users'] = $this->analytics->where('sex', 2)->getCount();
-
+        
+        $start_date = Carbon::now()->subMonths(8);
+        $end_date = Carbon::now();
+        $analytics['timed']['new_users'] = $this->analytics->setXAxis($start_date, $end_date, 'month')->getByUnit();
+        $analytics['timed']['x_axis'] = $this->analytics->getXAxis();
+        // return $analytics['timed']['x_axis'];
+        // return $analytics['timed']['new_users'];
     	$analytics['user_types']['collector'] = $this->analytics->where('user_type_id', 3)->getCount();
     	$analytics['user_types']['gallery'] = $this->analytics->where('user_type_id', 4)->getCount();
     	$analytics['user_types']['enthusiast'] = $this->analytics->where('user_type_id', 5)->getCount();
