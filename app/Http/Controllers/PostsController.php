@@ -193,7 +193,7 @@ class PostsController extends ApiController
             return;
         }
 
-        $tags = $this->parseTaggedUsersInput();
+        $tags = $this->request->tagged_users;
 
         foreach($tags as $tag) {
             $tag['post_id'] = $this->post->id;
@@ -206,7 +206,7 @@ class PostsController extends ApiController
      * @param  array  $tag [description]
      * @return [type]      [description]
      */
-    public function tagUser(array $tag)
+    private function tagUser(array $tag)
     {
         $user = User::find($tag['user_id']);
         if($user){
@@ -214,18 +214,6 @@ class PostsController extends ApiController
             $new_tag = Tag::create($tag);
             if($new_tag) $this->incrementUserTaggedCount($tag['user_id']);
         }
-    }
-
-    /**
-     * parses the tagged_users string to array
-     * @return array [description]
-     */
-    public function parseTaggedUsersInput()
-    {
-        $raw_tags = stripcslashes($this->request->tagged_users);
-        $tags = json_decode($raw_tags, JSON_UNESCAPED_UNICODE);
-
-        return $tags;
     }
 
     public function showWeb(Post $post)

@@ -60,7 +60,20 @@ class PostApiTest extends TestCase
         $y = .45;
         $post = factory('App\Post')->make([
             'post_image' => UploadedFile::fake()->image('avatar.jpg'),
-            'tagged_users' => '[{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_1.'\",\"x\":'.$x.'},{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_2.'\",\"x\":'.$x.'}]'
+            // this is the old way of taking tagged data input : a json array encoded as utf8 string on iOS end
+            // 'tagged_users' => '[{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_1.'\",\"x\":'.$x.'},{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_2.'\",\"x\":'.$x.'}]'
+            'tagged_users' => [
+                    [ 
+                        'user_id' => $tagges_user_id_1, 
+                        'x' => $x, 
+                        'y' => $y
+                    ], 
+                    [
+                        'user_id' => $tagges_user_id_2, 
+                        'x' => $x, 
+                        'y' => $y
+                    ]
+                ]
             ]);
     
         //act
