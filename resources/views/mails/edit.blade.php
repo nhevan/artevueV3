@@ -6,6 +6,7 @@
 			<div class="col-md-10 col-md-offset-1">
 				<div class="container-fluid">
 					<div class="row">
+						@include('backbutton')
 						<form method="POST" action="{{ route('mail.update', ['template' => $template->id]) }}">
 						
 						<button 
@@ -63,4 +64,4 @@
 		selector:'textarea',
 		plugins: "image imagetools" 
 	});</script>
-@endsection
+@append
