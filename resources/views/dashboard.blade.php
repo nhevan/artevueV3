@@ -10,7 +10,7 @@
                         <div class="panel-heading text-center">Quick View</div>
                         <div class="panel-body">
                             <div class="col-md-12">
-                                @include('dashboard.activities-line-graph', [
+                                @include('dashboard.quickview-charts', [
                                     'dataset' => $analytics['timed']
                                 ])
                             </div>
