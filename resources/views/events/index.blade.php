@@ -11,6 +11,7 @@
                     <th>Headline</th>
                     <th>Description</th>
                     <th>Location</th>
+                    <th>City</th>
                     <th>Publish Date</th>
                     <th>Action</th>
                   </tr>
@@ -21,6 +22,7 @@
                     <td>{{ $event->headline }}</td>
                     <td>{{ $event->description }}</td>
                     <td>{{ $event->location }}</td>
+                    <td>{{ $event->city or 'not mentioned' }}</td>
                     <td>{{ $event->publish_date }}</td>
                     <td><a href="/events/{{ $event->id }}" class="btn btn-primary pull-right">View</a></td>
                     <td><a href="/events/edit/{{ $event->id }}" class="btn btn-primary pull-right">Edit</a></td>

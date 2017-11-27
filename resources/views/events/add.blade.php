@@ -4,6 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
+            @include('backbutton')
             <h3 class="text-center">Add a new event</h3>
             <hr>
             <form method="POST" action="/events" enctype="multipart/form-data">
@@ -19,6 +20,19 @@
               <div class="form-group">
                 <label>Location</label>
                 <input type="text" name="location" class="form-control" value="{{ old('location') }}" required>
+              </div>
+              <div class="form-group">
+                <label>City name</label>
+                <select class="form-control" name='city'>
+                  <option>Select City</option>
+                  <option value="London">London</option>
+                  <option value="Paris">Paris</option>
+                  <option value="New York">New York</option>
+                  <option value="Dubai">Dubai</option>
+                  <option value="Hong Kong">Hong Kong</option>
+                  <option value="Tokyo">Tokyo</option>
+                  <option value="Berlin">Berlin</option>
+                </select>
               </div>
               <div class="form-group">
                 <label>Image</label>

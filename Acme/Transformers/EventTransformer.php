@@ -14,6 +14,7 @@ class EventTransformer extends Transformer
                 'headline' => $event['headline'],
                 'description' => $event['description'],
                 'location' => $event['location'],
+                'city' => $event['city'],
                 'image' => $event['image'],
                 'url' => $event['url'],
                 'start_date' => $event['start_date'],
