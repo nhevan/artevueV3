@@ -72,7 +72,7 @@ Route::middleware('auth:api')->post('/fetch-suggested-hashtags', 'PostsControlle
 Route::middleware('auth:api')->put('/post/{post}', 'PostsController@edit');
 Route::middleware('auth:api')->patch('/post/{post_id}', 'PostsController@swapLockStatus');
 Route::middleware('auth:api')->delete('/post/{post_id}', 'PostsController@delete');
-Route::middleware('auth:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
+Route::middleware('auth.optional:api')->get('/post/tagged/{user_id}', 'PostsController@taggedPosts');
 Route::middleware('auth.optional:api')->get('/post/likes/{post_id}', 'PostsController@postLikes');
 Route::middleware('auth.optional:api')->get('/feed', 'PostsController@feed');
 

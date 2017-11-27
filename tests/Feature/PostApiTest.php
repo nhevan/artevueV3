@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Http\Request;
 use App\Events\NewBuyPostRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -40,6 +41,69 @@ class PostApiTest extends TestCase
         //assert
         $response->assertSuccessful();
         $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id]);
+    }
+
+    /**
+     * @test
+     * a user can tag another user while creating a post
+     */
+    public function a_user_can_tag_another_user_while_creating_a_post()
+    {
+        //arrange
+        Storage::fake('s3');
+        $this->signIn();
+        $tagged_user_1 = factory('App\UserMetadata')->create()->user;
+        $tagges_user_id_1 = $tagged_user_1->id;
+        $tagged_user_2 = factory('App\UserMetadata')->create()->user;
+        $tagges_user_id_2 = $tagged_user_2->id;
+        $x = .45;
+        $y = .45;
+        $post = factory('App\Post')->make([
+            'post_image' => UploadedFile::fake()->image('avatar.jpg'),
+            'tagged_users' => '[{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_1.'\",\"x\":'.$x.'},{\"y\":'.$y.',\"user_id\":\"'.$tagges_user_id_2.'\",\"x\":'.$x.'}]'
+            ]);
+    
+        //act
+        $response = $this->post('api/post', $post->toArray());
+
+        //assert
+        $response->assertSuccessful();
+        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id]);
+        $this->assertDatabaseHas('tags', [
+                'user_id' => $tagged_user_1->id,
+                'username' => $tagged_user_1->username,
+                'x' => $x,
+                'y' => $y
+            ]);
+        $this->assertDatabaseHas('tags', [
+                'user_id' => $tagged_user_2->id,
+                'username' => $tagged_user_2->username,
+                'x' => $x,
+                'y' => $y
+            ]);
+    }
+
+    /**
+     * @test
+     * post type apis include a posts tagged users data
+     */
+    public function post_type_apis_include_a_posts_tagged_users_data()
+    {
+        //arrange
+        $this->signIn();
+        $post = factory('App\Post')->create(['owner_id' => $this->user->id]);
+        $tag = factory('App\Tag')->create([ 'post_id' => $post->id, 'x' => .4, 'y' => .6 ]);
+
+        //act
+        $response = $this->get('/api/feed');
+    
+        //assert
+        $response->assertJsonFragment([
+                "user_id" => $tag->user_id,
+                "username" =>  $tag->username,
+                "x" =>  $tag->x,
+                "y" =>  $tag->y
+            ]);
     }
 
     /**
