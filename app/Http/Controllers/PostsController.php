@@ -969,6 +969,7 @@ class PostsController extends ApiController
     {
         $interested_user = $this->request->user();
         event(new NewBuyPostRequest($interested_user, $post));
+        $this->trackAction(Auth::user(), "New Buy Post Request");
 
         return $this->respond(["message" => 'Post buy notification successgully sent.']);
     }

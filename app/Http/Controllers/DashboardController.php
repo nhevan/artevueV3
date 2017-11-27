@@ -106,6 +106,9 @@ class DashboardController extends Controller
     	$this->analytics->setModel('App\BlockedUser');
     	$analytics['total_blocked_users'] = $this->analytics->getCount();
 
+        $this->analytics->setModel('App\MixpanelActions');
+        $analytics['total_buy_button_pressed'] = $this->analytics->where('action', 'New Buy Post Request')->getCount();
+
         return view('dashboard', compact('analytics'));
     }
 }

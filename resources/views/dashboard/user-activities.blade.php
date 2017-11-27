@@ -12,6 +12,9 @@
         <span class="badge">{{ $analytics['total_posts_for_sale'] }}</span> Posts for sale
     </li>
     <li class="list-group-item">
+        <span class="badge">{{ $analytics['total_buy_button_pressed'] }}</span> Buy button pressed
+    </li>
+    <li class="list-group-item">
         <span class="badge">{{ $analytics['total_comments'] }}</span> Total Comments
     </li>
     <li class="list-group-item">
@@ -25,11 +28,5 @@
     </li>
     <li class="list-group-item">
         <span class="badge">{{ $analytics['total_hashtags'] }}</span> Total Hashtags
-    </li>
-    <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_reported_users'] }}</span> Total Reported Users
-    </li>
-    <li class="list-group-item">
-        <span class="badge">{{ $analytics['total_blocked_users'] }}</span> Total Blocked Users
     </li>
 </ul>

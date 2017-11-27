@@ -11,9 +11,9 @@
     <li class="list-group-item">
         <span class="badge">{{ $analytics['total_users'] }}</span> Total Users
     </li>
-    <li class="list-group-item">
+    {{-- <li class="list-group-item">
         @include('dashboard.male-female-chart')
-    </li>
+    </li> --}}
     <li class="list-group-item">
         <span class="badge">{{ $analytics['total_user_types'] }}</span> Available User Types
     </li>
@@ -25,5 +25,11 @@
     </li>
     <li class="list-group-item">
         <span class="badge">{{ $analytics['total_events'] }}</span> Total Events
+    </li>
+    <li class="list-group-item">
+        <span class="badge">{{ $analytics['total_reported_users'] }}</span> Total Reported Users
+    </li>
+    <li class="list-group-item">
+        <span class="badge">{{ $analytics['total_blocked_users'] }}</span> Total Blocked Users
     </li>
 </ul>
