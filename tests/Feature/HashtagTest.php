@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Post;
 use App\Hashtag;
 use Tests\TestCase;
+use App\Jobs\SendDetectedHashtags;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -95,21 +96,37 @@ class HashtagTest extends TestCase
 	        	'hashtag_id' => $hashtag->id
 	    	]);
         }
-        
-        //act
         $latest_post = factory('App\Post')->make( [
         	'post_image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABREAAAJPCAYAAADrIZMWAAABfGlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGAqSSwoyGFhYGDIzSspCnJ3UoiIjFJgv8PAzcDDIMRgxSCemFxc4BgQ4MOAE3y7xsAIoi/rgsxK8/x506a1fP4WNq+ZclYlOrj1gQF3SmpxMgMDIweQnZxSnJwLZOcA2TrJBUUlQPYMIFu3vKQAxD4BZIsUAR0IZN8BsdMh7A8gdhKYzcQCVhMS5AxkSwDZAkkQtgaInQ5hW4DYyRmJKUC2B8guiBvAgNPDRcHcwFLXkYC7SQa5OaUwO0ChxZOaFxoMcgcQyzB4MLgwKDCYMxgwWDLoMjiWpFaUgBQ65xdUFmWmZ5QoOAJDNlXBOT+3oLQktUhHwTMvWU9HwcjA0ACkDhRnEKM/B4FNZxQ7jxDLX8jAYKnMwMDcgxBLmsbAsH0PA4PEKYSYyjwGBn5rBoZt5woSixLhDmf8xkKIX5xmbARh8zgxMLDe+///sxoDA/skBoa/E////73',
         	'description' => 'latest post for hashtag - with a #test #secondtest hashtag'
     	] );
-
+        
+        //act
     	$this->post('api/post', $latest_post->toArray() , [ 'X-ARTEVUE-App-Version' => '2.0' ]);
     	$this->post('api/post', $latest_post->toArray() , [ 'X-ARTEVUE-App-Version' => '2.0' ]);
 
     	$response = $this->get('api/hashtag/latest-posts/test');
+        
         //assert
-		// $this->assertCount(2, $response->json()['data']);
+		$this->assertCount(2, $response->json()['data']);
 		$response->assertJsonFragment([
 			'description' => 'latest post for hashtag - with a #test #secondtest hashtag'
 		]);
+    }
+
+    /**
+     * @test
+     * parseHashtag method removes all special characters from a given hashtag in SendDetenctedHashtag class
+     */
+    public function parseHashtag_method_removes_all_special_characters_from_a_given_hashtag_in_SendDetenctedHashtag_class()
+    {
+        //arrange
+        $this->signIn();
+    
+        //act
+        $google_vision = new SendDetectedHashtags($this->user, 'a_image_url', 'something-random');
+    
+        //assert
+        $this->assertEquals('something', $google_vision->parseHashtag('somethi#"\'/!@#$%^&*()-+$ng'));
     }
 }

@@ -54,7 +54,7 @@ class SendDetectedHashtags implements ShouldQueue
             //if ($entity->getScore() > 0.6) {
                 $hashtag = strtolower(str_replace(' ', '', $entity->getDescription()));
                 if (strlen($hashtag) <= 15 && $i < 8) {
-                    $hashtags[] = $hashtag;
+                    $hashtags[] = $this->parseHashtag($hashtag);
                     $i += 1;
                 }
             //}
@@ -68,5 +68,15 @@ class SendDetectedHashtags implements ShouldQueue
         ];
         
         $this->sendPusherNotification('User-'.$this->user->id,'hashtags-detected', $data);
+    }
+
+    /**
+     * removes all symbols and spaces from a hashtag - only keeps characters and numbers
+     * @param  [type] $hashtag [description]
+     * @return [type]          [description]
+     */
+    public function parseHashtag($hashtag)
+    {
+        return preg_replace('/[^0-9a-zA-Z_]/', "", $hashtag);
     }
 }
