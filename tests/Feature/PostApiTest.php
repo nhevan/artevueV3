@@ -45,6 +45,62 @@ class PostApiTest extends TestCase
 
     /**
      * @test
+     * a user can edit a post of his own
+     */
+    public function a_user_can_edit_a_post_of_his_own()
+    {
+        //arrange
+        Storage::fake('s3');
+        $this->signIn();
+        $post = factory('App\Post')->create([
+            'owner_id' => $this->user->id,
+            'has_buy_btn' => 0,
+            'price' => 99.99,
+            'address_title' => 'old address title',
+            'address' => 'old address'
+        ]);
+        $tagged_user_1 = factory('App\UserMetadata')->create()->user;
+    
+        //act
+        $this->put("api/post/{$post->id}", [
+            'description' => 'new description',
+            'artist' => 'New Artist',
+            'has_buy_btn' => 1,
+            'price' => 11.99,
+            'address_title' => 'new address title',
+            'address' => 'new address',
+            'tagged_users' => [
+                [
+                    'user_id' => $tagged_user_1->id,
+                    'x' => .56,
+                    'y' => .31
+                ]
+            ]
+        ]);
+    
+        //assert
+        $this->assertDatabaseHas('posts', [
+            'owner_id' => $this->user->id,
+            'description' => 'new description',
+            'has_buy_btn' => 1,
+            'price' => 11.99,
+            'address_title' => 'new address title',
+            'address' => 'new address'
+        ]);
+
+        $this->assertDatabaseHas('artists', [
+            'title' => 'New Artist'    
+        ]);
+
+        $this->assertDatabaseHas('tags', [
+            'user_id' => $tagged_user_1->id,
+            'x' => .56,
+            'y' => .31
+        ]);
+    }
+
+    /**
+     * @test
      * a user can tag another user while creating a post
      */
     public function a_user_can_tag_another_user_while_creating_a_post()
