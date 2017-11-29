@@ -63,7 +63,6 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // dd($data);
         return User::create([
             'name' => $data['name'],
             'username' => $data['username'],
@@ -71,5 +70,23 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
             'user_type_id' => 3
         ]);
+    }
+
+    /**
+     * instead of registering the user, it redirects the user to login screen as registration is not available now
+     * @return [type] [description]
+     */
+    public function register()
+    {
+        return redirect()->route('login');
+    }
+
+    /**
+     * instead of showing the register form, it redirects the user to login screen
+     * @return [type] [description]
+     */
+    public function showRegistrationForm()
+    {
+        return redirect()->route('login');
     }
 }
