@@ -133,4 +133,22 @@ class PostSearchTest extends SearchTestCase
         // $this->search($needle)->matchByField('artist', $needle->artist->title)->checkSingularity();
     }
 
+    /**
+     * @test
+     * posts can be searched by hashtag
+     */
+    public function posts_can_be_searched_by_hashtag()
+    {
+        //arrange
+        $needle = factory('App\Post')->create(['description' => 'a post with a #hashtag']);
+        $needle2 = factory('App\Post')->create(['description' => 'another post with similar #hashtag']);
+        $posts = factory('App\Post', 5)->create();
+    
+        //act
+        $response = $this->json( 'GET', "/api/search-posts", ['hashtag' => urlencode('#hashtag')])->json();
+
+        //assert
+        $this->assertEquals(2, $response['pagination']['total']);
+    }
+
 }

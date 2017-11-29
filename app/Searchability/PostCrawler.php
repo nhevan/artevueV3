@@ -48,4 +48,11 @@ class PostCrawler extends Crawler
 
 		return $this->model = $this->model->whereIn('artist_id', $artists);
 	}
+
+	public function whereHashtag($query_string)
+	{
+		$query_string = str_replace('#', '', urldecode($query_string));
+
+		return $this->model = $this->model->where('description', 'LIKE', '%'.$query_string.'%');
+	}
 }
