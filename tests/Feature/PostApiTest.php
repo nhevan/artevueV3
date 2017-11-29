@@ -13,8 +13,10 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
+use Acme\Transformers\PostTransformer;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\SendNewMessageNotification;
+use App\Http\Controllers\PostsController;
 use App\Listeners\SendBuyPostRequestNotifications;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -97,6 +99,54 @@ class PostApiTest extends TestCase
             'x' => .56,
             'y' => .31
         ]);
+    }
+
+    /**
+     * @test
+     * it can post to facebook whern a post and a access token is given
+     */
+    public function it_can_post_to_facebook_whern_a_post_and_a_access_token_is_given()
+    {
+        //arrange
+        Storage::fake('s3');
+        $this->signIn();
+        $post = factory('App\Post')->create([
+            'owner_id' => $this->user->id,
+            'description' => 'A automated test post, please ignore'
+        ]);
+        $post_controller = new PostsController($post, new PostTransformer,new Request);
+        $access_token = 'EAACEdEose0cBADMOvA8UFSRJMZBFaR8SI4wMbGgbaY4lKTMXTqiSkagNQL0Rrw2z5jYAST6mPHdmTxXYF0iWjMn0ThYXUW3IM2Mi0g9PjgWgqdiusuw4YLHluHov88vClMoAF4MCItwXQMZCzwCYqFAuewuNs2xGukZCJNGZBriRrjZAgJ0fcXVI3dZAVaiHP3ZAUDeczzVNgZDZD';
+    
+        //act
+        $response = $post_controller->postToFacebook($post, $access_token);
+
+        //assert
+        $this->assertEquals(0, $response);
+    }
+
+    /**
+     * @test
+     * while creating a post a user can specify if he wants the post to posted to Facebook
+     */
+    public function while_creating_a_post_a_user_can_specify_if_he_wants_the_post_to_posted_to_Facebook()
+    {
+        //arrange
+        Storage::fake('s3');
+        $this->signIn();
+        $post = factory('App\Post')->make( ['post_image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABREAAAJPCAYAAADrIZMWAAABfGlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGAqSSwoyGFhYGDIzSspCnJ3UoiIjFJgv8PAzcDDIMRgxSCemFxc4BgQ4MOAE3y7xsAIoi/rgsxK8/x506a1fP4WNq+ZclYlOrj1gQF3SmpxMgMDIweQnZxSnJwLZOcA2TrJBUUlQPYMIFu3vKQAxD4BZIsUAR0IZN8BsdMh7A8gdhKYzcQCVhMS5AxkSwDZAkkQtgaInQ5hW4DYyRmJKUC2B8guiBvAgNPDRcHcwFLXkYC7SQa5OaUwO0ChxZOaFxoMcgcQyzB4MLgwKDCYMxgwWDLoMjiWpFaUgBQ65xdUFmWmZ5QoOAJDNlXBOT+3oLQktUhHwTMvWU9HwcjA0ACkDhRnEKM/B4FNZxQ7jxDLX8jAYKnMwMDcgxBLmsbAsH0PA4PEKYSYyjwGBn5rBoZt5woSixLhDmf8xkKIX5xmbARh8zgxMLDe+///sxoDA/skBoa/E////73',
+            'description' => 'unit test post to facebook',
+            'access_token' => 'EAACEdEose0cBADMOvA8UFSRJMZBFaR8SI4wMbGgbaY4lKTMXTqiSkagNQL0Rrw2z5jYAST6mPHdmTxXYF0iWjMn0ThYXUW3IM2Mi0g9PjgWgqdiusuw4YLHluHov88vClMoAF4MCItwXQMZCzwCYqFAuewuNs2xGukZCJNGZBriRrjZAgJ0fcXVI3dZAVaiHP3ZAUDeczzVNgZDZD'
+            ] )->toArray();
+
+        //act
+        $response = $this->post('api/post', $post , [ 'X-ARTEVUE-App-Version' => '2.0' ]);
+
+        //assert
+        $this->assertDatabaseHas('posts', ['owner_id' => $this->user->id]);
+        $this->assertDatabaseHas('mixpanel_actions', [
+                'user_id' => $this->user->id,
+                'action' => 'New Post with FB share'
+            ]);
     }
 
     /**

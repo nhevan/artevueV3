@@ -15,6 +15,7 @@ use Vision\Image;
 use Vision\Vision;
 use Vision\Feature;
 use App\PostHashtag;
+use GuzzleHttp\Client;
 use Illuminate\Http\File;
 use App\Mail\SendGalleryPdf;
 use Illuminate\Http\Request;
@@ -168,7 +169,6 @@ class PostsController extends ApiController
             $this->setValidationErrors(['is_gallery' => 'The provided galleries does not exist or does not belong to the logged in user.']);
             return $this->responseValidationError();   
         }
-
         $this->setArtist();
         $new_post = $this->request->user()->posts()->save($this->savePost());
         $this->post = $new_post;
@@ -179,6 +179,10 @@ class PostsController extends ApiController
         $this->sendNewPostEvent(); //need to implement
 
         $this->trackAction(Auth::user(), "New Post");
+        if($this->request->access_token){
+            $this->postToFacebook($this->post, $this->request->access_token);
+            $this->trackAction(Auth::user(), "New Post with FB share");
+        }
         
         return $this->respond(['message'=>'New Post created.']);
     }
@@ -984,5 +988,36 @@ class PostsController extends ApiController
     private function isCurrentUserGalleryOwner($gallery_id)
     {
         return !! Gallery::where('id', $gallery_id)->where('user_id', Auth::user()->id)->first();
+    }
+
+    /**
+     * posts a post to facebook
+     * @param  [type] $post         [description]
+     * @param  [type] $access_token [description]
+     * @return [type]               [description]
+     */
+    public function postToFacebook($post, $access_token, $privacy_value = 'EVERYONE')
+    {
+        $client = new Client();
+
+        try {
+            $response = $client->request("POST", "https://graph.facebook.com/v2.10/me/feed", [
+                'form_params' => [
+                    'access_token' => $access_token,
+                    'link' => 'http://dy01r176shqrv.cloudfront.net/'.$post->image,
+                    'message' => $post->description,
+                    'picture' => 'http://dy01r176shqrv.cloudfront.net/'.$post->image,
+                    'privacy' => [
+                        'value' => $privacy_value
+                    ]
+                ]
+            ]);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getMessage();
+
+            return $response;
+        }
+
+        return 0;
     }
 }
