@@ -84,13 +84,13 @@ Route::middleware('api')->get('/posts/sale', 'PostsController@onSalePosts'); // 
 
 Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');
-Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery');
+Route::middleware('auth.optional:api')->get('/gallery/{user_id}', 'PostsController@getGallery'); // v2
 Route::middleware('auth:api')->post('/arrange-gallery', 'PostsController@arrangeGalleryPosts');
 Route::middleware('auth:api')->post('/gallery', 'GalleriesController@store');
 Route::middleware('auth.optional:api')->get('/user/{user_id}/galleries', 'GalleriesController@index');
 Route::middleware('auth:api')->patch('/user/{user_id}/galleries', 'GalleriesController@arrangeGallery');
 Route::middleware('auth:api')->patch('/gallery/{gallery_id}/arrange-pins', 'GalleriesController@arrangePins');
-Route::middleware('api')->get('/user/{user_id}/gallery/{gallery_id}', 'GalleriesController@show');
+Route::middleware('api')->get('/user/{user_id}/gallery/{gallery_id}', 'GalleriesController@show'); // v3
 Route::middleware('auth:api')->delete('/gallery/{gallery_id}', 'GalleriesController@destroy');
 Route::middleware('auth:api')->patch('/gallery/{gallery}', 'GalleriesController@update');
 

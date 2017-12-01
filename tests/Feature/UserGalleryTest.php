@@ -159,15 +159,16 @@ class UserGalleryV2ApiTest extends TestCase
     public function gallery_posts_are_returned_with_their_sequence_in_ascending_order()
     {
         //arrange
-        $sequence0_pin = factory('App\Pin')->create(['user_id'=>$this->user->id]);
-        $sequence1_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'sequence' => 1]);
-        $sequence2_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'sequence' => 2]);
+        $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $sequence0_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'gallery_id' => $gallery->id]);
+        $sequence1_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'gallery_id' => $gallery->id, 'sequence' => 1]);
+        $sequence2_pin = factory('App\Pin')->create(['user_id'=>$this->user->id, 'gallery_id' => $gallery->id, 'sequence' => 2]);
 
         //act
-        $response = $this->getJson("/api/gallery/{$this->user->id}")->json();
-
+        $response = $this->getJson("/api/user/{$this->user->id}/gallery/{$gallery->id}")->json();
+        // dd($response);
         //assert
-        $this->assertEquals([ $sequence0_pin->post_id, $sequence1_pin->post_id, $sequence2_pin->post_id ], array_column($response['data'], 'id'));
+        $this->assertEquals([ $sequence0_pin->post_id, $sequence1_pin->post_id, $sequence2_pin->post_id ], array_column($response['data'], 'post_id'));
     }
 
     /**

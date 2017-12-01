@@ -104,7 +104,7 @@ class GalleriesController extends ApiController
         $gallery = Gallery::where('id', $gallery_id)->where('user_id', $user_id)->first();
         
         if ($gallery) {
-            $pins = Pin::where('gallery_id', $gallery_id)->orderBy('id', 'DESC')->get();
+            $pins = Pin::where('gallery_id', $gallery_id)->orderBy('sequence')->get();
 
             return $this->respond([
                 'data' => $pins
