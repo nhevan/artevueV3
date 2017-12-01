@@ -341,6 +341,31 @@ class PostApiTest extends TestCase
 
     /**
      * @test
+     * while creating a gallery a post the posts pin count increases accordingly
+     */
+    public function while_creating_a_gallery_a_post_the_posts_pin_count_increases_accordingly()
+    {
+        //arrange
+        Storage::fake('s3');
+        $this->signIn();
+        $gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
+        $post = factory('App\Post')->make([
+            'post_image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABREAAAJPCAYAAADrIZMWAAABfGlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGAqSSwoyGFhYGDIzSspCnJ3UoiIjFJgv8PAzcDDIMRgxSCemFxc4BgQ4MOAE3y7xsAIoi/rgsxK8/x506a1fP4WNq+ZclYlOrj1gQF3SmpxMgMDIweQnZxSnJwLZOcA2TrJBUUlQPYMIFu3vKQAxD4BZIsUAR0IZN8BsdMh7A8gdhKYzcQCVhMS5AxkSwDZAkkQtgaInQ5hW4DYyRmJKUC2B8guiBvAgNPDRcHcwFLXkYC7SQa5OaUwO0ChxZOaFxoMcgcQyzB4MLgwKDCYMxgwWDLoMjiWpFaUgBQ65xdUFmWmZ5QoOAJDNlXBOT+3oLQktUhHwTMvWU9HwcjA0ACkDhRnEKM/B4FNZxQ7jxDLX8jAYKnMwMDcgxBLmsbAsH0PA4PEKYSYyjwGBn5rBoZt5woSixLhDmf8xkKIX5xmbARh8zgxMLDe+///sxoDA/skBoa/E////73',
+            'is_gallery' => $gallery1->id
+        ])->toArray();
+    
+        //act
+        $response = $this->post('api/post', $post , [ 'X-ARTEVUE-App-Version' => '2.0' ]);
+
+        //assert
+        $this->assertDatabaseHas('pins', ['user_id' => $this->user->id, 'gallery_id' => $gallery1->id]);
+        $this->assertDatabaseHas('posts', [
+            'pin_count' => 1
+        ]);
+    }
+
+    /**
+     * @test
      * a user can fetch all posts with predefined hashtag - in this case arteprize2017
      */
     public function a_user_can_fetch_arteprize_related_posts()

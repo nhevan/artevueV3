@@ -480,10 +480,15 @@ class PostsController extends ApiController
     public function pinPost()
     {
         $target_galleries = $this->getGalleriesFromIsGalleryField();
-
+        $pin_count = $this->post->pin_count;
+        
         foreach ($target_galleries as $gallery_id) {
         	Pin::create([ 'post_id' => $this->post->id, 'user_id' => $this->request->user()->id, 'gallery_id' => $gallery_id]);
+            $pin_count++;
         }
+
+        $this->post->pin_count = $pin_count;
+        $this->post->save();
     }
 
     /**
