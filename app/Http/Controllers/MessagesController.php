@@ -164,7 +164,10 @@ class MessagesController extends ApiController
     	$this->updateTotalMessageCountInParticipantsTable($request->user()->id, $request->receiver_id, $message->id);
     	$this->updateMessageCountInFollowersTable($request->receiver_id);
 
-        return $this->respond(['message'=>'Message successfully sent.']);
+        return $this->respond([
+        	'message' => 'Message successfully sent.',
+        	'message_id' => $message->id
+    	]);
     }
 
     /**

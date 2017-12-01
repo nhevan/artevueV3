@@ -221,6 +221,43 @@ class MessageApiTest extends TestCase
 
     /**
      * @test
+     * when a message is sent to a user the message participant table is updated to point to the last message
+     */
+    public function when_a_message_is_sent_to_a_user_the_message_participant_table_is_updated_to_point_to_the_last_message()
+    {
+        //arrange
+        $sender = factory('App\User')->create();
+        $receiver = factory('App\User')->create();
+        factory('App\UserMetadata')->create(['user_id' => $sender->id]);
+        factory('App\UserMetadata')->create(['user_id' => $receiver->id]);
+        $this->signIn($sender);
+        $message1 = $this->json('POST','api/message',[
+            'receiver_id' => $receiver->id,
+            'message' => 'Testing new entry message participant table.',
+        ]);
+
+        //act
+        $message2 = $this->json('POST','api/message',[
+            'receiver_id' => $receiver->id,
+            'message' => 'Second Message',
+        ]);
+        $this->signIn($receiver);
+        $message3 = $this->json('POST','api/message',[
+            'receiver_id' => $sender->id,
+            'message' => 'Third Message as a reply',
+        ]);
+
+        //assert
+        $this->assertDatabaseHas('message_participants', [
+            'participant_one' => $sender->id,
+            'participant_two' => $receiver->id,
+            'total_messages' => 3,
+            'last_message_id' => $message3->json()['message_id']
+        ]);
+    }
+
+    /**
+     * @test
      * a user can delete a entire conversation
      */
     public function a_user_can_delete_a_entire_conversation()
