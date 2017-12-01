@@ -49,7 +49,8 @@ class SendBuyPostRequestNotifications implements ShouldQueue
         $message->receiver_id = $event->post->owner->id;
 
         if($event->post->price > 0){
-            $message->message = "Hi, I am interested in this work which is priced at ${$event->post->price}. Please can you let me know if it is available and provide further details. Thank you.";
+            $price = $event->post->price;
+            $message->message = 'Hi, I am interested in this work which is priced at $'.$price.'. Please can you let me know if it is available and provide further details. Thank you.';
         }else{
             $message->message = "Hi, I am interested in this work. Please can you let me know if it is available and provide further details. Thank you.";
         }

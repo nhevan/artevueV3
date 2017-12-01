@@ -192,7 +192,7 @@ class UserGalleryV3ApiTest extends TestCase
     {
     	//arrange
         $gallery = factory('App\Gallery')->create(['user_id' => $this->user->id]);
-    	$pins = factory('App\Pin', 6)->create(['gallery_id'=>$gallery->id])->sortByDesc('id');
+    	$pins = factory('App\Pin', 6)->create(['gallery_id'=>$gallery->id])->sortByDesc('sequence');
 
         //act
     	$response = $this->getJson("/api/user/{$this->user->id}/gallery/{$gallery->id}")->json();
@@ -378,16 +378,25 @@ class UserGalleryV3ApiTest extends TestCase
     	//arrange
     	$gallery1 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
     	$gallery2 = factory('App\Gallery')->create(['user_id' => $this->user->id]);
-    	$pins = factory('App\Pin', 3)->create(['gallery_id'=>$gallery1->id, 'user_id' => $this->user->id])->sortByDesc('id');
+    	$pins = factory('App\Pin', 3)->create(['gallery_id'=>$gallery1->id, 'user_id' => $this->user->id]);
     	$post = factory('App\Post')->create();
     	$custom_pin = factory('App\Pin')->create([ 'gallery_id' => $gallery1->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
     	$custom_pin_2 = factory('App\Pin')->create([ 'gallery_id' => $gallery2->id, 'user_id' => $this->user->id, 'post_id' => $post->id ]);
-        
+
         //act
-		$response = $this->json('GET', "/api/user/{$this->user->id}/gallery/{$gallery1->id}")->json();
+		$response = $this->json('GET', "/api/user/{$this->user->id}/gallery/{$gallery1->id}");
 
         //assert
-        $this->assertEquals( array_merge([$custom_pin->id], $pins->pluck('id')->all()), array_column($response['data'] ,'id'));
+        $response->assertJsonFragment([
+            'post_id' => $custom_pin->post_id,
+            'post_id' => $custom_pin_2->post_id
+        ]);
+        foreach ($pins->toArray() as $pin) {
+            $response->assertJsonFragment([
+                'post_id' => $pin['post_id']
+            ]);
+        }
+
     }
 
     /**
