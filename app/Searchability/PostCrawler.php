@@ -51,8 +51,13 @@ class PostCrawler extends Crawler
 
 	public function whereHashtag($query_string)
 	{
-		$query_string = str_replace('#', '', urldecode($query_string));
+		$hashtag = urldecode($query_string);
 
-		return $this->model = $this->model->where('description', 'LIKE', '%'.$query_string.'%');
+		if($hashtag[0] == "#"){
+			return $this->model = $this->model->where('description', 'LIKE', '%'.$hashtag.'%');
+		}
+
+		return $this->model = $this->model->where('description', 'LIKE', '%#'.$hashtag.'%');
+
 	}
 }
