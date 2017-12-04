@@ -38,7 +38,11 @@ class OptionalAuth
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        $this->authenticate($guards);
+        // dd(get_class_methods($request->headers));
+        // dd($request->headers->get('authorization'));
+        
+        if($request->headers->get('authorization'))
+            $this->authenticate($guards);
 
         return $next($request);
     }
@@ -63,6 +67,6 @@ class OptionalAuth
             }
         }
 
-        // throw new AuthenticationException('Unauthenticated.', $guards);
+        throw new AuthenticationException('Unauthenticated.', $guards);
     }
 }
