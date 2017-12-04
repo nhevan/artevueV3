@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Carbon\Carbon;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -172,5 +173,29 @@ class GeneralPurposeApiTest extends TestCase
                 'longitude' => '23.646646364564',
                 'location' => 'London, UK'
             ]);
+    }
+
+    /**
+     * @test
+     * a logged in user can change his password
+     */
+    public function a_logged_in_user_can_change_his_password()
+    {
+        //arrange
+        $this->signIn();
+
+        //act
+        $response = $this->patch("api/password", [
+                'old_password' => 'secret',
+                'new_password' => 'newpassword'
+            ]);
+
+        //assert
+        if (Hash::check('newpassword', $this->user->password))
+        {
+            $this->assertEquals(1, 1);
+        }else{
+            $this->assertEquals(1, 0);
+        }
     }
 }
