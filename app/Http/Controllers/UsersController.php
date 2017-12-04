@@ -139,6 +139,15 @@ class UsersController extends ApiController
     }
 
     /**
+     * returns the profile of the logged-in user
+     * @return [type] [description]
+     */
+    public function myProfile()
+    {
+        return $this->fetch(Auth::user()->id);
+    }
+
+    /**
      * returns a single user detail for api
      * @param  User   $user [description]
      * @return [type]       [description]
