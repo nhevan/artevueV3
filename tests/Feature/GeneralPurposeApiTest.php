@@ -198,4 +198,17 @@ class GeneralPurposeApiTest extends TestCase
             $this->assertEquals(1, 0);
         }
     }
+
+    /**
+     * @test
+     * confirm that test db is in use
+     */
+    public function confirm_that_test_db_is_in_use()
+    {
+        //act
+        $response = $this->get('/api/feed');
+
+        //assert
+        $this->assertCount(0, $response->json()['data']);
+    }
 }
