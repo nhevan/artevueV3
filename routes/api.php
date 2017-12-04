@@ -31,6 +31,7 @@ Route::middleware('api')->post('/auth/{provider}/signup', 'UsersController@signu
 Route::middleware('auth.optional:api')->get('/user/{user}', 'UsersController@fetch');
 Route::middleware('auth:api')->get('/me', 'UsersController@myProfile');
 Route::middleware('auth:api')->put('/user', 'UsersController@edit');
+Route::middleware('auth:api')->put('/instagram-uid', 'UsersController@updateInstagramId');
 Route::middleware('auth:api')->get('/current-user', 'UsersController@currentUser');
 Route::middleware('api')->get('/user-by-username', 'UsersController@fetchUserByUsername');
 Route::middleware('api')->get('/check-username', 'UsersController@checkUsername');

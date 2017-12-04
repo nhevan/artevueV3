@@ -746,6 +746,27 @@ class UsersController extends ApiController
     }
 
     /**
+     * allows a user to update their instagram uid 
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function updateInstagramId(Request $request)
+    {
+        $rules = [
+            'instagram_uid' => 'required'
+        ];
+        if (!$this->setRequest($request)->isValidated($rules)) {
+            return $this->responseValidationError();
+        }
+
+        $user = $request->user();
+        $user->instagram_uid = $request->input('instagram_uid');
+        $user->save();
+
+        return $this->respond( [ 'message' => 'The user has successfully updated their instagram_uid.' ] );
+    }
+
+    /**
      * updates the authenticated users location
      * @param  Request $request [description]
      * @return [type]           [description]

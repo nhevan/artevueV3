@@ -38,6 +38,7 @@ class UserTransformer extends Transformer
                 'gcm_registration_key' => $user['gcm_registration_key'],
                 'social_media' => $user['social_media'],
                 'social_media_uid' => $user['social_media_uid'],
+                'instagram_uid' => $user['instagram_uid'],
                 'social_media_access_token' => $user['social_media_access_token'],
                 'profile_picture' => $user['profile_picture'],
                 
