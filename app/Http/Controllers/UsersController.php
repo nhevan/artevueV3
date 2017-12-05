@@ -24,6 +24,7 @@ use Illuminate\Http\Request;
 use App\Mail\NewPasswordEmail;
 use App\Traits\UserSwissKnife;
 use App\Traits\CounterSwissKnife;
+use App\Traits\FileUploadSwissKnife;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -40,7 +41,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 
 class UsersController extends ApiController
 {
-    use CounterSwissKnife, NotificationSwissKnife, UserSwissKnife;
+    use CounterSwissKnife, NotificationSwissKnife, UserSwissKnife, FileUploadSwissKnife;
     protected $user;
     
     /**
@@ -949,15 +950,16 @@ class UsersController extends ApiController
     public function updateProfilePicture(Request $request)
     {
         $rules = [
-            'profile_picture' => 'required|file',
+            'profile_picture' => 'required',
         ];
         if (!$this->setRequest($request)->isValidated($rules)) {
             return $this->responseValidationError();
         }
         
-        $path = $request->file('profile_picture')->store(
-            'img/profile_pic', 's3'
-        );
+        // $path = $request->file('profile_picture')->store(
+        //     'img/profile_pic', 's3'
+        // );
+        $path = $this->uploadPostImageTos3('profile_picture', 'img/profile_pic');
 
         $user = Auth::user();
         $user->profile_picture = $path;
