@@ -26,15 +26,14 @@ class NewPasswordEmail extends Mailable
     public function __construct(User $user, $is_previewing = 0)
     {
         $this->user = $user;
-
         $this->template = EmailTemplate::where('mail_class', get_class($this))->first();
-        $this->content = $this->replaceVariables();
 
         if (!$is_previewing) {
             $this->new_password = str_random(8);
             $this->user->password = bcrypt($this->new_password);
             $this->user->save();
         }
+        $this->content = $this->replaceVariables();
     }
 
     /**
