@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class SendDetectedHashtags implements ShouldQueue
+class SendDetectedHashtags
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NotificationSwissKnife;
     
