@@ -17,16 +17,21 @@ class GeneralPurposeApiTest extends TestCase
      * @test
      * avatars endpoint returns 4 avatars for artist type users
      */
-    public function avatars_endpoint_returns_4_avatars_for_artist_type_users()
+    public function avatars_endpoint_returns_4_avatars_for_top_artist_type_users()
     {
         //arrange
         $this->seed('UserTypesTableSeeder');
         $ignored1 = factory('App\User')->create([ 'user_type_id' => 6, 'profile_picture' => 'dummy.png', 'created_at' => Carbon::now()->subDays(2)]);
-        $artist1 = factory('App\User')->create([ 'user_type_id' => 6]);
-        $artist2 = factory('App\User')->create([ 'user_type_id' => 6]);
-        $artist3 = factory('App\User')->create([ 'user_type_id' => 6]);
-        $artist4 = factory('App\User')->create([ 'user_type_id' => 6]);
+        $artist1 = factory('App\User')->create([ 'user_type_id' => 6, 'profile_picture' => 'img/needle-image1.jpg', 'created_at' => Carbon::now()->subDays(2) ]);
+        factory('App\UserMetadata')->create(['user_id' => $artist1->id, 'pin_count' => 10, 'like_count' => 10, 'comment_count' => 10 ]);
+        $artist2 = factory('App\User')->create([ 'user_type_id' => 6, 'profile_picture' => 'img/needle-image2.jpg', 'created_at' => Carbon::now()->subDays(2) ]);
+        factory('App\UserMetadata')->create(['user_id' => $artist2->id, 'pin_count' => 20, 'like_count' => 10, 'comment_count' => 10 ]);
+        $artist3 = factory('App\User')->create([ 'user_type_id' => 6, 'profile_picture' => 'img/needle-image3.jpg', 'created_at' => Carbon::now()->subDays(2) ]);
+        factory('App\UserMetadata')->create(['user_id' => $artist3->id, 'pin_count' => 30, 'like_count' => 10, 'comment_count' => 10 ]);
+        $artist4 = factory('App\User')->create([ 'user_type_id' => 6, 'profile_picture' => 'img/needle-image4.jpg', 'created_at' => Carbon::now()->subDays(2) ]);
+        factory('App\UserMetadata')->create(['user_id' => $artist4->id, 'pin_count' => 40, 'like_count' => 10, 'comment_count' => 10 ]);
     
+        $other_artists = factory('App\User', 5)->create([ 'user_type_id' => 6]);
         //act
         $response = $this->get('/api/user-types/avatars');
 
@@ -45,10 +50,14 @@ class GeneralPurposeApiTest extends TestCase
         //arrange
         $this->seed('UserTypesTableSeeder');
         $ignored1 = factory('App\User')->create([ 'user_type_id' => 4, 'profile_picture' => 'dummy.png', 'created_at' => Carbon::now()->subDays(2)]);
-        $gallery1 = factory('App\User')->create([ 'user_type_id' => 4]);
-        $gallery2 = factory('App\User')->create([ 'user_type_id' => 4]);
-        $gallery3 = factory('App\User')->create([ 'user_type_id' => 4]);
-        $gallery4 = factory('App\User')->create([ 'user_type_id' => 4]);
+        $gallery1 = factory('App\User')->create([ 'user_type_id' => 4, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $gallery1->id, 'pin_count' => 10, 'like_count' => 10, 'comment_count' => 10 ]);
+        $gallery2 = factory('App\User')->create([ 'user_type_id' => 4, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $gallery2->id, 'pin_count' => 20, 'like_count' => 10, 'comment_count' => 10 ]);
+        $gallery3 = factory('App\User')->create([ 'user_type_id' => 4, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $gallery3->id, 'pin_count' => 30, 'like_count' => 10, 'comment_count' => 10 ]);
+        $gallery4 = factory('App\User')->create([ 'user_type_id' => 4, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $gallery4->id, 'pin_count' => 40, 'like_count' => 10, 'comment_count' => 10 ]);
     
         //act
         $response = $this->get('/api/user-types/avatars');
@@ -68,10 +77,14 @@ class GeneralPurposeApiTest extends TestCase
         //arrange
         $this->seed('UserTypesTableSeeder');
         $ignored1 = factory('App\User')->create([ 'user_type_id' => 3, 'profile_picture' => 'dummy.png', 'created_at' => Carbon::now()->subDays(2)]);
-        $collector1 = factory('App\User')->create([ 'user_type_id' => 3]);
-        $collector2 = factory('App\User')->create([ 'user_type_id' => 3]);
-        $collector3 = factory('App\User')->create([ 'user_type_id' => 3]);
-        $collector4 = factory('App\User')->create([ 'user_type_id' => 3]);
+        $collector1 = factory('App\User')->create([ 'user_type_id' => 3, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $collector1->id, 'pin_count' => 10, 'like_count' => 10, 'comment_count' => 10 ]);
+        $collector2 = factory('App\User')->create([ 'user_type_id' => 3, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $collector2->id, 'pin_count' => 20, 'like_count' => 10, 'comment_count' => 10 ]);
+        $collector3 = factory('App\User')->create([ 'user_type_id' => 3, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $collector3->id, 'pin_count' => 30, 'like_count' => 10, 'comment_count' => 10 ]);
+        $collector4 = factory('App\User')->create([ 'user_type_id' => 3, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $collector4->id, 'pin_count' => 40, 'like_count' => 10, 'comment_count' => 10 ]);
     
         //act
         $response = $this->get('/api/user-types/avatars');
@@ -91,10 +104,14 @@ class GeneralPurposeApiTest extends TestCase
         //arrange
         $this->seed('UserTypesTableSeeder');
         $ignored1 = factory('App\User')->create([ 'user_type_id' => 5, 'profile_picture' => 'dummy.png', 'created_at' => Carbon::now()->subDays(2)]);
-        $enthusiast1 = factory('App\User')->create([ 'user_type_id' => 5]);
-        $enthusiast2 = factory('App\User')->create([ 'user_type_id' => 5]);
-        $enthusiast3 = factory('App\User')->create([ 'user_type_id' => 5]);
-        $enthusiast4 = factory('App\User')->create([ 'user_type_id' => 5]);
+        $enthusiast1 = factory('App\User')->create([ 'user_type_id' => 5, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $enthusiast1->id, 'pin_count' => 10, 'like_count' => 10, 'comment_count' => 10 ]);
+        $enthusiast2 = factory('App\User')->create([ 'user_type_id' => 5, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $enthusiast2->id, 'pin_count' => 20, 'like_count' => 10, 'comment_count' => 10 ]);
+        $enthusiast3 = factory('App\User')->create([ 'user_type_id' => 5, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $enthusiast3->id, 'pin_count' => 30, 'like_count' => 10, 'comment_count' => 10 ]);
+        $enthusiast4 = factory('App\User')->create([ 'user_type_id' => 5, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $enthusiast4->id, 'pin_count' => 40, 'like_count' => 10, 'comment_count' => 10 ]);
     
         //act
         $response = $this->get('/api/user-types/avatars');
@@ -114,17 +131,21 @@ class GeneralPurposeApiTest extends TestCase
         //arrange
         $this->seed('UserTypesTableSeeder');
         $ignored1 = factory('App\User')->create([ 'user_type_id' => 8, 'profile_picture' => 'dummy.png', 'created_at' => Carbon::now()->subDays(2)]);
-        $professional1 = factory('App\User')->create([ 'user_type_id' => 8]);
-        $professional2 = factory('App\User')->create([ 'user_type_id' => 8]);
-        $professional3 = factory('App\User')->create([ 'user_type_id' => 8]);
-        $professional4 = factory('App\User')->create([ 'user_type_id' => 8]);
+        $professional1 = factory('App\User')->create([ 'user_type_id' => 7, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $professional1->id, 'pin_count' => 10, 'like_count' => 10, 'comment_count' => 10 ]);
+        $fair = factory('App\User')->create([ 'user_type_id' => 8, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $fair->id, 'pin_count' => 20, 'like_count' => 10, 'comment_count' => 10 ]);
+        $institute3 = factory('App\User')->create([ 'user_type_id' => 9, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $institute3->id, 'pin_count' => 30, 'like_count' => 10, 'comment_count' => 10 ]);
+        $institute4 = factory('App\User')->create([ 'user_type_id' => 9, 'profile_picture' => 'img/needle-image1.jpg']);
+        factory('App\UserMetadata')->create(['user_id' => $institute4->id, 'pin_count' => 50, 'like_count' => 10, 'comment_count' => 10 ]);
     
         //act
         $response = $this->get('/api/user-types/avatars');
 
         //assert
         $response->assertJsonFragment([
-            "professional" => [ $professional4->profile_picture, $professional3->profile_picture, $professional2->profile_picture, $professional1->profile_picture ]
+            "professional" => [ $institute4->profile_picture, $institute4->profile_picture, $fair->profile_picture, $professional1->profile_picture ]
         ]);
     }
 

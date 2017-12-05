@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Notifications\Notifiable;
@@ -126,6 +127,13 @@ class User extends Authenticatable
     public function tags()
     {
         return $this->hasMany('App\Tag');
+    }
+
+    public function scopeTop($query)
+    {
+        return $query->join('users_metadata', 'users.id', '=', 'users_metadata.user_id')
+                     ->select('users.*', DB::raw('`users_metadata`.`like_count`+`users_metadata`.`pin_count`+`users_metadata`.`comment_count`+`users_metadata`.`message_count`+`users_metadata`.`follower_count`+`users_metadata`.`following_count`+`users_metadata`.`post_count`+`users_metadata`.`tagged_count` as total_count'))
+                     ->orderBy('total_count', 'desc');
     }
 
     /**

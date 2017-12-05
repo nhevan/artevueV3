@@ -44,11 +44,11 @@ class UserTypesController extends ApiController
     public function avatars(Request $request)
     {
         return [
-            "artist" => $this->getLatest4AvatarsByUserType(6),
-            "gallery" => $this->getLatest4AvatarsByUserType(4),
-            "collector" => $this->getLatest4AvatarsByUserType(3),
-            "enthusiast" => $this->getLatest4AvatarsByUserType(5),
-            "professional" => $this->getLatest4AvatarsByUserType([7, 8, 9])
+            "artist" => $this->getTop4AvatarsByUserType(6),
+            "gallery" => $this->getTop4AvatarsByUserType(4),
+            "collector" => $this->getTop4AvatarsByUserType(3),
+            "enthusiast" => $this->getTop4AvatarsByUserType(5),
+            "professional" => $this->getTop4AvatarsByUserType([7, 8, 9])
         ];
     }
 
@@ -57,13 +57,13 @@ class UserTypesController extends ApiController
      * @param  [type] $user_type_id [description]
      * @return [type]               [description]
      */
-    private function getLatest4AvatarsByUserType($user_type_id)
+    private function getTop4AvatarsByUserType($user_type_id)
     {
         if (gettype($user_type_id) == "array") {
-            $users = User::whereIn('user_type_id', $user_type_id)->select('profile_picture')->latest()->limit(4)->get();
+            $users = User::whereIn('user_type_id', $user_type_id)->select('profile_picture')->top()->latest()->limit(4)->get();
         }
         else {
-            $users = User::where('user_type_id', $user_type_id)->select('profile_picture')->latest()->limit(4)->get();
+            $users = User::where('user_type_id', $user_type_id)->select('profile_picture')->top()->latest()->limit(4)->get();
         }
         $avatars = [];
         foreach ($users as $user) {
