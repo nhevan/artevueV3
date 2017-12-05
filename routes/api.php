@@ -130,6 +130,6 @@ Route::middleware('auth:api')->get('/test-email-queue/{user}', 'UsersController@
 Route::middleware('auth:api')->get('/test-mixpanel', 'UsersController@testMixpanel');
 Route::middleware('api')->get('/status', 'SettingsController@status');
 
-Route::middleware('api')->get('/search-posts', 'SearchPostsController@search');
-Route::middleware('api')->get('/search-users', 'SearchUsersController@search');
+Route::middleware('auth.optional:api')->get('/search-posts', 'SearchPostsController@search');
+Route::middleware('auth.optional:api')->get('/search-users', 'SearchUsersController@search');
 Route::middleware('auth:api')->get('/find-friends', 'SocialMediaController@findFriends');

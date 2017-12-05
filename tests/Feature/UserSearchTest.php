@@ -111,7 +111,7 @@ class UserSearchTest extends SearchTestCase
         //assert
         $response->assertJsonFragment([
             'id' => $collector->id,
-            'id' => $gallery->id
+            'id' => $gallery->id,
         ]);
         $response->assertJsonMissing([
             'id' => $enthusiast->id
@@ -151,6 +151,27 @@ class UserSearchTest extends SearchTestCase
         $this->assertEquals([$first->user_id, $second->user_id, $last->user_id], array_column($response->json()['data'], 'id'));
         $response->assertJsonMissing([
             'id' => $unrelated->user_id
+        ]);
+    }
+
+    /**
+     * @test
+     * when a logged in user searches other users the returned is_following key is correct
+     */
+    public function when_a_logged_in_user_searches_other_users_the_returned_is_following_key_is_correct()
+    {
+        //arrange
+        $this->signIn();
+        $random_user = factory('App\User')->create(['user_type_id' => 6]);
+        factory('App\UserMetadata')->create(['user_id' => $random_user->id]);
+        
+        //act
+        $follow = $this->post('api/follow/'.$random_user->id);
+        $response = $this->get('/api/search-users', ['user_type_id' => 6]);
+
+        //assert
+        $response->assertJsonFragment([
+            'is_following' => true
         ]);
     }
 }
