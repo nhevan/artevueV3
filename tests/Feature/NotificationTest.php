@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Jobs\SendNewPinNotification;
 use App\Jobs\SendNewLikeNotification;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\SendNewCommentNotification;
@@ -111,6 +112,33 @@ class NotificationTest extends TestCase
             $expected_notification_text = "{$commentor->name}({$commentor->username}) commented on your post.";
 
             return $new_comment->notification_text === $expected_notification_text;
+        }); 
+    }
+
+    /**
+     * @test
+     * a notification is sent to the post owner when someone pins a post
+     */
+    public function a_notification_is_sent_to_the_post_owner_when_someone_pins_a_post()
+    {
+        //arrange
+        $pinner = factory('App\User')->create();
+        $gallery = factory('App\Gallery')->create(['user_id' => $pinner->id]);
+        $this->signIn($pinner);
+        $owner = factory('App\User')->create(['id'=>1]);
+        $post = factory('App\Post')->create(['owner_id' => $owner->id]);
+        factory('App\UserMetadata')->create(['user_id' => $pinner->id]);
+        factory('App\UserMetadata')->create(['user_id' => $owner->id]);
+
+        //act
+        Queue::fake();
+        $response = $this->post("/api/gallery/{$gallery->id}/pin/{$post->id}");
+
+        //assert
+        Queue::assertPushed(SendNewPinNotification::class, function($new_pin) use ($pinner){
+            $expected_notification_text = "{$pinner->name}({$pinner->username}) pinned your post.";
+
+            return $new_pin->notification_text === $expected_notification_text;
         }); 
     }
 }

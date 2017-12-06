@@ -8,6 +8,7 @@ use App\User;
 use App\Gallery;
 use Illuminate\Http\Request;
 use App\Traits\CounterSwissKnife;
+use App\Jobs\SendNewPinNotification;
 use Illuminate\Support\Facades\Auth;
 use Acme\Transformers\PostTransformer;
 use Illuminate\Http\Response as IlluminateResponse;
@@ -52,12 +53,13 @@ class PinsController extends ApiController
             return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError('This user has already pinned the post on the given gallery.');
         }
 
-        $this->pin->create([ 'post_id' => $post_id, 'gallery_id'=> $gallery_id , 'user_id' => $this->request->user()->id ]);
+        $new_pin = $this->pin->create([ 'post_id' => $post_id, 'gallery_id'=> $gallery_id , 'user_id' => $this->request->user()->id ]);
 
         $this->incrementPostPinCount($post_id);
         $this->incrementUserPinCount($this->request->user()->id);
         $this->updatePinCountInFollowersTable($post->owner_id);
 
+        dispatch(new SendNewPinNotification($new_pin));
         $this->trackAction(Auth::user(), "New Pin", ['Post ID' => $post_id]);
 
         return $this->respond([ 'message' => 'Post successfully pinned.' ]);
