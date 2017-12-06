@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Jobs\SendNewLikeNotification;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\SendNewFollowerNotification;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -58,5 +59,31 @@ class NotificationTest extends TestCase
 
             return $new_follower_notification->notification_text === $expected_notification_text;
         });        
+    }
+
+    /**
+     * @test
+     * a notification is sent to the post owner when someone likes a post
+     */
+    public function a_notification_is_sent_to_the_post_owner_when_someone_likes_a_post()
+    {
+        //arrange
+        $liker = factory('App\User')->create();
+        $this->signIn($liker);
+        $owner = factory('App\User')->create(['id'=>1]);
+        $post = factory('App\Post')->create(['owner_id' => $owner->id]);
+        factory('App\UserMetadata')->create(['user_id' => $liker->id]);
+        factory('App\UserMetadata')->create(['user_id' => $owner->id]);
+
+        //act
+        Queue::fake();
+        $response = $this->post('api/like/'.$post->id);
+
+        //assert
+        Queue::assertPushed(SendNewLikeNotification::class, function($new_like) use ($liker){
+            $expected_notification_text = "{$liker->name}({$liker->username}) liked your post.";
+
+            return $new_like->notification_text === $expected_notification_text;
+        }); 
     }
 }

@@ -8,12 +8,14 @@ use Illuminate\Bus\Queueable;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Acme\Transformers\ActivityTransformer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 class SendNewLikeNotification implements ShouldQueue
 {
-    protected $like;
+    public $like;
+    public $notification_text;
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NotificationSwissKnife;
 
@@ -24,8 +26,8 @@ class SendNewLikeNotification implements ShouldQueue
      */
     public function __construct(Like $like)
     {
-        //
-        $this->like = $like;
+        $this->like = array_merge(['type' => 'like'], $like->load('post', 'user')->toArray());
+        $this->prepareNotification();
     }
 
     /**
@@ -35,13 +37,16 @@ class SendNewLikeNotification implements ShouldQueue
      */
     public function handle()
     {
-        $this->like->load('post', 'user');
-        $post_owner_id = $this->like->post->owner_id;
-        $liker_name = $this->like->user->name;
-        $owner = User::find($post_owner_id);
+        $target = $this->getOneSignalTarget($this->like['post_owner_id']);
 
-        $this->sendFcmMessage($owner, 'New Like', $liker_name.' liked your post.');
-        $this->sendPusherNotification($post_owner_id.'-activity-channel', 'all-activities', [$post_owner_id, $liker_name]);
-        $this->sendPusherNotificationToAllFollowersOfAUser($this->like->user_id);
+        $this->sendNotificationToSegment($this->notification_text, $this->like, $target);
+    }
+
+    public function prepareNotification()
+    {
+        $transformer = new ActivityTransformer;
+        $this->like = $transformer->transform($this->like);
+
+        $this->notification_text = "{$this->like['name']}({$this->like['username']}) liked your post.";
     }
 }
