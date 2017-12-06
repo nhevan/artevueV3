@@ -101,6 +101,7 @@ class ActivityTransformer extends Transformer
                 'type' => $activity['type'],
                 'follower_id' => $activity['follower_id'],
                 'follower_username' => $activity['follower_detail']['username'],
+                'follower_name' => $activity['follower_detail']['name'],
                 'user_id' => $activity['user_id'],
                 'username' => $activity['user']['username'],
                 'profile_picture' => $activity['follower_detail']['profile_picture'],

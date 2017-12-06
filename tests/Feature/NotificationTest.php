@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\SendNewFollowerNotification;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -31,5 +33,30 @@ class NotificationTest extends TestCase
     
         //assert
         $response->assertJsonFragment(['Message successfully sent.']);
+    }
+
+    /**
+     * @test
+     * a notification is sent to a user who is just being followed by another user
+     */
+    public function a_notification_is_sent_to_a_user_who_is_just_being_followed_by_another_user()
+    {
+        //arrange
+        $follower = factory('App\User')->create();
+        $this->signIn($follower);
+        $followed_user = factory('App\User')->create(['id'=>1]);
+        factory('App\UserMetadata')->create(['user_id' => $follower->id]);
+        factory('App\UserMetadata')->create(['user_id' => $followed_user->id]);
+    
+        //act
+        Queue::fake();
+        $response = $this->post('api/follow/'.$followed_user->id);
+
+        //assert
+        Queue::assertPushed(SendNewFollowerNotification::class, function($new_follower_notification) use ($follower){
+            $expected_notification_text = "{$follower->name}({$follower->username}) started following you.";
+
+            return $new_follower_notification->notification_text === $expected_notification_text;
+        });        
     }
 }

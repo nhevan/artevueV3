@@ -141,18 +141,18 @@ class FollowersController extends ApiController
     	if (Auth::user()->id == $user_id) {
     		return $this->setStatusCode(IlluminateResponse::HTTP_UNPROCESSABLE_ENTITY)->respondWithError(['message'=>'User can not follow him/herself']);
     	}
-    	$was_once_follower = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
-    	if ($was_once_follower) {
-    		$was_once_follower->is_still_following = 1;
-    		$was_once_follower->save();
+    	$follow = $this->follower->where(['user_id' => $user_id, 'follower_id' => Auth::user()->id])->first();
+    	if ($follow) {
+    		$follow->is_still_following = 1;
+    		$follow->save();
     	}else{
-    		$this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
+    		$follow = $this->follower->create(['user_id' => $user_id, 'follower_id' => Auth::user()->id]);
     	}
 
     	$this->incrementFollowingCount(Auth::user()->id);
     	$this->incrementFollowerCount($user_id);
 
-        dispatch(new SendNewFollowerNotification($user_id, Auth::user()->name));
+        dispatch(new SendNewFollowerNotification($follow));
     	return $this->respond(['message' => Auth::user()->name.' started following a user.']);
     }
 
