@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\NotificationSwissKnife;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Acme\Transformers\ActivityTransformer;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 class SendNewCommentNotification implements ShouldQueue
 {
-    protected $comment;
+    public $comment;
+    public $notification_text;
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NotificationSwissKnife;
 
@@ -25,7 +27,8 @@ class SendNewCommentNotification implements ShouldQueue
      */
     public function __construct(Comment $comment)
     {
-        $this->comment = $comment;
+        $this->comment = array_merge(['type' => 'comment'], $comment->load('post', 'commentor')->toArray());
+        $this->prepareNotification();
     }
 
     /**
@@ -35,15 +38,16 @@ class SendNewCommentNotification implements ShouldQueue
      */
     public function handle()
     {
-        $this->comment->load('post', 'commentor');
-        $post_owner_id = $this->comment->post->owner_id;
-        $commentor_name = $this->comment->commentor->name;
-        $owner = User::find($post_owner_id);
+        $target = $this->getOneSignalTarget($this->comment['post_owner_id']);
 
-        // if(Auth::user()->id != $post_owner_id)
-        $this->sendFcmMessage($owner, 'New Comment', $commentor_name.' commented on your post.');
-        
-        $this->sendPusherNotification($post_owner_id.'-activity-channel', 'all-activities', [$post_owner_id, $commentor_name]);
-        $this->sendPusherNotificationToAllFollowersOfAUser($this->comment->user_id);
+        $this->sendNotificationToSegment($this->notification_text, $this->comment, $target);
+    }
+
+    public function prepareNotification()
+    {
+        $transformer = new ActivityTransformer;
+        $this->comment = $transformer->transform($this->comment);
+
+        $this->notification_text = "{$this->comment['name']}({$this->comment['username']}) commented on your post.";
     }
 }

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Jobs\SendNewLikeNotification;
 use Illuminate\Support\Facades\Queue;
+use App\Jobs\SendNewCommentNotification;
 use App\Jobs\SendNewFollowerNotification;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -84,6 +85,32 @@ class NotificationTest extends TestCase
             $expected_notification_text = "{$liker->name}({$liker->username}) liked your post.";
 
             return $new_like->notification_text === $expected_notification_text;
+        }); 
+    }
+
+    /**
+     * @test
+     * a notification is sent to the post owner when someone makes a comment
+     */
+    public function a_notification_is_sent_to_the_post_owner_when_someone_makes_a_comment()
+    {
+        //arrange
+        $commentor = factory('App\User')->create();
+        $this->signIn($commentor);
+        $owner = factory('App\User')->create(['id'=>1]);
+        $post = factory('App\Post')->create(['owner_id' => $owner->id]);
+        factory('App\UserMetadata')->create(['user_id' => $commentor->id]);
+        factory('App\UserMetadata')->create(['user_id' => $owner->id]);
+
+        //act
+        Queue::fake();
+        $response = $this->post('api/comment/'.$post->id, ['comment' => 'test comment']);
+
+        //assert
+        Queue::assertPushed(SendNewCommentNotification::class, function($new_comment) use ($commentor){
+            $expected_notification_text = "{$commentor->name}({$commentor->username}) commented on your post.";
+
+            return $new_comment->notification_text === $expected_notification_text;
         }); 
     }
 }
