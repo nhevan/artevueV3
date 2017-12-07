@@ -768,6 +768,27 @@ class UsersController extends ApiController
     }
 
     /**
+     * swaps the privacy status of a users account
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function swapPrivacy(Request $request)
+    {
+        if ($request->user()->isPrivate()) {
+            $user = $request->user();
+            $user->metadata->is_account_private = 0;
+            $user->metadata->save();
+
+            return $this->respond( [ 'message' => 'This users account is now public.' ] );
+        }
+
+        $user = $request->user();
+        $user->metadata->is_account_private = 1;
+        $user->metadata->save();
+        return $this->respond( [ 'message' => 'This users account is now private.' ] );
+    }
+
+    /**
      * updates the authenticated users location
      * @param  Request $request [description]
      * @return [type]           [description]

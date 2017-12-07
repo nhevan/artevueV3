@@ -38,6 +38,7 @@ Route::middleware('api')->get('/check-username', 'UsersController@checkUsername'
 Route::middleware('api')->get('/search-user', 'UsersController@searchUser');
 Route::middleware('auth:api')->post('/facebook-signup', 'UsersController@facebookSignup');
 Route::middleware('auth:api')->patch('/update-gallery-info', 'UsersController@updateGalleryInfo');
+Route::middleware('auth:api')->patch('/swap-privacy', 'UsersController@swapPrivacy');
 Route::middleware('auth:api')->patch('/update-settings', 'UsersController@updateSettings');
 Route::middleware('api')->get('/check-email', 'UsersController@checkEmail');
 Route::middleware('auth:api')->post('/update-profile-picture', 'UsersController@updateProfilePicture');

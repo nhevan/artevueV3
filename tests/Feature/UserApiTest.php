@@ -31,6 +31,28 @@ class UserApiTest extends TestCase
 
     /**
      * @test
+     * a user can update the privacy status of his account
+     */
+    public function a_user_can_update_the_privacy_status_of_his_account()
+    {
+        //arrange
+        $this->signIn();
+
+        // act and assert
+        $response = $this->patch('/api/swap-privacy');
+        $this->assertDatabaseHas('users_metadata',[
+            'user_id' => $this->user->id,
+            'is_account_private' => 1
+        ]);
+        $response = $this->patch('/api/swap-privacy');
+        $this->assertDatabaseHas('users_metadata',[
+            'user_id' => $this->user->id,
+            'is_account_private' => 0
+        ]);
+    }
+
+    /**
+     * @test
      * while a user is returned it contains the instagram uid field
      */
     public function while_a_user_is_returned_it_contains_the_instagram_uid_field()

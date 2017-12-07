@@ -150,4 +150,9 @@ class User extends Authenticatable
     {
         return "https://hooks.slack.com/services/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";
     }
+
+    public function isPrivate()
+    {
+        return !! $this->metadata->is_account_private;
+    }
 }
