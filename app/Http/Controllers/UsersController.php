@@ -719,7 +719,7 @@ class UsersController extends ApiController
             'email' => 'email',
             'user_type_id' => 'numeric|min:3|max:10',
             'sex' => 'numeric|in:1,2',
-            'website' =>'nullable|url',
+            'website' =>'nullable',
             'biography' => 'nullable|max:250',
             'phone' => 'nullable',
         ];

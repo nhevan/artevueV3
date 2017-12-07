@@ -137,7 +137,7 @@ class GalleriesController extends ApiController
             'name' => 'max:40',
             'description' => 'nullable|max:350',
             'email' => 'nullable|email',
-            'website' => 'nullable|url',
+            'website' => 'nullable',
             'is_private' => 'nullable|in:0,1'
         ];
         if (!$this->setRequest($this->request)->isValidated($rules)) {
