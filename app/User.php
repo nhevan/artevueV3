@@ -155,4 +155,9 @@ class User extends Authenticatable
     {
         return !! $this->metadata->is_account_private;
     }
+
+    public function isAdmin()
+    {
+        if($this->user_type_id <= 2) return true;
+    }
 }
