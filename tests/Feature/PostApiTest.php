@@ -115,7 +115,7 @@ class PostApiTest extends TestCase
             'description' => 'A automated test post, please ignore'
         ]);
         $post_controller = new PostsController($post, new PostTransformer,new Request);
-        $access_token = 'EAACEdEose0cBADMOvA8UFSRJMZBFaR8SI4wMbGgbaY4lKTMXTqiSkagNQL0Rrw2z5jYAST6mPHdmTxXYF0iWjMn0ThYXUW3IM2Mi0g9PjgWgqdiusuw4YLHluHov88vClMoAF4MCItwXQMZCzwCYqFAuewuNs2xGukZCJNGZBriRrjZAgJ0fcXVI3dZAVaiHP3ZAUDeczzVNgZDZD';
+        $access_token = 'EAAEKXpBRuKwBACN3vzSoF4eK1jlnjGZBiTP6tH8T3878wFY8AZApj6UoULR2m0w609SSzkxUluYzVRF1g1KgHCkg0RiFsBUVP1vuUZAYjMQ2v5WJhXhNW9emWWJMQS418oGPb0iPCTgfL7XD8X0J4r2KEVxKaQanKsMgcJTUvRDWGSUQgv6Av8IeThNGdMZD';
     
         //act
         $response = $post_controller->postToFacebook($post, $access_token);
