@@ -100,7 +100,8 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Posts <span class="caret"></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('posts.index') }}">All Posts</a></li>
-                                <li><a href="{{ route('posts.trending') }}">Discover Posts</a></li>
+                                <li><a href="{{ route('posts.discover') }}">Discover Posts</a></li>
+                                <li><a href="{{ route('posts.trending') }}">Trending Posts</a></li>
                                 <li><a href="{{ route('posts.arteprize') }}">Arteprize Posts</a></li>
                                 <li><a href="{{ route('posts.buy') }}">Buy Art Posts</a></li>
                                 <li><a href="{{ route('posts.curators-choice') }}">Curators Choices</a></li>

@@ -14,6 +14,10 @@ class TrendingPostsController extends ApiController
     	$limit = 21;
     	$posts = Post::trending()->with('owner', 'tags', 'artist')->paginate($limit);
 
+    	if (!request()->wantsJson()) {
+            return view('posts.index', ['posts' => $posts]);
+        }
+
         return $this->respondWithPagination($posts, new PostTransformer);
     }
 }
