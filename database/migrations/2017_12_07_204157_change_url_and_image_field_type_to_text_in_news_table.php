@@ -27,8 +27,8 @@ class ChangeUrlAndImageFieldTypeToTextInNewsTable extends Migration
     public function down()
     {
         Schema::table('news', function (Blueprint $table) {
-            $table->string('image');
-            $table->string('url');
+            $table->string('image')->change();
+            $table->string('url')->change();
         });
     }
 }

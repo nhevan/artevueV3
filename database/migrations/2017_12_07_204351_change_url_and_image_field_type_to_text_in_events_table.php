@@ -27,8 +27,8 @@ class ChangeUrlAndImageFieldTypeToTextInEventsTable extends Migration
     public function down()
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->string('image');
-            $table->string('url');
+            $table->string('image')->change();
+            $table->string('url')->change();
         });
     }
 }
