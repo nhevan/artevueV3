@@ -1300,11 +1300,11 @@ class UsersController extends ApiController
         foreach ($followers as $follower) {
             $follower->delete();
         }
-        foreach ($messages as $message) {
-            $message->delete();
-        }
         foreach ($participants as $participant) {
             $participant->delete();
+        }
+        foreach ($messages as $message) {
+            $message->delete();
         }
         foreach ($reported_users as $report) {
             $report->delete();
