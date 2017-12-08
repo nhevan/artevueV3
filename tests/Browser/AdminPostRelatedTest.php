@@ -20,6 +20,7 @@ class AdminPostRelatedTest extends DuskTestCase
 
         $admin_type = factory('App\UserType')->create(['id' => 2]);
         $this->admin = factory('App\User')->create(['user_type_id' => 2]);
+        $this->seed('PostArtTypesTableSeeder');
     }
 
     /**
