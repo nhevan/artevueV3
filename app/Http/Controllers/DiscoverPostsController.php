@@ -318,7 +318,10 @@ class DiscoverPostsController extends DiscoverController
      */
     public function algorithmV2($weight, $unit)
     {
-        if($weight) return ( $weight / (1 - $weight)) * $unit;
+        if($weight){
+            if($weight == 1) return $unit;   
+            return ( $weight / (1 - $weight)) * $unit;   
+        }
     }
 
     /**
