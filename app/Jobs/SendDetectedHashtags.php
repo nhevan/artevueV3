@@ -41,23 +41,21 @@ class SendDetectedHashtags
     public function handle()
     {
         $api_key = config('app.google_api_key');
-        $vision = new Vision($api_key, [new Feature(Feature::WEB_DETECTION, 10)]);
+        $vision = new Vision($api_key, [new Feature(Feature::LABEL_DETECTION, 10)]);
+
         $response = $vision->request(
             new Image($this->filepath)
         );
-
+        $labels = $response->getLabelAnnotations();
 
         $hashtags = [];
         $i = 0;
-        $webDetection = $response->getWebDetection();
-        foreach ($webDetection->getWebEntities() as $entity) {
-            //if ($entity->getScore() > 0.6) {
-                $hashtag = strtolower(str_replace(' ', '', $entity->getDescription()));
-                if (strlen($hashtag) <= 15 && $i < 8) {
-                    $hashtags[] = $this->parseHashtag($hashtag);
-                    $i += 1;
-                }
-            //}
+        foreach ($labels as $label) {
+            $hashtag = strtolower(str_replace(' ', '', $label->getDescription()));
+            if (strlen($hashtag) <= 15 && $i < 8) {
+                $hashtags[] = $this->parseHashtag($hashtag);
+                $i += 1;
+            }
         }
         array_unique($hashtags);
         unlink($this->filepath);
@@ -66,7 +64,7 @@ class SendDetectedHashtags
             'key' => $this->unique_key,
             'hashtags' => $hashtags
         ];
-        
+
         $this->sendPusherNotification('User-'.$this->user->id,'hashtags-detected', $data);
     }
 
