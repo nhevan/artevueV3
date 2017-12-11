@@ -46,10 +46,11 @@ Route::middleware(['auth', 'admin'])->get('/send-notification-form/{user?}', 'Us
 Route::middleware(['auth', 'admin'])->post('/send-notification/{user?}', 'UsersController@sendNotification')->name('user.send-notification');
 
 Route::middleware(['auth', 'admin'])->get('/posts', 'PostsController@indexWeb')->name('posts.index');
+Route::middleware(['auth', 'admin'])->get('/posts/for-sale', 'PostsController@forSalePosts')->name('posts.for-sale');
 Route::middleware(['auth', 'admin'])->get('/posts/discover', 'DiscoverPostsController@discoverPosts')->name('posts.discover');
 Route::middleware(['auth', 'admin'])->get('/posts/trending', 'TrendingPostsController@trendingPosts')->name('posts.trending');
 Route::middleware(['auth', 'admin'])->get('/posts/arteprize', 'PostsController@artePrizePosts')->name('posts.arteprize');
-Route::middleware(['auth', 'admin'])->get('/posts/buy', 'PostsController@onSalePosts')->name('posts.buy');
+Route::middleware(['auth', 'admin'])->get('/posts/buy', 'PostsController@selectedSalePosts')->name('posts.buy');
 Route::middleware(['auth', 'admin'])->get('/posts/curators-choice', 'PostsController@artevueSelectedPosts')->name('posts.curators-choice');
 Route::middleware(['auth', 'admin'])->get('/post/{post}', 'PostsController@showWeb')->name('posts.show');
 Route::middleware(['auth', 'admin'])->get('/post/edit/{post}', 'PostsController@showEditForm')->name('posts.edit-form');

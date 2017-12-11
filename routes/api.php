@@ -83,7 +83,7 @@ Route::middleware('auth.optional:api')->get('/discover-posts', 'DiscoverPostsCon
 Route::middleware('auth.optional:api')->get('/posts/trending', 'TrendingPostsController@trendingPosts'); //v3
 Route::middleware('api')->get('/posts/arteprize', 'PostsController@artePrizePosts'); // v3
 Route::middleware('api')->get('/posts/selected', 'PostsController@artevueSelectedPosts'); // v3
-Route::middleware('api')->get('/posts/sale', 'PostsController@onSalePosts'); // v3
+Route::middleware('api')->get('/posts/sale', 'PostsController@selectedSalePosts'); // v3
 
 Route::middleware('auth.optional:api')->get('/advance-search', 'PostsController@advanceSearch');
 Route::middleware('auth:api')->post('/email-gallery-pdf', 'PostsController@emailGalleryPdf');

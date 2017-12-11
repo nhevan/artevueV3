@@ -161,7 +161,7 @@ class DiscoverPostsController extends DiscoverController
      */
     private function getOnSaleFirstPostImage()
     {
-        $on_sale_first_post = Post::onSalePosts()->latest()->first();
+        $on_sale_first_post = Post::selectedSalePosts()->latest()->first();
         if (!$on_sale_first_post) {
             return 'img/posts/FbwOjCAYkSEDUfmJPYoe9lWzw5karyhF05qEVQuA.jpeg';
         }

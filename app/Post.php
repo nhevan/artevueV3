@@ -64,14 +64,25 @@ class Post extends Model
     }
 
     /**
-     * Scope a query to only include posts selected for sale.
+     * Scope a query to only include posts selected for sale by Artevue Team.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOnSalePosts($query)
+    public function scopeSelectedSalePosts($query)
     {
         return $query->where('is_selected_for_sale', 1)->where('is_undiscoverable', 0);
+    }
+
+    /**
+     * Scope a query to only include posts with a buy button.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForSalePosts($query)
+    {
+        return $query->where('has_buy_btn', 1)->where('is_undiscoverable', 0);
     }
 
     /**

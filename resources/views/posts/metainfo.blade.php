@@ -28,9 +28,14 @@
 			<td>{{ $post->address }}</td>
 		</tr>
 		<tr>
+			<td><strong>Has buy button</strong></td>
+			<td style="padding: 0 5px;"> :  </td>
+			<td>{{ $post->has_buy_btn ? 'yes' : 'no' }}</td>
+		</tr>
+		<tr>
 			<td><strong>Price</strong></td>
 			<td style="padding: 0 5px;"> :  </td>
-			<td>{{ $post->price }}</td>
+			<td>${{ $post->price }}</td>
 		</tr>
 		<tr>
 			<td><strong>Pin Count</strong></td>

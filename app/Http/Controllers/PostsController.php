@@ -106,12 +106,27 @@ class PostsController extends ApiController
     }
 
     /**
-     * returns all posts that are selected for sale
+     * returns all posts that has a price and a button to buy
      * @return [type] [description]
      */
-    public function onSalePosts()
+    public function forSalePosts()
     {
-        $on_sale_posts = $this->post->onSalePosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
+        $on_sale_posts = $this->post->forSalePosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
+
+        if ($this->request->wantsJson()) {
+            return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
+        }
+
+        return view('posts.index', ['posts' => $on_sale_posts]);
+    }
+
+    /**
+     * returns all posts that are selected for sale by Artevue
+     * @return [type] [description]
+     */
+    public function selectedSalePosts()
+    {
+        $on_sale_posts = $this->post->selectedSalePosts()->latest()->with('artist', 'owner', 'tags')->paginate(30);
 
         if ($this->request->wantsJson()) {
             return $this->respondWithPagination($on_sale_posts, $this->postTransformer );
