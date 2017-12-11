@@ -22,13 +22,15 @@ class AdminEmailManagementTest extends TestCase
     	//arrange
         Mail::fake();
         $this->seed('EmailTemplatesSeeder');
-
-        $this->signIn();
+        $this->seed('UserTypesTableSeeder');
+        $admin = factory('App\User')->create(['user_type_id' => 2]);
+        $this->signIn($admin);
         $user2 = factory('App\User')->create();
     
         //act
     	$response = $this->get("/mails/dispatch-announcement");
     	$new_user = factory('App\User')->create();
+
         //assert
         Mail::assertSent(AnnouncementEmail::class, function($mail){
         	return $mail->user->id === $this->user->id;
